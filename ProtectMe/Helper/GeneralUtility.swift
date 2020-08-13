@@ -55,6 +55,17 @@ func setView(view: UIView, hidden: Bool) {
 //MARK: - NSString Extension
 
 extension String {
+
+        func strstr(needle: String, beforeNeedle: Bool = false) -> String? {
+            guard let range = self.range(of: needle) else { return nil }
+
+            if beforeNeedle {
+                return self.substring(to: range.lowerBound)
+            }
+
+            return self.substring(from: range.upperBound)
+        }
+
     
     func isEmail() -> Bool {
         let regex = try? NSRegularExpression(pattern: "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}", options: .caseInsensitive)

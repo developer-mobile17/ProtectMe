@@ -62,7 +62,7 @@ class renameArchiveVC: UIViewController {
         self.txtName.text = txtValue
         if(FieldType == "email"){
             txtName.validationType = .email
-                   txtName.config.textFieldKeyboardType = .email
+        txtName.config.textFieldKeyboardType = .email
             txtName.leftIcon = #imageLiteral(resourceName: "ic_email")
             alertStr = "please enter email."
         }
@@ -75,6 +75,7 @@ class renameArchiveVC: UIViewController {
         else{
             let img = #imageLiteral(resourceName: "ic_Adetails")
             alertStr = "please enter filename."
+            txtName.config.textFieldKeyboardType = .name
             //txtName.leftIcon = #imageLiteral(resourceName: "ic_Adetails")
             txtName.leftIcon  = img
             //txtName.leftViewPadding = 12

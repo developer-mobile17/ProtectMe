@@ -139,6 +139,21 @@ class archiveVC: baseVC {
         print()
         
     }
+    @IBAction func btnplayvideoClieck(_ sender: UIButton) {
+        if(arrarchivedList[sender.tag].type == "image"){
+            
+        }
+        else{
+        let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
+               let player = AVPlayer(url: videoURL!)
+               let vc = AVPlayerViewController()
+               vc.player = player
+
+               present(vc, animated: true) {
+                   vc.player?.play()
+               }
+        }
+    }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
         self.setDetails(data:self.arrarchivedList[sender.tag])
@@ -159,7 +174,9 @@ class archiveVC: baseVC {
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
         OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
-        OBJchangepasswordVC.txtValue = self.arrarchivedList[selectedIndex!.row].image_name!
+        let firstPart = self.arrarchivedList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
+        print(firstPart) // print Hello
+        OBJchangepasswordVC.txtValue = firstPart ??  self.arrarchivedList[selectedIndex!.row].image_name!
         
         self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
     }
@@ -317,6 +334,7 @@ class archiveVC: baseVC {
                             objarchivedList.updated      = outcome[a]["updated"] as? String ?? ""
                             objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
                             objarchivedList.name      = outcome[a]["name"] as? String ?? ""
+                            objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
 
                             self.arrarchivedList.append(objarchivedList)
                         }
@@ -443,7 +461,10 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "collCell", for: indexPath) as! collCell
             cell.videoThumb.image = nil
+            cell.btnPlayvideo.tag = indexPath.row
             cell.btnMap.tag = indexPath.row
+            cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
+
             cell.btnOption.tag = indexPath.row
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
@@ -459,15 +480,15 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
               }
               else{
             cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.videoThumb.sd_imageIndicator?.startAnimatingIndicator()
-            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path!)!
-            AVAsset(url: url).generateThumbnail { [weak self] (image) in
-                DispatchQueue.main.async {
-                    guard let image = image else { return }
-                    cell.videoThumb.image = image
-                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
-                }
-            }
+            cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+            //            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path ?? "")!
+//            AVAsset(url: url).generateThumbnail { [weak self] (image) in
+//                DispatchQueue.main.async {
+//                    guard let image = image else { return }
+//                    cell.videoThumb.image = image
+//                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
+//                }
+//            }
               //cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
 //                      self.getThumbnailFromUrl(arrarchivedList[indexPath.row].image_path) { (image) in
 //                       //Use image where you want to use
@@ -519,16 +540,16 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             
         }
         else{
-            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.videoThumb.sd_imageIndicator?.startAnimatingIndicator()
-            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path!)!
-                  AVAsset(url: url).generateThumbnail { [weak self] (image) in
-                                 DispatchQueue.main.async {
-                                     guard let image = image else { return }
-                                     cell.videoThumb.image = image
-                                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
-                                 }
-                             }
+              cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                      cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+//            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path!)!
+//                  AVAsset(url: url).generateThumbnail { [weak self] (image) in
+//                                 DispatchQueue.main.async {
+//                                     guard let image = image else { return }
+//                                     cell.videoThumb.image = image
+//                                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
+//                                 }
+//                             }
         }
         return cell
     }
@@ -540,6 +561,8 @@ class collCell: UICollectionViewCell {
     @IBOutlet weak var videoThumb:UIImageView!
     @IBOutlet weak var lblTitle:UILabel!
     @IBOutlet weak var lblName:UILabel!
+    @IBOutlet weak var btnPlayvideo:UIButton!
+
     @IBOutlet weak var btnOption:UIButton!
 }
 extension AVAsset {

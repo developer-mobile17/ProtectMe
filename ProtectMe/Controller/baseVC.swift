@@ -133,7 +133,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
         }
     }
     func WSUploadVideo(Parameter:[String:String],urll:URL) -> Void {
-        ServiceManager.shared.callAPIWithVideo(WithType:.upload_file, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+        ServiceManager.shared.callAPIWithVideo(WithType:.upload_chunk, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
         //        ServiceManager.shared.callAPIPost(WithType: .get_pocket, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
@@ -230,7 +230,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             let imageData = img.mediumQualityJPEGNSData
                             if let image = UIImage(data: imageData as Data) {
                                // Use image...
-                                self.WSUploadImage(Parameters: ["long":self.longitude.description,"lat":self.latitude.description,"type":"image"], img: image)
+                                self.WSUploadImage(Parameters: ["lat":self.longitude.description,"long":self.latitude.description,"type":"image"], img: image)
 
                             }
 

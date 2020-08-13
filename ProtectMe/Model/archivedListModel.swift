@@ -27,6 +27,8 @@ class archivedListModel: NSObject {
     var type            :String?
     var updated         :String?
     var user_id         :String?
+    var thumb_image         :String?
+    
     var thumbImage         :UIImage?
     
 

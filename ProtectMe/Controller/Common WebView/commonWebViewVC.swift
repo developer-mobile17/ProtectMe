@@ -41,17 +41,17 @@ class commonWebViewVC: UIViewController {
         appDelegate.SHOW_CUSTOM_LOADER()
 
         if(titleString == "Privacy Policy"){
-            let request = URLRequest(url: URL.init(string: "http://deluxcoder.com/beta/protectme/ws/v1/user/content/privacy_policy")!)
+            let request = URLRequest(url: URL.init(string: ServiceManager.shared.baseURL + "content/privacy_policy")!)
             self.webView.load(request)
             //self.WSPrivacyPolicy(Parameter: [:])
 
         }
         else if(titleString == "Terms and Condition"){
-             let request = URLRequest(url: URL.init(string: "http://deluxcoder.com/beta/protectme/ws/v1/user/content/term")!)
+             let request = URLRequest(url: URL.init(string: ServiceManager.shared.baseURL + "content/term")!)
             self.webView.load(request)
         }
         else{
-            let request = URLRequest(url: URL.init(string: "http://deluxcoder.com/beta/protectme/ws/v1/user/content/privacy_policy")!)
+            let request = URLRequest(url: URL.init(string: ServiceManager.shared.baseURL + "content/contactus")!)
             self.webView.load(request)
         }
         appDelegate.HIDE_CUSTOM_LOADER()

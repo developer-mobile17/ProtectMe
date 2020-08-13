@@ -9,6 +9,7 @@
 import UIKit
 import SideMenu
 import AVFoundation
+import CoreMedia
 import AVKit
 import CoreLocation
 import Foundation
@@ -21,7 +22,9 @@ import MobileCoreServices
 class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
+    let myGroup = DispatchGroup()
 
+    var unique_id = ""
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var timeView: UIView!
     // let cameraManager = CameraManager()
@@ -313,36 +316,319 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         }
         return fileSize
     }
+    func setupNamedPipe(withData data: Data) -> URL?
+    {
+        // Build a URL for a named pipe in the documents directory
+        let fifoBaseName = "avpipe"
+        let fifoUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!.appendingPathComponent(fifoBaseName)
+
+        // Ensure there aren't any remnants of the fifo from a previous run
+        unlink(fifoUrl.path)
+
+        // Create the FIFO pipe
+        if mkfifo(fifoUrl.path, 0o666) != 0
+        {
+            print("Failed to create named pipe")
+            return nil
+        }
+
+        // Run the code to manage the pipe on a dispatch queue
+        DispatchQueue.global().async
+        {
+            print("Waiting for somebody to read...")
+            let fd = open(fifoUrl.path, O_WRONLY)
+            if fd != -1
+            {
+                print("Somebody is trying to read, writing data on the pipe")
+                data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
+                    let num = write(fd, bytes, data.count)
+                    if num != data.count
+                    {
+                        print("Write error")
+                    }
+                }
+
+                print("Closing the write side of the pipe")
+                close(fd)
+            }
+            else
+            {
+                print("Failed to open named pipe for write")
+            }
+
+            print("Cleaning up the named pipe")
+            unlink(fifoUrl.path)
+        }
+
+        return fifoUrl
+    }
+    func sizePerMB(url: URL?) -> Double {
+        guard let filePath = url?.path else {
+            return 0.0
+        }
+        do {
+            let attribute = try FileManager.default.attributesOfItem(atPath: filePath)
+            if let size = attribute[FileAttributeKey.size] as? NSNumber {
+                return size.doubleValue / 1000000.0
+            }
+        } catch {
+            print("Error: \(error)")
+        }
+        return 0.0
+    }
+     func cropVideo(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil)
+    {
+        
+        let fileManager = FileManager.default
+        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+
+        let asset = AVAsset(url: sourceURL)
+        let length = Float(asset.duration.value) / Float(asset.duration.timescale)
+      //  print("video length: \(length) seconds")
+
+        var outputURL = documentDirectory.appendingPathComponent("output")
+        do {
+            try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
+            outputURL = outputURL.appendingPathComponent("\(sourceURL.lastPathComponent)")
+            
+        }catch let error {
+            print(error)
+        }
+
+        //Remove existing file
+        try? fileManager.removeItem(at: outputURL)
+
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else { return }
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = .mp4
+
+        let timeRange = CMTimeRange(start: CMTime(seconds: startTime, preferredTimescale: 1000),
+                                    end: CMTime(seconds: endTime, preferredTimescale: 1000))
+
+        exportSession.timeRange = timeRange
+        exportSession.exportAsynchronously {
+            switch exportSession.status {
+            case .completed:
+                print("exported at \(outputURL)")
+                completion?(outputURL)
+            case .failed:
+                print("failed \(exportSession.error.debugDescription)")
+            case .cancelled:
+                print("cancelled \(exportSession.error.debugDescription)")
+            default: break
+            }
+        }
+    }
+    func trimVideoAndUpload(filepath:URL){
+        let asset = AVAsset(url: filepath)
+        let duration = asset.duration
+        let durationTime = CMTimeGetSeconds(duration)
+        print("video in seconds : ",durationTime)
+        var totalTime = Int(durationTime)
+        if(totalTime < 5){
+            
+        }
+        else{
+            var currentLevel:Double = 0, finalLevel:Double = Double(totalTime)
+            let gameCompleted = true
+            while (currentLevel <= finalLevel) {
+                //play game
+                if gameCompleted {
+                
+                    if(totalTime>5){
+                        totalTime = totalTime - Int(5.0)
+                        currentLevel += 5.0
+                        
+                    }
+                    else{
+                        currentLevel = currentLevel + Double(totalTime)
+                    }
+                    self.cropVideo(sourceURL: filepath, startTime: Double(currentLevel), endTime: Double(currentLevel + 5) ) { (FUrl) in
+                        print(FUrl)
+                        let group = DispatchGroup()
+                        let tempID = ""
+                        var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+                        group.enter()
+                        ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                        if(Status == true){
+                            let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                            let StatusCode = DataResponce?["status"] as? Int
+                            if (StatusCode == 200){
+                                if let Data = dataResponce["data"] as? NSDictionary{
+                                if let videoKey = Data["unique_id"] as? String{
+                                    self.unique_id = videoKey
+                                    Parameter["unique_id"] = videoKey
+                                }
+                                group.leave()
+                                }
+                                }
+                                else if(StatusCode == 401)
+                                {
+                                    if let errorMessage:String = Message{
+                                                                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                                                            group.leave()
+
+                                                                                appDelegate.setLoginVC()
+                                                                                // Fallback on earlier versions
+                                                                            
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    group.leave()
+
+                                                                    if let errorMessage:String = dataResponce["message"] as? String{
+                                                                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                                                    }
+                                                                }
+                                                            }
+                                                            else{
+                                                                group.leave()
+
+                                                                if let errorMessage:String = Message{
+                                                                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                                                }
+                                                            }
+                                                        }) { (DataResponce, Status, Message) in
+                                                            //
+                                                        }
+                                                group.wait()
+//                        self.WSUploadVideoR(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video","unique_id":self.unique_id], chunk: FUrl)
+                    }
+                    
+                        
+                    }
+                    
+                }
+            }
+        }
+
+    
     func fileintoChunk(filepath:URL){
+        var tempID:String = ""
+        let a = sizePerMB(url: filepath)
+        print("video size:",a)
         //let path = Bundle.main.url(forAuxiliaryExecutable: self.videoRecorded!.absoluteString)
         let size = self.fileSize(forURL: filepath)
         print("Filte Size : ",size)
                   do
                   {
-                    let data = try Data(contentsOf: filepath)
-                      let dataLen = (data as NSData).length
-                      let fullChunks = Int(dataLen / 1024) // 1 Kbyte
-                      let totalChunks = fullChunks + (dataLen % 1024 != 0 ? 1 : 0)
+                    let data = try Data(contentsOf: filepath, options:.init())
 
-                      var chunks:[Data] = [Data]()
-                      for chunkCounter in 0..<totalChunks
-                      {
-                          var chunk:Data
-                          let chunkBase = chunkCounter * 1024
-                          var diff = 1024
-                          if chunkCounter == totalChunks - 1
-                          {
-                              diff = dataLen - chunkBase
-                          }
 
-                          let range:Range<Data.Index> = Range<Data.Index>(chunkBase..<(chunkBase + diff))
-                          chunk = data.subdata(in: range)
-                        print("chunks.count : ",chunks.count)
-                          chunks.append(chunk)
+                    //let data = try Data(contentsOf: filepath)
+                    let dataLen = data.count
+                    let chunkSize = ((1024 * 1000) * 4) // MB
+                    let fullChunks = Int(dataLen / chunkSize)
+                    let totalChunks = fullChunks + (dataLen % 1024 != 0 ? 1 : 0)
+
+                    var chunks:[Data] = [Data]()
+                    chunks.removeAll()
+                    for chunkCounter in 0..<totalChunks {
+                      var chunk:Data
+                      let chunkBase = chunkCounter * chunkSize
+                      var diff = chunkSize
+                      if(chunkCounter == totalChunks - 1) {
+                        diff = dataLen - chunkBase
                       }
+                      let range:Range<Data.Index> = Range<Data.Index>(chunkBase..<(chunkBase + diff))
+                        chunk = data.subdata(in: range)
+                        
+//                        let videoDataString = NSString(data: chunk., encoding: String.Encoding.utf8.rawValue)
+//                    let videoURL = NSURL(string: String(videoDataString!))
+//                    print("video url",videoURL)
+                        //
+                      print("The size is \(chunk.count)")
+                    chunks.append(chunk)
 
+                    }
+                    
+                    
+//                    let data = try Data(contentsOf: filepath)
+//                      let dataLen = (data as NSData).length
+//                    let valC = 1024*1024
+//                    print("dataLen:",dataLen)
+//                      let fullChunks = Int(dataLen / valC) // 1 Kbyte
+//                    print("fullChunks:",fullChunks)
+//                      let totalChunks = fullChunks + (dataLen % valC != 0 ? 1 : 0)
+//                    print("totalChunks:",totalChunks)
+//                      var chunks:[Data] = [Data]()
+//                      for chunkCounter in 0..<totalChunks
+//                      {
+//                          var chunk:Data
+//                          let chunkBase = chunkCounter * valC
+//                          var diff = valC
+//                          if chunkCounter == totalChunks - 1
+//                          {
+//                              diff = dataLen - chunkBase
+//                          }
+//
+//                          let range:Range<Data.Index> = Range<Data.Index>(chunkBase..<(chunkBase + diff))
+//                          chunk = data.subdata(in: range)
+//                        print("chunks.count : ",chunks.count)
+//                          chunks.append(chunk)
+//                      }
+ 
+                    let group = DispatchGroup()
+            var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+             //   for a in chunks{
+//                      if let videoURL = setupNamedPipe(withData: a)
+//                    {
+//                        print("video url",videoURL)
+//                    //                        let player = AVPlayer(url: videoURL)
+//                    }
+                        group.enter()
+                                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                                    if(Status == true){
+                                        let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                                        let StatusCode = DataResponce?["status"] as? Int
+                                        if (StatusCode == 200){
+                                           if let Data = dataResponce["data"] as? NSDictionary{
+                                                if let videoKey = Data["unique_id"] as? String{
+                                                    self.unique_id = videoKey
+                                                    Parameter["unique_id"] = videoKey
+                                                }
+                                            group.leave()
+
+                                        }
+                                        }
+                                        else if(StatusCode == 401)
+                                        {
+                                            if let errorMessage:String = Message{
+                                                showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                                    group.leave()
+
+                                                        appDelegate.setLoginVC()
+                                                        // Fallback on earlier versions
+                                                    
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            group.leave()
+
+                                            if let errorMessage:String = dataResponce["message"] as? String{
+                                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        group.leave()
+
+                                        if let errorMessage:String = Message{
+                                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                        }
+                                    }
+                                }) { (DataResponce, Status, Message) in
+                                    //
+                                }
+                        group.wait()
+    
+                       // self.WSUploadVideoR(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video","unique_id":self.unique_id], chunk: a)
+                        
+                 //Forloop }
                       // Send chunks as you want
-                      debugPrint(chunks)
+//                      debugPrint(chunks)
                   }
                   catch
                   {
@@ -398,44 +684,85 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             }
        // }
     }
-     func WSUploadVideoR(Parameter:[String:String],urll:URL) -> Void {
-//        self.presentTo("uploadProgress")
-        ServiceManager.shared.callAPIWithVideo(WithType:.upload_file, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
-        //        ServiceManager.shared.callAPIPost(WithType: .get_pocket, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
-            if(Status == true){
-                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
-                let StatusCode = DataResponce?["status"] as? Int
-                if (StatusCode == 200){
-                   
-                }
-                else if(StatusCode == 401)
-                {
-                    if let errorMessage:String = Message{
-                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
-                                appDelegate.setLoginVC()
-                                // Fallback on earlier versions
-                            
+    //Parameter:[String:String],chunk:[URL,Index:Int,
+    func WSUploadVideoR(statTime:Double, endTime:Double) -> Void {
+        var etime = statTime + 5.0
+        if(etime>endTime){
+            etime = endTime
+        }
+        if(statTime < endTime){
+        self.cropVideo(sourceURL: self.videoRecorded!, startTime: statTime, endTime: etime) { (FUrl) in
+        print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
+            
+           // arrOfChunks.append(FUrl)
+            let curruntChunk = FUrl
+             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                if(Status == true){
+                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                    let StatusCode = DataResponce?["status"] as? Int
+                    if (StatusCode == 200){
+                       if let Data = dataResponce["data"] as? NSDictionary{
+                            if let videoKey = Data["unique_id"] as? String{
+                                self.unique_id = videoKey
+                              //  if(chunk.count - 1 != Index){
+                                 //    Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+                                    var strTimr = statTime + 5
+                                    if(statTime >= endTime){
+                                        print("video upload complete")
+                                    }
+                                    else{
+                                        self.WSUploadVideoR(statTime: strTimr , endTime: endTime)
+                                    }
+                                    //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
+                           //     }
+                                
+
+                            }
+                    }
+                    }
+                    else if(StatusCode == 401)
+                    {
+                     //   self.myGroup.leave()
+                        self.WSUploadVideoR(statTime: statTime , endTime: endTime)
+                        if let errorMessage:String = Message{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                
+                                    appDelegate.setLoginVC()
+                                    // Fallback on earlier versions
+                                
+                            }
+                        }
+                    }
+                    else{
+                   //     self.myGroup.leave()
+
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                           // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                         }
                     }
                 }
                 else{
-                    if let errorMessage:String = dataResponce["message"] as? String{
-                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    //self.myGroup.leave()
+
+                    if let errorMessage:String = Message{
+                        //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                     }
                 }
+            }) { (DataResponce, Status, Message) in
+                //
+                //self.myGroup.leave()
+
             }
-            else{
-                if let errorMessage:String = Message{
-                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                }
-            }
-        }) { (DataResponce, Status, Message) in
-            //
+
+          
+        
         }
     }
+       // return responsBool
+    }
      func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-
+        
          if (error != nil) {
             self.StopTimer()
             self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -448,16 +775,26 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
          } else {
             
              videoRecorded = outputURL! as URL
-             print(videoRecorded)
-            DispatchQueue.background(background: {
-                // do something in background
-                self.fileintoChunk(filepath: outputFileURL)
-               // self.getFileDataInChunks()
-                    self.WSUploadVideoR(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: self.videoRecorded!)
-                            
-            }, completion:{
-                // when background job finished, do something in main thread
-            })
+            UISaveVideoAtPathToSavedPhotosAlbum(outputFileURL.path, nil, nil, nil)
+            print("recorded video url :",videoRecorded!)
+            let asset = AVAsset(url: videoRecorded!)
+            let duration = asset.duration
+            let durationTime = CMTimeGetSeconds(duration)
+            self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime) )
+//            self.passVideoFortrim(videoUrl: outputFileURL)
+         //   self.cropVideo(sourceURL: outputURL, startTime: StartTime, endTime: EndTime) { (FUrl) in
+                                  //print("url :",FUrl, "Start time : ",StartTime, "End time : ",EndTime)
+                                                // UISaveVideoAtPathToSavedPhotosAlbum(FUrl.path, nil, nil, nil)
+            //}
+//            DispatchQueue.background(background: {
+//                // do something in background
+//             //   self.trimVideoAndUpload(filepath: outputFileURL)
+//               // self.fileintoChunk(filepath: outputFileURL)
+//               // self.getFileDataInChunks()
+//                            
+//            }, completion:{
+//                // when background job finished, do something in main thread
+//            })
                 
                  
             print(videoRecorded!.lastPathComponent)
@@ -642,7 +979,187 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 
         }
     }
-  
+  // MARK: - video management
+    func callservice(arrOfChunks:[URL]){
+        var tempID = ""
+        var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+
+        let GroupSync2 = DispatchGroup()
+
+            for chURL in arrOfChunks {
+                GroupSync2.enter()
+
+                 ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: chURL, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                            if(Status == true){
+                                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                                let StatusCode = DataResponce?["status"] as? Int
+                                if (StatusCode == 200){
+                                   if let Data = dataResponce["data"] as? NSDictionary{
+                                    GroupSync2.leave()
+                                        if let videoKey = Data["unique_id"] as? String{
+                                            
+                                            self.unique_id = videoKey
+                                           Parameter["unique_id"] = videoKey
+                                        }
+                                }
+                                }
+                                else if(StatusCode == 401)
+                                {
+
+                                    if let errorMessage:String = Message{
+                                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                            
+                                                appDelegate.setLoginVC()
+                                                // Fallback on earlier versions
+                                            
+                                        }
+                                    }
+                                }
+                                else{
+
+                                    if let errorMessage:String = dataResponce["message"] as? String{
+                                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                    }
+                                }
+                            }
+                            else{
+                                if let errorMessage:String = Message{
+                                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                }
+                            }
+                        }) { (DataResponce, Status, Message) in
+                            //
+
+                        }
+                GroupSync2.leave()
+            }
+    }
+    func passVideoFortrim(videoUrl:URL){
+        var arrOfChunks = [URL]()
+        let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+
+        let asset = AVAsset(url: videoUrl)
+        let duration = asset.duration
+        let durationTime = CMTimeGetSeconds(duration)
+        //print("recorded video duration seconds : ",durationTime)
+
+            // do something in background
+            var VideoStartTime:Double = 0.0, VideoEndTime:Double = Double(durationTime)
+            let group = DispatchGroup()
+            group.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                
+                let gameCompleted = true
+
+                repeat {
+
+                if(Int(round(durationTime))%5 == 0){
+
+                }
+                else{
+                    VideoEndTime = VideoEndTime - Double(Int(durationTime)%5)
+                }
+                            
+                    
+
+                print("VideoStartTime",round(VideoStartTime))
+                let st = VideoStartTime
+                
+                    if(VideoEndTime<5){
+                        VideoStartTime += VideoEndTime
+                    }
+                    else{
+                        VideoStartTime += 5
+
+                    }
+                let et = VideoStartTime
+                print("VideoEndTime",et)
+
+
+                
+                
+                
+            }while (VideoStartTime <= VideoEndTime)
+                
+                
+                
+                
+//            for n in 0 ... Int(VideoEndTime)/5 {
+//                let st = VideoStartTime
+//                VideoStartTime += 5
+//                    let et = VideoStartTime
+//                print(n)
+//               // group.wait()
+//                self.cropVideo(sourceURL: self.outputURL, startTime: st, endTime: et) { (FUrl) in
+//                print("\(st):","url :",FUrl, "Start time : ",st, "End time : ",et)
+//                    arrOfChunks.append(FUrl)
+//                    if(Int(et) == Int(VideoEndTime)){
+//                        group.leave()
+//                    }
+//
+//                }
+//                }
+            // Do work asyncly and call group.leave() after you are done
+        }
+        group.notify(queue: .main, execute: {
+        //    self.WSUploadVideoR(Parameter: Parameter, chunk: arrOfChunks, Index: 0)
+            // This will be called when block ends
+        })
+
+
+        DispatchQueue.background(background: {
+
+            
+//            while (VideoStartTime <= VideoEndTime) {
+//            //play game
+//
+//                let st = VideoStartTime
+//                VideoStartTime += 1
+//                let et = VideoStartTime
+//                self.cropVideo(sourceURL: self.outputURL, startTime: st, endTime: et) { (FUrl) in
+//                    print("\(st):","url :",FUrl, "Start time : ",st, "End time : ",et)
+//                    arrOfChunks.append(FUrl)
+//                    myGroup.wait() //// When your task completes
+//
+//                }
+//
+//
+//            }
+            }, completion:{
+
+                
+                    
+                        // when background job finished, do something in main thread
+                    })
+
+        
+
+            //self.callservice(arrOfChunks: arrOfChunks)
+
+          //  }, completion:{
+                  //    GroupSync.leave()
+              // when background job finished, do something in main thread
+            ///      })
+
+
+      
+          
+        
+        
+//            for i in 0 ..< 5 {
+//                self.myGroup.enter()
+//                self.cropVideo(sourceURL: outputURL, startTime: StartTime, endTime: EndTime) { (FUrl) in
+//                           print("url :",FUrl, "Start time : ",StartTime, "End time : ",EndTime)
+//                    myGroup.leave()
+//
+//                }
+//                }
+            
+           
+        
+      
+
+    }
   
 
     /*

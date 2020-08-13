@@ -50,6 +50,7 @@ enum APITYPE {
     case linked_account_action
     case resend_request
     case upload_file
+    case upload_chunk
     case delete_file
     case rename_file
     case upload_thumb
@@ -117,6 +118,8 @@ enum APITYPE {
             return "folderList"
         case .create_folder:
             return "create_folder"
+        case .upload_chunk:
+            return "upload_chunk"
         }
     }
 }
@@ -129,8 +132,8 @@ class ServiceManager: NSObject{
     static let shared:ServiceManager = ServiceManager()
     
     // MARK: - Static Variable
-    let baseURL = "http://deluxcoder.com/beta/protectme/ws/v1/user/"
-    
+//    let baseURL = "http://deluxcoder.com/beta/protectme/ws/v1/user/"
+  let baseURL = "http://zestbrains4u.site/protectme/ws/v1/user/"
     
     static var previousAPICallRequestParams:(APITYPE,[String:Any]?)?
     
@@ -665,7 +668,111 @@ class ServiceManager: NSObject{
     
     
         
-    
+    func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
+        {
+            
+            if Connectivity.isConnectedToInternet() {
+                print("Yes! internet is available.")
+                // do some tasks..
+                /* API URL */
+                
+                print("------  Parameters --------")
+                print(params)
+                print("------  Parameters --------")
+                
+                
+                let apiUrl:String = "\(self.baseURL)\(apiType.getEndPoint())"
+                print(apiUrl)
+                let apitocken = USER.shared.vAuthToken
+                 
+    //            let apitocken = UserDefaults.standard.string(forKey: kapiToken)
+                print(apitocken)
+                var headers: HTTPHeaders = [:]//
+
+                headers = ["Vauthtoken":"Bearer " + apitocken,"Content-type": "multipart/form-data",
+                "Content-Disposition" : "form-data"]
+              //  SHOW_CUSTOM_LOADER()
+                Alamofire.upload (multipartFormData: { multipartFormData in
+                    
+                    for (key, value) in params {
+                        print("key: \(key),value : \(value)")
+                        multipartFormData.append((value as! String).data(using: String.Encoding.utf8)!, withName: key)
+                    }
+//                    if let videoUrl = VideoUrl as? URL {
+                    print("withName: chunk")
+                    print("Video.mov")
+                    multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video.mov", mimeType: "video/mp4")
+                  //  multipartFormData.append(VideoChunk.base64EncodedData(), withName: "chunk", fileName: "Video.mov", mimeType: "video/mp4")
+                    //multipartFormData.append(VideoChunk,withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
+                      //  multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
+//                                   }
+                    
+                },to:apiUrl, headers:headers)
+                { (result) in
+                    switch result {
+                    case .success(let upload, _, _):
+
+                        upload.uploadProgress(closure: { (progress) in
+                            FileUploafProgress = progress.fractionCompleted
+                            print("Upload Progress: \(progress.fractionCompleted)")
+                        })
+                        
+                        upload.responseJSON { response in
+                            print(response.result.value ?? "")
+                            
+                            if let jsonResponse = response.result.value as? NSDictionary
+                            {
+                                HIDE_CUSTOM_LOADER()
+
+                                successBlock(jsonResponse, true, nil)
+         
+                                
+                            }else{
+                                HIDE_CUSTOM_LOADER()
+                                
+                                let alertController = UIAlertController(title: Constant.APP_NAME, message: "Something went wrong.", preferredStyle: .alert)
+                                
+                                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                                alertController.addAction(defaultAction)
+                                
+                                let keyWindow: UIWindow? = UIApplication.shared.keyWindow
+                                
+                                keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+                                
+                                print(response)
+                                print("\n\n===========Error===========")
+                                if let data = response.data, let str = String(data: data, encoding: String.Encoding.utf8){
+                                        print("Server Error: " + str)
+                                }
+                                print("\n\n===========Error===========")
+                                print("Json Object is not NSDictionary : Please Check this API \(apiType.getEndPoint())")
+                                successBlock(nil, true, nil)
+                            }
+                        }
+                        
+                    case .failure(let encodingError):
+                        HIDE_CUSTOM_LOADER()
+                        
+                        print(encodingError)
+                    }
+                }
+                
+            }else{
+                HIDE_CUSTOM_LOADER()
+                
+                let alertController = UIAlertController(title: Constant.APP_NAME, message: "Internet Connection seems to be offline", preferredStyle: .alert)
+                
+                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alertController.addAction(defaultAction)
+                
+                let keyWindow: UIWindow? = UIApplication.shared.keyWindow
+                
+                // let appWindow: UIWindow = UIWindow(frame: UIScreen.main.bounds)
+                // keyWindow.makeKeyAndVisible()
+                keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+                // (alertController, animated: true, completion: nil)
+            }
+        }
     
     func callAPIWithVideo(WithType apiType:APITYPE,VideoUrl:URL,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
         {
@@ -697,7 +804,7 @@ class ServiceManager: NSObject{
                         multipartFormData.append((value as! String).data(using: String.Encoding.utf8)!, withName: key)
                     }
                     if let videoUrl = VideoUrl as? URL {
-                        multipartFormData.append(videoUrl, withName: "file", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
+                        multipartFormData.append(videoUrl, withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
                                    }
                     
                 },to:apiUrl, headers:headers)
@@ -733,15 +840,26 @@ class ServiceManager: NSObject{
                                 keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
                                 
                                 print(response)
+                        print("\n\n===========Error===========")
+                                if let data = response.data, let str = String(data: data, encoding: String.Encoding.utf8){
+                                    print("Server Error: " + str)
+                                }
+                                print("\n\n===========Error===========")
                                 print("Json Object is not NSDictionary : Please Check this API \(apiType.getEndPoint())")
                                 successBlock(nil, true, nil)
                             }
                         }
                         
-                    case .failure(let encodingError):
+                    case .failure(let error):
                         HIDE_CUSTOM_LOADER()
+                        print(error.localizedDescription)
+                        print("\n\n===========Error===========")
+                        print("Error Code: \(error._code)")
+                        print("Error Messsage: \(error.localizedDescription)")
                         
-                        print(encodingError)
+                        debugPrint(error as Any)
+                        print("===========================\n\n")
+                        //print(encodingError)
                     }
                 }
                 
