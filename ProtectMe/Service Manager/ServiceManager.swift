@@ -701,7 +701,7 @@ class ServiceManager: NSObject{
 //                    if let videoUrl = VideoUrl as? URL {
                     print("withName: chunk")
                     print("Video.mov")
-                    multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video.mov", mimeType: "video/mp4")
+                    multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video.mp4", mimeType: "video/mp4")
                   //  multipartFormData.append(VideoChunk.base64EncodedData(), withName: "chunk", fileName: "Video.mov", mimeType: "video/mp4")
                     //multipartFormData.append(VideoChunk,withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
                       //  multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")

@@ -12,8 +12,15 @@ import CameraRoll
 import MobileCoreServices
 
 
-
+protocol NotifyToCallListService: class {
+    // The following command (ie, method) must be obeyed by any
+    // underling (ie, delegate) of the older sibling.
+    func getListData()
+}
 class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    var videoRecorded: URL? = nil
+    var unique_idforFile = ""
+    weak var delegate: NotifyToCallListService?
 
     let imgPickerController = UIImagePickerController()
     var selectedImage:UIImage?
@@ -132,6 +139,83 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             }
         }
     }
+    func WSUploadPhoneVideo(statTime:Double, endTime:Double) -> Void {
+        var etime = statTime + 5.0
+        if(etime>endTime){
+            etime = endTime
+        }
+        if(statTime < endTime){
+            self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
+        print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
+            
+           // arrOfChunks.append(FUrl)
+            let curruntChunk = FUrl
+             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_idforFile]
+            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                if(Status == true){
+                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                    let StatusCode = DataResponce?["status"] as? Int
+                    if (StatusCode == 200){
+                       if let Data = dataResponce["data"] as? NSDictionary{
+                            if let videoKey = Data["unique_id"] as? String{
+                                self.unique_idforFile = videoKey
+                              //  if(chunk.count - 1 != Index){
+                                 //    Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+                                    var strTimr = statTime + 5
+                                    if(statTime >= endTime){
+                                        print("video upload complete")
+                                        self.delegate?.getListData()
+                                    }
+                                    else{
+                                        self.WSUploadPhoneVideo(statTime: strTimr , endTime: endTime)
+                                    }
+                                    //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
+                           //     }
+                                
+
+                            }
+                    }
+                    }
+                    else if(StatusCode == 401)
+                    {
+                     //   self.myGroup.leave()
+                        self.WSUploadPhoneVideo(statTime: statTime , endTime: endTime)
+                        if let errorMessage:String = Message{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                
+                                    appDelegate.setLoginVC()
+                                    // Fallback on earlier versions
+                                
+                            }
+                        }
+                    }
+                    else{
+                   //     self.myGroup.leave()
+
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                           // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                }
+                else{
+                    //self.myGroup.leave()
+
+                    if let errorMessage:String = Message{
+                        //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }) { (DataResponce, Status, Message) in
+                //
+                //self.myGroup.leave()
+
+            }
+
+          
+        
+        }
+    }
+       // return responsBool
+    }
     func WSUploadVideo(Parameter:[String:String],urll:URL) -> Void {
         ServiceManager.shared.callAPIWithVideo(WithType:.upload_chunk, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
         //        ServiceManager.shared.callAPIPost(WithType: .get_pocket, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
@@ -175,6 +259,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             if (StatusCode == 200){
                 if let outcome = dataResponce["data"] as? NSDictionary {
                     DispatchQueue.main.async {
+                        self.delegate?.getListData()
                         //USER.shared.setData(dict:outcome)
                         //USER.shared.save()
                         //self.popTo()
@@ -230,7 +315,15 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             let imageData = img.mediumQualityJPEGNSData
                             if let image = UIImage(data: imageData as Data) {
                                // Use image...
+                                DispatchQueue.background(background: {
+                                    // do something in background
                                 self.WSUploadImage(Parameters: ["lat":self.longitude.description,"long":self.latitude.description,"type":"image"], img: image)
+
+                                }, completion:{
+                                   
+
+                                    // when background job finished, do something in main thread
+                                })
 
                             }
 
@@ -254,8 +347,19 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             print(vid)
                             if let nextURLAsset = vid as? AVURLAsset {
                                 let sourceURL = nextURLAsset.url
-                               
-                                self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
+                                let asset = AVAsset(url: sourceURL)
+                                self.videoURL = sourceURL as NSURL
+                                let duration = asset.duration
+                                let durationTime = CMTimeGetSeconds(duration)
+                                                     DispatchQueue.background(background: {
+                                                         // do something in background
+                                                         self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime) )
+                                                     }, completion:{
+                                                        self.delegate?.getListData()
+                                                         // when background job finished, do something in main thread
+                                                     })
+
+                               // self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
                             }
                              // self.imageView.image = image
                          //   self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: vid)

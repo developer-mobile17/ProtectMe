@@ -104,6 +104,8 @@
 		<string>SourceSansPro-Semibold.ttf</string>
 		<string>SourceSansPro-SemiboldItalic.ttf</string>
 	</array>
+    <key>UIUserInterfaceStyle</key>
+    <string>Light</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

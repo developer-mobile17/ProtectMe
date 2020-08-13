@@ -202,7 +202,7 @@ class LinkedAccountVC: baseVC {
             //
         }
     }
-    func WSlinked_account_action(Parameter:[String:String]) -> Void {
+    func    WSlinked_account_action(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .linked_account_action, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>

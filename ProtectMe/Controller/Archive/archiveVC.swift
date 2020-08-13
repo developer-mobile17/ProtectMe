@@ -11,13 +11,19 @@ import SDWebImage
 import AVFoundation
 import AVKit
 import MapKit
+import Alamofire
+import Photos
 
-extension archiveVC:MKMapViewDelegate{
+extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
+    func getListData() {
+        WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
+    }
+    
     
 }
 
 class archiveVC: baseVC {
-
+   
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
@@ -123,7 +129,13 @@ class archiveVC: baseVC {
         self.lblDetailName2.text = data.image_name?.uppercased()
 
         self.lblDetailSize.text = data.file_size?.uppercased()
-        self.lblDetailType.text = data.type?.uppercased()
+        if(data.type?.uppercased() == "VIDEO"){
+            self.lblDetailType.text = (data.type?.uppercased())! + " MP4"
+        }
+        else{
+            self.lblDetailType.text = (data.type?.uppercased())! + " JPG"
+
+        }
         if(data.user_id == USER.shared.id){
             self.lblDetailSharedBy.text = "YOU"
         }
@@ -153,6 +165,130 @@ class archiveVC: baseVC {
                    vc.player?.play()
                }
         }
+    }
+    func downloadVideoToPhotos(url:String){
+        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+        var headers: HTTPHeaders = [:]//
+        
+            let apitocken = USER.shared.vAuthToken
+            headers = ["Accept":"application/json","Vauthtoken":"Bearer " + apitocken]
+        
+                  
+        Alamofire.download(
+         url,
+         method: .get,
+         parameters: [:],
+         encoding: JSONEncoding.default,
+         headers: headers,
+         to: destination).downloadProgress(closure: { (progress) in
+             //progress closure
+         }).response(completionHandler: { (DefaultDownloadResponse) in
+             //here you able to access the DefaultDownloadResponse
+             //result closure
+         })
+    }
+    func downloadVideoLinkAndCreateAsset(_ videoLink: String) {
+        appDelegate.SHOW_CUSTOM_LOADER()
+           // use guard to make sure you have a valid url
+           guard let videoURL = URL(string: videoLink) else { return }
+
+           guard let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+
+           // check if the file already exist at the destination folder if you don't want to download it twice
+           if !FileManager.default.fileExists(atPath: documentsDirectoryURL.appendingPathComponent(videoURL.lastPathComponent).path) {
+
+               // set up your download task
+               URLSession.shared.downloadTask(with: videoURL) { (location, response, error) -> Void in
+
+                   // use guard to unwrap your optional url
+                   guard let location = location else { return }
+
+                   // create a deatination url with the server response suggested file name
+                   let destinationURL = documentsDirectoryURL.appendingPathComponent(response?.suggestedFilename ?? videoURL.lastPathComponent)
+
+                   do {
+
+                       try FileManager.default.moveItem(at: location, to: destinationURL)
+
+                       PHPhotoLibrary.requestAuthorization({ (authorizationStatus: PHAuthorizationStatus) -> Void in
+
+                           // check if user authorized access photos for your app
+                           if authorizationStatus == .authorized {
+                               PHPhotoLibrary.shared().performChanges({
+                                   PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: destinationURL)}) { completed, error in
+                                    appDelegate.HIDE_CUSTOM_LOADER()
+
+                                       if completed {
+                                           print("Video asset created")
+                                        
+//                                        appDelegate.HIDE_CUSTOM_LOADER()
+                                       } else {
+                                           print(error)
+  //                                      appDelegate.HIDE_CUSTOM_LOADER()
+                                       }
+                               }
+                           }
+                       })
+
+                   } catch { print(error)
+                    appDelegate.HIDE_CUSTOM_LOADER()
+                }
+
+               }.resume()
+            appDelegate.HIDE_CUSTOM_LOADER()
+
+
+           } else {
+            appDelegate.HIDE_CUSTOM_LOADER()
+
+               print("File already exists at destination url")
+           }
+        appDelegate.HIDE_CUSTOM_LOADER()
+
+
+       }
+    @IBAction func btnShareVideoURL(_ sender: UIButton) {
+        //Set the default sharing message.
+        let message = "Please check this video link"
+        //Set the link to share.
+        if let link = NSURL(string: self.arrarchivedList[self.selectedIndex!.row].thumb_image!)
+        {
+            let objectsToShare = [message,link] as [Any]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
+            self.present(activityVC, animated: true, completion: nil)
+        }
+    }
+    func writeToFile(urlString: String) {
+
+       guard let videoUrl = URL(string: urlString) else {
+           return
+       }
+
+       do {
+
+           let videoData = try Data(contentsOf: videoUrl)
+
+           let fm = FileManager.default
+
+           guard let docUrl = fm.urls(for: .documentDirectory, in: .userDomainMask).first else {
+               print("Unable to reach the documents folder")
+               return
+           }
+
+           let localUrl = docUrl.appendingPathComponent("test.mp4")
+
+           try videoData.write(to: localUrl)
+
+       } catch  {
+           print("could not save data")
+       }
+    }
+    @IBAction func btnDownloadVideo(_ sender: UIButton) {
+        let url = self.arrarchivedList[self.selectedIndex!.row].image_path
+    //    self.downloadVideoToPhotos(url:url! )
+        //self.writeToFile(urlString: url!)
+        self.downloadVideoLinkAndCreateAsset(url!)
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
