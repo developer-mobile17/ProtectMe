@@ -26,6 +26,7 @@
 		0449B38E248F5B5300A911A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0449B38C248F5B5300A911A9 /* Main.storyboard */; };
 		0449B390248F5B5400A911A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0449B38F248F5B5400A911A9 /* Assets.xcassets */; };
 		0449B393248F5B5400A911A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0449B391248F5B5400A911A9 /* LaunchScreen.storyboard */; };
+		044B6DDD24E6E63500709A1A /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 044B6DDC24E6E63500709A1A /* Intents.intentdefinition */; };
 		04510A1F24B4BFF10046864A /* uploadProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04510A1E24B4BFF10046864A /* uploadProgress.swift */; };
 		0476BAA5248F60E8005977D4 /* recordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0476BA7B248F60E8005977D4 /* recordVC.swift */; };
 		0476BAA6248F60E8005977D4 /* signupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0476BA7D248F60E8005977D4 /* signupVC.swift */; };
@@ -112,6 +113,7 @@
 		0449B38F248F5B5400A911A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0449B392248F5B5400A911A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0449B394248F5B5400A911A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		044B6DDC24E6E63500709A1A /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		04510A1E24B4BFF10046864A /* uploadProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadProgress.swift; sourceTree = "<group>"; };
 		0476BA7B248F60E8005977D4 /* recordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = recordVC.swift; sourceTree = "<group>"; };
 		0476BA7D248F60E8005977D4 /* signupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = signupVC.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 				0449B38F248F5B5400A911A9 /* Assets.xcassets */,
 				0449B391248F5B5400A911A9 /* LaunchScreen.storyboard */,
 				0449B394248F5B5400A911A9 /* Info.plist */,
+				044B6DDC24E6E63500709A1A /* Intents.intentdefinition */,
 			);
 			path = ProtectMe;
 			sourceTree = "<group>";
@@ -732,6 +735,7 @@
 				0476BAA8248F60E8005977D4 /* resetPasswordVC.swift in Sources */,
 				041ADC382492339900E573F7 /* commonWebViewVC.swift in Sources */,
 				0476BAB0248F60E8005977D4 /* AIBaseTextField+Validation.swift in Sources */,
+				044B6DDD24E6E63500709A1A /* Intents.intentdefinition in Sources */,
 				0476BAB6248F60E8005977D4 /* Globel.swift in Sources */,
 				0476BAB4248F60E8005977D4 /* AITextFieldDatePickerView.swift in Sources */,
 				0476BAB8248F60E8005977D4 /* Extension.swift in Sources */,

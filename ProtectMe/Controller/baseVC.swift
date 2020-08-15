@@ -151,7 +151,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
              let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_idforFile]
-            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
                     let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                     let StatusCode = DataResponce?["status"] as? Int

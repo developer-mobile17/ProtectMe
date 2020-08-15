@@ -668,7 +668,7 @@ class ServiceManager: NSObject{
     
     
         
-    func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
+    func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,thumbImage:UIImage,passThumb:Bool,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
         {
             
             if Connectivity.isConnectedToInternet() {
@@ -702,6 +702,11 @@ class ServiceManager: NSObject{
                     print("withName: chunk")
                     print("Video.mov")
                     multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video.mp4", mimeType: "video/mp4")
+                    if(passThumb == true){
+                    guard let imgData = thumbImage.jpegData(compressionQuality: 0.5) else { return }
+                    multipartFormData.append(imgData, withName: "thumb_image", fileName: "thumb_image.jpeg", mimeType: "image/jpeg")
+                    }
+                                   
                   //  multipartFormData.append(VideoChunk.base64EncodedData(), withName: "chunk", fileName: "Video.mov", mimeType: "video/mp4")
                     //multipartFormData.append(VideoChunk,withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")
                       //  multipartFormData.append(VideoChunk, withName: "chunk", fileName: "Video\(Date().description).mov", mimeType: "video/mp4")

@@ -219,7 +219,9 @@ class archiveVC: baseVC {
                                     appDelegate.HIDE_CUSTOM_LOADER()
 
                                        if completed {
-                                           print("Video asset created")
+                                        print("Video asset created")
+                                        showAlertWithTitleFromVC(vc: self, andMessage: "File saved to photos")
+
                                         
 //                                        appDelegate.HIDE_CUSTOM_LOADER()
                                        } else {
@@ -240,6 +242,7 @@ class archiveVC: baseVC {
 
            } else {
             appDelegate.HIDE_CUSTOM_LOADER()
+            showAlertWithTitleFromVC(vc: self, andMessage: "File already exists")
 
                print("File already exists at destination url")
            }

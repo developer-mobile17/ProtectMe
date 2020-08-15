@@ -23,16 +23,19 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
     let myGroup = DispatchGroup()
-
+    var thumbImageForVide:UIImage = #imageLiteral(resourceName: "placeholder")
     var unique_id = ""
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var timeView: UIView!
     // let cameraManager = CameraManager()
     let movieOutput = AVCaptureMovieFileOutput()
     var videoRecordedURL: URL? = nil
+    var cameraOutput = AVCapturePhotoOutput()
+
     let captureSession = AVCaptureSession()
     var previewLayer: AVCaptureVideoPreviewLayer!
     var activeInput: AVCaptureDeviceInput!
+    
     var outputURL: URL!
     @IBOutlet weak var btnChangeCam: UIButton!
 
@@ -46,7 +49,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     var timer = Timer()
     var isTimerRunning = false //This will be used to make sure only one timer is created at a time.
 
-
+    func capturePhoto() {
+        // create settings for your photo capture
+        let settings = AVCapturePhotoSettings()
+        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
+        let previewFormat = [
+            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+            kCVPixelBufferWidthKey as String: UIScreen.main.bounds.size.width,
+            kCVPixelBufferHeightKey as String: UIScreen.main.bounds.size.height
+            ] as [String : Any]
+        settings.previewPhotoFormat = previewFormat
+        cameraOutput.capturePhoto(with: settings, delegate: self)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loader.stopAnimating()
@@ -71,8 +85,12 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         previewLayer.frame = camPreview.bounds
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         camPreview.layer.addSublayer(previewLayer)
+        cameraOutput.isHighResolutionCaptureEnabled = true
+        captureSession.addOutput(cameraOutput)
+
     
     }
+    
      //MARK:- Setup Camera
  /// Create new capture device with requested position
     
@@ -232,23 +250,16 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 
      }
      func startRecording() {
-
          if movieOutput.isRecording == false {
-
              let connection = movieOutput.connection(with: AVMediaType.video)
-
              if (connection?.isVideoOrientationSupported)! {
                  connection?.videoOrientation = currentVideoOrientation()
              }
-
              if (connection?.isVideoStabilizationSupported)! {
                  connection?.preferredVideoStabilizationMode = AVCaptureVideoStabilizationMode.auto
              }
-
              let device = activeInput.device
-
              if (device.isSmoothAutoFocusSupported) {
-
                  do {
                      try device.lockForConfiguration()
                      device.isSmoothAutoFocusEnabled = false
@@ -256,18 +267,14 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                  } catch {
                     print("Error setting configuration: \(error)")
                  }
-
              }
-
              //EDIT2: And I forgot this
              outputURL = tempURL()
              movieOutput.startRecording(to: outputURL, recordingDelegate: self)
-
              }
              else {
                  stopRecording()
              }
-
         }
     func tempURL() -> URL? {
         let directory = NSTemporaryDirectory() as NSString
@@ -407,7 +414,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                         let tempID = ""
                         var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
                         group.enter()
-                        ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                        ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
                         if(Status == true){
                             let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                             let StatusCode = DataResponce?["status"] as? Int
@@ -536,7 +543,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 //                    //                        let player = AVPlayer(url: videoURL)
 //                    }
                         group.enter()
-                                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                    ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
                                     if(Status == true){
                                         let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                                         let StatusCode = DataResponce?["status"] as? Int
@@ -643,7 +650,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
        // }
     }
     //Parameter:[String:String],chunk:[URL,Index:Int,
-    func WSUploadVideoR(statTime:Double, endTime:Double) -> Void {
+    func WSUploadVideoR(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool) -> Void {
+        
         var etime = statTime + 5.0
         if(etime>endTime){
             etime = endTime
@@ -655,7 +663,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
              let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
-            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
                     let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                     let StatusCode = DataResponce?["status"] as? Int
@@ -663,6 +671,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                        if let Data = dataResponce["data"] as? NSDictionary{
                             if let videoKey = Data["unique_id"] as? String{
                                 self.unique_id = videoKey
+                               // sendThum = false
+                                
                               //  if(chunk.count - 1 != Index){
                                  //    Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
                                     var strTimr = statTime + 5
@@ -670,7 +680,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                         print("video upload complete")
                                     }
                                     else{
-                                        self.WSUploadVideoR(statTime: strTimr , endTime: endTime)
+                                        self.WSUploadVideoR(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false)
+//                                        self.WSUploadVideoR(statTime: strTimr , endTime: endTime ,thumimg:UIImage())
                                     }
                                     //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
                            //     }
@@ -682,7 +693,9 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                     else if(StatusCode == 401)
                     {
                      //   self.myGroup.leave()
-                        self.WSUploadVideoR(statTime: statTime , endTime: endTime)
+                        self.WSUploadVideoR(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false )
+                        //
+                     //   self.WSUploadVideoR(statTime: statTime , endTime: endTime, thumimg: UIImage())
                         if let errorMessage:String = Message{
                             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                                 
@@ -719,6 +732,39 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     }
        // return responsBool
     }
+    func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
+        DispatchQueue.global().async { //1
+            let asset = AVAsset(url: url) //2
+            let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
+            avAssetImageGenerator.appliesPreferredTrackTransform = true //4
+            let thumnailTime = CMTimeMake(value: 0, timescale: 600) //5
+            do {
+                let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
+                let thumbImage = UIImage(cgImage: cgThumbImage) //7
+                DispatchQueue.main.async { //8
+                    completion(thumbImage) //9
+                }
+            } catch {
+                print(error.localizedDescription) //10
+                DispatchQueue.main.async {
+                    completion(nil) //11
+                }
+            }
+        }
+    }
+//    func generateThumbnail(path: URL) -> UIImage? {
+//        do {
+//            let asset = AVURLAsset(url: path, options: nil)
+//            let imgGenerator = AVAssetImageGenerator(asset: asset)
+//            imgGenerator.appliesPreferredTrackTransform = true
+//            let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+//            let thumbnail = UIImage(cgImage: cgImage)
+//            return thumbnail
+//        } catch let error {
+//            print("*** Error generating thumbnail: \(error.localizedDescription)")
+//            return nil
+//        }
+//    }
      func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         
          if (error != nil) {
@@ -731,16 +777,20 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
              print("Error recording movie: \(error!.localizedDescription)")
 
          } else {
-            
+            //self.thumbImageForVide =  generateThumbnail(path: self.outputURL)!
              videoRecorded = outputURL! as URL
             UISaveVideoAtPathToSavedPhotosAlbum(outputFileURL.path, nil, nil, nil)
             print("recorded video url :",videoRecorded!)
             let asset = AVAsset(url: videoRecorded!)
             let duration = asset.duration
             let durationTime = CMTimeGetSeconds(duration)
+            self.getThumbnailImageFromVideoUrl(url: videoRecorded!) { (AthumbImage) in
+                //self.thumbImageForVide = AthumImage
+                self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true )
+            }
                     //    DispatchQueue.background(background: {
                             // do something in background
-                            self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime) )
+           
 //                        }, completion:{
 //                            // when background job finished, do something in main thread
 //                        })
@@ -846,11 +896,11 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
               //Indicate that some changes will be made to the session
               captureSession.beginConfiguration()
               captureSession.removeInput(currentCameraInput)
-//        if let inputs = captureSession.inputs as? [AVCaptureDeviceInput] {
-//            for input in inputs {
-//                captureSession.removeInput(input)
-//            }
-//        }
+                if let inputs = captureSession.inputs as? [AVCaptureDeviceInput] {
+                    for input in inputs {
+                        captureSession.removeInput(input)
+                    }
+                }
 
               //Get new input
               var newCamera: AVCaptureDevice! = nil
@@ -913,10 +963,16 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     @IBAction func recordVideo(_ sender: UIButton){
 
         if(movieOutput.isRecording == false){
+//            if let videoConnection = cameraOutput.connection(with: AVMediaType.video) {
+//                // Adjust the orientaion of captured image
+//                let capturePhotoSetting = AVCapturePhotoSettings.init(from: photoSetting)
+//                videoConnection.videoOrientation = (previewLayer.connection?.videoOrientation)!
+//                // Save captured photo to system album
+//                self.cameraOutput.capturePhoto(with: capturePhotoSetting, delegate: self)
+//            }
             DispatchQueue.main.async {
                 self.previewLayer.frame = self.camPreview.bounds
                 self.camPreview.layer.addSublayer(self.previewLayer)
-
             }
 
             self.runTimer()
@@ -953,7 +1009,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             for chURL in arrOfChunks {
                 GroupSync2.enter()
 
-                 ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: chURL, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: chURL, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
                             if(Status == true){
                                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                                 let StatusCode = DataResponce?["status"] as? Int
@@ -1150,4 +1206,31 @@ extension DispatchQueue {
         }
     }
 
+}
+extension recordVC: AVCapturePhotoCaptureDelegate {
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+        guard error == nil else {
+            print("Photo Error: \(String(describing: error))")
+            return
+        }
+
+        guard let sampleBuffer = photoSampleBuffer,
+            let previewBuffer = previewPhotoSampleBuffer,
+            let outputData =  AVCapturePhotoOutput
+            .jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) else {
+                    print("Oops, unable to create jpeg image")
+            return
+        }
+
+        print("captured photo...")
+        loadImage(data: outputData)
+    }
+
+    func loadImage(data: Data) {
+        let dataProvider = CGDataProvider(data: data as CFData)
+        let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+        self.thumbImageForVide = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImage.Orientation.right)
+        // do whatever you like with the generated image here...
+        //delegate?.processVideoSnapshot(image)
+    }
 }
