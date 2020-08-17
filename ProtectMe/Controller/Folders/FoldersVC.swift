@@ -539,11 +539,11 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 }
 class FolderListMOdel:NSObject{
     var id            :String?
-    var user_id            :String?
-    var folder_name            :String?
-    var name            :String?
-    var created            :String?
-    var updated            :String?
+    var user_id       :String?
+    var folder_name   :String?
+    var name          :String?
+    var created       :String?
+    var updated       :String?
     
    
 }

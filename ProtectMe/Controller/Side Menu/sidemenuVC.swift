@@ -11,7 +11,7 @@ import UIKit
 class sidemenuVC: UIViewController {
     
     //["img":#imageLiteral(resourceName: "ic_folders"),"name":"Folders"],
-    let menuarr = [["img":#imageLiteral(resourceName: "ic_record"),"name":"Record"],["img":#imageLiteral(resourceName: "ic_archive"),"name":"Archives"],["img":#imageLiteral(resourceName: "ic_link"),"name":"Linked Accounts"],["img":#imageLiteral(resourceName: "ic_setting"),"name":"Settings"],["img":#imageLiteral(resourceName: "ic_logout"),"name":"Logout"]]
+    let menuarr = [["img":#imageLiteral(resourceName: "ic_record"),"name":"Record"],["img":#imageLiteral(resourceName: "ic_archive"),"name":"Archives"],["img":#imageLiteral(resourceName: "ic_link"),"name":"Linked Accounts"],["img":#imageLiteral(resourceName: "ic_setting"),"name":"Settings"],["img":#imageLiteral(resourceName: "ic_deleted"),"name":"Deleted"],["img":#imageLiteral(resourceName: "ic_logout"),"name":"Logout"]]
     @IBOutlet weak var tblMenu:UITableView!
     @IBOutlet weak var lblName:UILabel!{
         didSet{
@@ -73,10 +73,10 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
             
             self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
         }
-//            else if(indexPath.row == 1){
-//                let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "FoldersVC") as!  FoldersVC
-//                self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
-//            }
+        else if(indexPath.row == 4){
+            let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "FoldersVC") as!  FoldersVC
+                self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
+            }
         else if(indexPath.row == 1){
             let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "archiveVC") as!  archiveVC
             self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
@@ -90,11 +90,9 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
             self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
         }
         
-        else if(indexPath.row == 4){
+        else if(indexPath.row == 5){
             self.LogOut()
         }
-
-
     }
     func LogOut(){
       

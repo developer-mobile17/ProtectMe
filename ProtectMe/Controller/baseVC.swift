@@ -77,68 +77,6 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
            present(menu, animated: true, completion: nil)
        }
-    @IBAction func plusButtonAction(_ sender:UIButton){
-        let status = PHPhotoLibrary.authorizationStatus()
-        var acess:Bool = false
-        if (status == PHAuthorizationStatus.authorized) {
-            // Access has been granted.
-            acess = true
-        }
-
-        else if (status == PHAuthorizationStatus.denied) {
-            // Access has been denied.
-            acess = false
-            
-//
-        }
-
-        else if (status == PHAuthorizationStatus.notDetermined) {
-
-            // Access has not been determined.
-            PHPhotoLibrary.requestAuthorization({ (newStatus) in
-                if (newStatus == PHAuthorizationStatus.authorized) {
-                    acess = true
-                }
-
-                else {
-                    acess = false
-                   
-                }
-            })
-        }
-
-        else if (status == PHAuthorizationStatus.restricted) {
-            // Restricted access - normally won't happen.
-            acess = false
-        }
-        else{
-            
-        }
-        if(acess == true){
-            self.showAction()
-
-        }
-        else{
-             //showAlertWithTitleFromVC(vc: self, andMessage: "Please grant permition to acess camera roll!")
-        }
-        
-        
-        
-        // handling code
-    }
-    func showAction(){
-        showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Photo Album","Video Album"], canCancel: true) { (i) in
-            if(i == 0){
-                self.PhotoAlbum()
-            }
-            else if(i == 1){
-                self.VideoAlbum()
-            }
-            else
-            {
-            }
-        }
-    }
     func WSUploadPhoneVideo(statTime:Double, endTime:Double) -> Void {
         var etime = statTime + 5.0
         if(etime>endTime){

@@ -23,7 +23,9 @@ extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
 }
 
 class archiveVC: baseVC {
-   
+    
+
+   @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
@@ -39,6 +41,7 @@ class archiveVC: baseVC {
         }
     }
     var selectedIndex:IndexPath? = nil
+    var isFolderSelected:Bool = false
 //Detail View
     @IBOutlet weak var lblDetailType:UILabel!
     @IBOutlet weak var lblDetailName:UILabel!
@@ -50,11 +53,21 @@ class archiveVC: baseVC {
     @IBOutlet weak var lblDetailSharedBy:UILabel!
     @IBOutlet weak var lblDetailDateCreatedandLocation:UILabel!
     @IBOutlet weak var mapView: MKMapView!
-
+    @IBOutlet weak var txtName:AIBaseTextField!{
+        didSet{
+        txtName.borderColor = .black
+        txtName.borderWidth = 1.0
+        txtName.leftViewPadding = 12
+        txtName.validationType = .alphaNumeric_WithSpace
+        //txtName.config.textFieldKeyboardType = .name
+        }
+    }
     var selectedType = "recent"
     var selectedFilter = "0"
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
+    var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
+
     var sectionIsExpanded: Bool = true {
         didSet {
             UIView.animate(withDuration: 0.25) {
@@ -83,13 +96,110 @@ class archiveVC: baseVC {
         // Do any additional setup after loading the view.
     }
    // MARK: - Button Click Action
+    
+      @IBAction func btnCreateFolderAction(_ sender: UIControl) {
+          guard let text = txtName.text, !text.isEmpty else {
+              showAlertWithTitleFromVC(vc: self, andMessage: "Please enter folder name.")
+              return
+          }
+          self.WSCreateFolder(Parameter: ["name":text])
+          
+      }
+        
     @IBAction func btnUserCurruntLocation(_ sender: UIButton) {
            mapView.userTrackingMode = .follow
        }
       
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
+        if(self.isFolderSelected == true){
+        }
+        else{
         self.WSDeleteArchive(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!])
+        }
     }
+        @IBAction func plusButtonAction(_ sender:UIButton){
+            let status = PHPhotoLibrary.authorizationStatus()
+            var acess:Bool = false
+            if (status == PHAuthorizationStatus.authorized) {
+                // Access has been granted.
+                acess = true
+            }
+
+            else if (status == PHAuthorizationStatus.denied) {
+                // Access has been denied.
+                acess = false
+                
+    //
+            }
+
+            else if (status == PHAuthorizationStatus.notDetermined) {
+
+                // Access has not been determined.
+                PHPhotoLibrary.requestAuthorization({ (newStatus) in
+                    if (newStatus == PHAuthorizationStatus.authorized) {
+                        acess = true
+                    }
+
+                    else {
+                        acess = false
+                       
+                    }
+                })
+            }
+
+            else if (status == PHAuthorizationStatus.restricted) {
+                // Restricted access - normally won't happen.
+                acess = false
+            }
+            else{
+                
+            }
+            if(acess == true){
+                self.showAction()
+
+            }
+            else{
+                 //showAlertWithTitleFromVC(vc: self, andMessage: "Please grant permition to acess camera roll!")
+            }
+            
+            
+            
+            // handling code
+        }
+        func showAction(){
+            
+            if(self.isFolderSelected == true){
+                showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Create New Folder","Photo Album","Video Album"], canCancel: true) { (i) in
+                    if(i == 0){
+                        self.ViewCreateFolder.frame = UIScreen.main.bounds
+                        self.navigationController?.view.addSubview(self.ViewCreateFolder)
+                    }
+                    else if(i == 1){
+                        self.PhotoAlbum()
+                        
+                    }
+                    else{
+                    
+                        self.VideoAlbum()
+                    }
+                 
+                }
+            }
+            else{
+            showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Photo Album","Video Album"], canCancel: true) { (i) in
+                if(i == 0){
+                    self.PhotoAlbum()
+                }
+                else if(i == 1){
+                    self.VideoAlbum()
+                }
+                else
+                {
+                }
+            }
+            }
+        }
+
     func setPinUsingMKPlacemark(location: CLLocationCoordinate2D) {
         //let pin = MKPlacemark(coordinate: location)
         let annotation = MKPointAnnotation()
@@ -123,6 +233,27 @@ class archiveVC: baseVC {
         self.ViewVideoDetails.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewVideoDetails)
     }
+    func setFoldersDetails(data:FolderListMOdel) -> Void {
+        self.lblDetailName.text = data.folder_name
+        self.lblDetailName1.text = data.folder_name
+        self.lblDetailName2.text = data.folder_name
+
+        self.lblDetailSize.text = "-"
+        self.lblDetailType.text = "Folder"
+        if(data.user_id == USER.shared.id){
+            self.lblDetailSharedBy.text = "YOU"
+        }
+        else{
+            self.lblDetailSharedBy.text = "-"
+        }
+        self.lblDetailStorageUsed.text = "-"
+        let date = data.created?.uppercased()
+        let city = ""
+        let country = ""
+        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+        print()
+        
+    }
     func setDetails(data:archivedListModel) -> Void {
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
@@ -130,10 +261,10 @@ class archiveVC: baseVC {
 
         self.lblDetailSize.text = data.file_size?.uppercased()
         if(data.type?.uppercased() == "VIDEO"){
-            self.lblDetailType.text = (data.type?.uppercased())! + " MP4"
+            self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
         }
         else{
-            self.lblDetailType.text = (data.type?.uppercased())! + " JPG"
+            self.lblDetailType.text = (data.type?.uppercased())! + " (JPG)"
 
         }
         if(data.user_id == USER.shared.id){
@@ -295,13 +426,21 @@ class archiveVC: baseVC {
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-        self.setDetails(data:self.arrarchivedList[sender.tag])
+        if(self.isFolderSelected == true){
+            self.setFoldersDetails(data:self.arrFolderList[sender.tag])
+
+        }
+        else{
+            self.setDetails(data:self.arrarchivedList[sender.tag])
+
+        }
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
     @IBAction func btnhideDetails(_ sender: Any)
     {
         self.ViewVideoDetails.removeFromSuperview()
+        self.ViewCreateFolder.removeFromSuperview()
     }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
@@ -309,6 +448,8 @@ class archiveVC: baseVC {
     }
     @IBAction func btnChangeRename(_ sender: Any)
     {
+        if(self.isFolderSelected == false){
+
         let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "renameArchiveVC") as!  renameArchiveVC
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
@@ -318,6 +459,7 @@ class archiveVC: baseVC {
         OBJchangepasswordVC.txtValue = firstPart ??  self.arrarchivedList[selectedIndex!.row].image_name!
         
         self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         self.btnHandlerBlackBg(self)
@@ -326,6 +468,8 @@ class archiveVC: baseVC {
         self.btnHandlerBlackBg(self)
         self.btnChangeTableView(self.btnGreed)
         self.btnSelectOptions(self.btnRecent)
+        txtName.borderColor = .black
+        txtName.borderWidth = 1.0
         //let monthname = Date().getMonthFullname()
         //let year = Date().getYear()
         lblMonthandYear.text = "Recent"
@@ -383,14 +527,17 @@ class archiveVC: baseVC {
         for btn in arrOption{
             
             if(btn == selected){
+                self.isFolderSelected = false
                 if(btn == self.btnRecent){
                     self.selectedType = "recent"
                 }
                 else if(btn == self.btnFolders){
                     self.selectedType = "folders"
+                    self.isFolderSelected = true
                 }
                 else{
-                    self.selectedType = "folders"
+                    self.selectedType = "shared"
+                    
                 }
                 btn.setTitleColor(UIColor.clrSkyBlue, for: .normal)
                 
@@ -399,12 +546,140 @@ class archiveVC: baseVC {
                 btn.setTitleColor(UIColor.lightGray, for: .normal)
             }
         }
-        WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
+        if(self.isFolderSelected == true){
+            self.WSFolderList(Parameter: [:])
+        }
+        else{
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
+        }
 
     }
     
     // MARK: - WEB Service
-    
+    func WSCreateFolder(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .create_folder, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    self.btnhideDetails(self)
+                    self.WSFolderList(Parameter: [:])
+                }
+                    else if(StatusCode == 307)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                if let url = URL(string: LIveURL),
+                                UIApplication.shared.canOpenURL(url){
+                                    UIApplication.shared.openURL(url)
+                                }
+                            }
+                            }
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                    }
+                    else if(StatusCode == 412)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                            
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                            
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
+    func WSFolderList(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .folderList, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    if let outcome = dataResponce["data"] as? [NSDictionary]{
+                         self.arrFolderList.removeAll()
+                        for a : Int in (0..<(outcome.count))
+                        {
+                            let objarchivedList : FolderListMOdel = FolderListMOdel()
+                            objarchivedList.created      = outcome[a]["created"] as? String ?? ""
+                            objarchivedList.folder_name  = outcome[a]["folder_name"] as? String ?? ""
+                            objarchivedList.id           = outcome[a]["id"] as? String ?? ""
+                            objarchivedList.updated      = outcome[a]["updated"] as? String ?? ""
+                            objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
+                            objarchivedList.name      = outcome[a]["name"] as? String ?? ""
+                            self.arrFolderList.append(objarchivedList)
+                        }
+                        self.tblVideoList.reloadData()
+                        self.collVideogrid.reloadData()
+                    }
+                }
+                    else if(StatusCode == 307)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                if let url = URL(string: LIveURL),
+                                UIApplication.shared.canOpenURL(url){
+                                    UIApplication.shared.openURL(url)
+                                }
+                            }
+                            }
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                    }
+                    else if(StatusCode == 412)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                            
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                            
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSDeleteArchive(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .delete_file, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
@@ -505,10 +780,8 @@ class archiveVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
-                            
                         }
                     }
                 }
@@ -578,26 +851,47 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
  }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.arrarchivedList.count
+        if(self.isFolderSelected == true){
+            return self.arrFolderList.count
+        }
+        else{
+            return self.arrarchivedList.count
+        }
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
-        {
+        if(self.isFolderSelected == true){
             
         }
         else{
-            let videoURL = URL(string: self.arrarchivedList[indexPath.row].image_path!)
-                   let player = AVPlayer(url: videoURL!)
-                   let vc = AVPlayerViewController()
-                   vc.player = player
+            if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
+            {
+                
+            }
+            else{
+                let videoURL = URL(string: self.arrarchivedList[indexPath.row].image_path!)
+                       let player = AVPlayer(url: videoURL!)
+                       let vc = AVPlayerViewController()
+                       vc.player = player
 
-                   present(vc, animated: true) {
-                       vc.player?.play()
-                   }
+                       present(vc, animated: true) {
+                           vc.player?.play()
+                       }
+
+            }
 
         }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        if(self.isFolderSelected == true){
+        let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
+            cell.lblName.text = self.arrFolderList[indexPath.row].folder_name
+            cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+            
+            return cell
+
+        }
+        else{
         let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "collCell", for: indexPath) as! collCell
             cell.videoThumb.image = nil
             cell.btnPlayvideo.tag = indexPath.row
@@ -634,18 +928,31 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 //                         cell.videoThumb.image = image
 //                  }
         }
-        return cell
+            return cell
+
+        }
+
     }
     
 }
 extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.arrarchivedList.count
+        
+        if(self.isFolderSelected == true){
+            return self.arrFolderList.count
+        }
+        else{
+            return self.arrarchivedList.count
+        }
     }
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return
 //    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if(self.isFolderSelected == true){
+        }
+        else{
         if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
         {
             
@@ -660,8 +967,21 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             vc.player?.play()
         }
         }
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if(self.isFolderSelected == true){
+        let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
+        cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
+        cell.selectionStyle = .none
+        cell.btnMap.isHidden = true
+        cell.btnOption.tag = indexPath.row
+        cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+        cell.lblTitle.text = self.arrFolderList[indexPath.row].folder_name
+        cell.lblName.text = ""
+        return cell
+        }
+        else{
         let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
         cell.videoThumb.image = nil
         cell.selectionStyle = .none
@@ -691,9 +1011,14 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
 //                             }
         }
         return cell
+        }
     }
     
    
+}
+class FolderCell: UICollectionViewCell {
+    @IBOutlet weak var lblName:UILabel!
+    @IBOutlet weak var btnOption:UIButton!
 }
 class collCell: UICollectionViewCell {
     @IBOutlet weak var btnMap:UIButton!
