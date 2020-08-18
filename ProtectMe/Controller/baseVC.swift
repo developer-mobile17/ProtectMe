@@ -89,7 +89,10 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
              let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_idforFile]
-                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: UIImage(), passThumb: false, WithParams: Parameter,Progress: {
+                    (process)in
+                    print("my:",process)
+                }, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
                     let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                     let StatusCode = DataResponce?["status"] as? Int
@@ -105,6 +108,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                         self.delegate?.getListData()
                                     }
                                     else{
+                                        
                                         self.WSUploadPhoneVideo(statTime: strTimr , endTime: endTime)
                                     }
                                     //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
@@ -291,6 +295,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                 let durationTime = CMTimeGetSeconds(duration)
                                                      DispatchQueue.background(background: {
                                                          // do something in background
+                                                        
                                                          self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime) )
                                                      }, completion:{
                                                         self.delegate?.getListData()

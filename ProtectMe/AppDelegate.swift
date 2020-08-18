@@ -23,6 +23,9 @@ var loggedInUserData = USER()
 @UIApplicationMain
     class AppDelegate: UIResponder, UIApplicationDelegate {
     var FCMdeviceToken:String = ""
+    var ArrLocalVideoUploading:[localVideoModel] = [localVideoModel]()
+    var objLocalVid:localVideoModel = localVideoModel()
+
     var badgeCount = 0
     var window: UIWindow?
     let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)

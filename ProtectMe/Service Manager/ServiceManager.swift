@@ -14,6 +14,7 @@ var FileUploafProgress = Double()
 typealias ApiCallSuccessBlock = (Bool,NSDictionary) -> Void
 typealias ApiCallFailureBlock = (Bool,NSError?,NSDictionary?) -> Void
 typealias APIResponseBlock = ((_ response: NSDictionary?,_ isSuccess: Bool,_ error: String?)->())
+typealias UploadProgressBlock = ((_ process: Double?)->())
 
 typealias APIResponseBlockImage = ((_ param:[String:Any], _ imgURL:String, _ isSuccess: Bool,_ error: String?)->())
 
@@ -668,7 +669,7 @@ class ServiceManager: NSObject{
     
     
         
-    func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,thumbImage:UIImage,passThumb:Bool,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
+    func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,thumbImage:UIImage,passThumb:Bool,WithParams params:[String:Any],Progress progressBlock:@escaping UploadProgressBlock, Success successBlock:@escaping APIResponseBlock,Failure failureBlock:@escaping APIResponseBlock) -> Void
         {
             
             if Connectivity.isConnectedToInternet() {
@@ -718,8 +719,10 @@ class ServiceManager: NSObject{
                     case .success(let upload, _, _):
 
                         upload.uploadProgress(closure: { (progress) in
-                            FileUploafProgress = progress.fractionCompleted
+                            //FileUploafProgress = progress.fractionCompleted
                             print("Upload Progress: \(progress.fractionCompleted)")
+                            //progressBlock(progress.fractionCompleted,true,"")
+                            progressBlock(progress.fractionCompleted)
                         })
                         
                         upload.responseJSON { response in

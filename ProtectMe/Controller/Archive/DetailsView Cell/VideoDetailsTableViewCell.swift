@@ -11,6 +11,8 @@ import UIKit
 class VideoDetailsTableViewCell: UITableViewCell {
     @IBOutlet weak var btnMap:UIButton!
     @IBOutlet weak var videoThumb:UIImageView!
+    @IBOutlet weak var imgType:UIImageView!
+
 @IBOutlet weak var lblTitle:UILabel!
     @IBOutlet weak var lblName:UILabel!
 

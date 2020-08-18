@@ -16,6 +16,7 @@
 		041ADC322492006100E573F7 /* notificationSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC312492006100E573F7 /* notificationSettingVC.swift */; };
 		041ADC352492106600E573F7 /* renameArchiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC342492106600E573F7 /* renameArchiveVC.swift */; };
 		041ADC382492339900E573F7 /* commonWebViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC372492339900E573F7 /* commonWebViewVC.swift */; };
+		043127C824EC3D65004C5650 /* imgviewwerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043127C724EC3D64004C5650 /* imgviewwerVC.swift */; };
 		043F96152490AD380015C2D2 /* LinkedAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F96142490AD380015C2D2 /* LinkedAccountVC.swift */; };
 		043F96182490AEB10015C2D2 /* LinkedAccountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F96162490AEB10015C2D2 /* LinkedAccountTableViewCell.swift */; };
 		043F96192490AEB10015C2D2 /* LinkedAccountTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 043F96172490AEB10015C2D2 /* LinkedAccountTableViewCell.xib */; };
@@ -87,6 +88,7 @@
 		04E7B76B248FAF7700DBA769 /* VideoDetailsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */; };
 		04E7B76D248FB18F00DBA769 /* baseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E7B76C248FB18F00DBA769 /* baseVC.swift */; };
 		04EAD24E24A4C8E50084EAB5 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */; };
+		04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FACBFD24EBC48B004CE41F /* localVideoModel.swift */; };
 		4A2E624717ABC8B994AA8705 /* Pods_ProtectMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +103,7 @@
 		041ADC312492006100E573F7 /* notificationSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notificationSettingVC.swift; sourceTree = "<group>"; };
 		041ADC342492106600E573F7 /* renameArchiveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = renameArchiveVC.swift; sourceTree = "<group>"; };
 		041ADC372492339900E573F7 /* commonWebViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = commonWebViewVC.swift; sourceTree = "<group>"; };
+		043127C724EC3D64004C5650 /* imgviewwerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imgviewwerVC.swift; sourceTree = "<group>"; };
 		043F96142490AD380015C2D2 /* LinkedAccountVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedAccountVC.swift; sourceTree = "<group>"; };
 		043F96162490AEB10015C2D2 /* LinkedAccountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedAccountTableViewCell.swift; sourceTree = "<group>"; };
 		043F96172490AEB10015C2D2 /* LinkedAccountTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LinkedAccountTableViewCell.xib; sourceTree = "<group>"; };
@@ -175,6 +178,7 @@
 		04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VideoDetailsTableViewCell.xib; sourceTree = "<group>"; };
 		04E7B76C248FB18F00DBA769 /* baseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseVC.swift; sourceTree = "<group>"; };
 		04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		04FACBFD24EBC48B004CE41F /* localVideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localVideoModel.swift; sourceTree = "<group>"; };
 		6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProtectMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C549DAE0357C8B9AA1FC0202 /* Pods-ProtectMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProtectMe.release.xcconfig"; path = "Target Support Files/Pods-ProtectMe/Pods-ProtectMe.release.xcconfig"; sourceTree = "<group>"; };
 		ED35DCFBE05634D1201DBD33 /* Pods-ProtectMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProtectMe.debug.xcconfig"; path = "Target Support Files/Pods-ProtectMe/Pods-ProtectMe.debug.xcconfig"; sourceTree = "<group>"; };
@@ -452,6 +456,7 @@
 				0476BAA4248F60E8005977D4 /* USER.swift */,
 				04E083F624A360BD0027DE04 /* lisnkedListModel.swift */,
 				0410246D24A7346400F3A71F /* archivedListModel.swift */,
+				04FACBFD24EBC48B004CE41F /* localVideoModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -526,6 +531,7 @@
 			children = (
 				04E7B767248FAF5300DBA769 /* DetailsView Cell */,
 				04E7B765248FAEF300DBA769 /* archiveVC.swift */,
+				043127C724EC3D64004C5650 /* imgviewwerVC.swift */,
 			);
 			path = Archive;
 			sourceTree = "<group>";
@@ -743,6 +749,7 @@
 				04E18B31248F8CB5003AF836 /* UISideMenuNavigationController.swift in Sources */,
 				0476BABE248F60E8005977D4 /* ServiceManager.swift in Sources */,
 				04E18B30248F8CB5003AF836 /* sidemenuTableViewCell.swift in Sources */,
+				04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */,
 				04E18B34248F8CB5003AF836 /* SideMenuTransition.swift in Sources */,
 				04E083F524A30D830027DE04 /* KVideoRecorder.swift in Sources */,
 				04EAD24E24A4C8E50084EAB5 /* LocationManager.swift in Sources */,
@@ -754,6 +761,7 @@
 				043F96182490AEB10015C2D2 /* LinkedAccountTableViewCell.swift in Sources */,
 				0476BAB5248F60E8005977D4 /* AppDatePickerTextField.swift in Sources */,
 				04A875AA2493D05E00B34BF3 /* selectCurancyVC.swift in Sources */,
+				043127C824EC3D65004C5650 /* imgviewwerVC.swift in Sources */,
 				0476BABA248F60E8005977D4 /* StringExtension.swift in Sources */,
 				0476BAC1248F60E8005977D4 /* USER.swift in Sources */,
 				0476BAA9248F60E8005977D4 /* signinVC.swift in Sources */,

@@ -25,6 +25,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     let myGroup = DispatchGroup()
     var thumbImageForVide:UIImage = #imageLiteral(resourceName: "placeholder")
     var unique_id = ""
+
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var timeView: UIView!
     // let cameraManager = CameraManager()
@@ -414,7 +415,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                         let tempID = ""
                         var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
                         group.enter()
-                        ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                        ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Progress: {
+                            (process)in
+                            print("my:",process)
+                        }, Success: { (DataResponce, Status, Message) in
                         if(Status == true){
                             let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                             let StatusCode = DataResponce?["status"] as? Int
@@ -454,7 +458,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                                                     showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                                                                 }
                                                             }
-                                                        }) { (DataResponce, Status, Message) in
+                        }) { (DataResponce, Status, Message) in
                                                             //
                                                         }
                                                 group.wait()
@@ -543,7 +547,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 //                    //                        let player = AVPlayer(url: videoURL)
 //                    }
                         group.enter()
-                    ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                    ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter,Progress: {
+                        (process)in
+                        print("my:",process)
+                    },Success: { (DataResponce, Status, Message) in
                                     if(Status == true){
                                         let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                                         let StatusCode = DataResponce?["status"] as? Int
@@ -584,7 +591,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                             showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                                         }
                                     }
-                                }) { (DataResponce, Status, Message) in
+                    }) { (DataResponce, Status, Message) in
                                     //
                                 }
                         group.wait()
@@ -650,7 +657,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
        // }
     }
     //Parameter:[String:String],chunk:[URL,Index:Int,
-    func WSUploadVideoR(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool) -> Void {
+    func WSUploadVideoR(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
         
         var etime = statTime + 5.0
         if(etime>endTime){
@@ -663,7 +670,14 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
              let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
-            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
+                (process)in
+                print("my:",process)
+                //first?.added = value
+                appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
+                
+                //appDelegate.objLocalVid.progress = process!
+            }, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
                     let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                     let StatusCode = DataResponce?["status"] as? Int
@@ -671,18 +685,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                        if let Data = dataResponce["data"] as? NSDictionary{
                             if let videoKey = Data["unique_id"] as? String{
                                 self.unique_id = videoKey
-                               // sendThum = false
-                                
-                              //  if(chunk.count - 1 != Index){
-                                 //    Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
-                                    var strTimr = statTime + 5
-                                    if(statTime >= endTime){
-                                        print("video upload complete")
-                                    }
-                                    else{
-                                        self.WSUploadVideoR(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false)
-//                                        self.WSUploadVideoR(statTime: strTimr , endTime: endTime ,thumimg:UIImage())
-                                    }
+                                let strTimr = statTime + 5
+                                if(strTimr >= endTime){
+                                    print("video upload complete")
+                                    appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
+//                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.isUploaded = true
+                                    NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                }
+                                else{
+                                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
+
+                                    self.WSUploadVideoR(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoRecorded!)
+                                }
                                     //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
                            //     }
                                 
@@ -693,7 +707,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                     else if(StatusCode == 401)
                     {
                      //   self.myGroup.leave()
-                        self.WSUploadVideoR(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false )
+                        self.WSUploadVideoR(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoRecorded!)
                         //
                      //   self.WSUploadVideoR(statTime: statTime , endTime: endTime, thumimg: UIImage())
                         if let errorMessage:String = Message{
@@ -786,7 +800,13 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             let durationTime = CMTimeGetSeconds(duration)
             self.getThumbnailImageFromVideoUrl(url: videoRecorded!) { (AthumbImage) in
                 //self.thumbImageForVide = AthumImage
-                self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true )
+                let objLocalVid:localVideoModel = localVideoModel()
+                objLocalVid.url = self.videoRecorded
+                objLocalVid.thumbImage = AthumbImage
+                objLocalVid.name = "Video.mp4"
+
+                appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+            self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true ,OPUrl: outputFileURL)
             }
                     //    DispatchQueue.background(background: {
                             // do something in background
@@ -1009,7 +1029,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             for chURL in arrOfChunks {
                 GroupSync2.enter()
 
-                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: chURL, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: chURL, thumbImage: UIImage(), passThumb: false, WithParams: Parameter,Progress: {
+                    (process)in
+                    print("my:",process)
+                }, Success: { (DataResponce, Status, Message) in
                             if(Status == true){
                                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                                 let StatusCode = DataResponce?["status"] as? Int

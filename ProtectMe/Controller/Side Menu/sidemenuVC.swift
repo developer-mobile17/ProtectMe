@@ -15,12 +15,12 @@ class sidemenuVC: UIViewController {
     @IBOutlet weak var tblMenu:UITableView!
     @IBOutlet weak var lblName:UILabel!{
         didSet{
-            lblName.text = USER.shared.name
+            //lblName.text = USER.shared.name
         }
     }
     @IBOutlet weak var lblStateCountry:UILabel!{
         didSet{
-            lblStateCountry.text = "\(USER.shared.city),\(USER.shared.state)"
+            //lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
     }
 
@@ -28,11 +28,36 @@ class sidemenuVC: UIViewController {
         super.viewDidLoad()
         tblMenu.delegate = self
         tblMenu.dataSource = self
+        let locationManager = LocationManager.sharedInstance
+              locationManager.showVerboseMessage = false
+              locationManager.autoUpdate = true
+              print(USER.shared.latitude.toDouble()!)
+              print(USER.shared.longitude.toDouble()!)
+              
+
+//              locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+//                  if let city = dict?["locality"] as? String{
+//                      USER.shared.city = city
+//                  }
+//                  if let country = dict?["country"] as? String{
+//                      USER.shared.country = country
+//                  }
+//                  USER.shared.save()
+//                  self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+//              }
 
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
         lblName.text = USER.shared.name
+        lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        if(USER.shared.city == ""){
+        lblStateCountry.text = "\(USER.shared.country)"
+        }
+        else{
+            lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        }
+        
 
     }
         // MARK: - Navigation
