@@ -16,6 +16,10 @@
 		041ADC322492006100E573F7 /* notificationSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC312492006100E573F7 /* notificationSettingVC.swift */; };
 		041ADC352492106600E573F7 /* renameArchiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC342492106600E573F7 /* renameArchiveVC.swift */; };
 		041ADC382492339900E573F7 /* commonWebViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ADC372492339900E573F7 /* commonWebViewVC.swift */; };
+		042B96B924ED070500957A79 /* uploadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042B96B724ED070500957A79 /* uploadTableViewCell.swift */; };
+		042B96BA24ED070500957A79 /* uploadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 042B96B824ED070500957A79 /* uploadTableViewCell.xib */; };
+		042B96BD24ED2B7400957A79 /* driveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042B96BC24ED2B7400957A79 /* driveVC.swift */; };
+		042B96BF24ED31F600957A79 /* subFolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042B96BE24ED31F600957A79 /* subFolderVC.swift */; };
 		043127C824EC3D65004C5650 /* imgviewwerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043127C724EC3D64004C5650 /* imgviewwerVC.swift */; };
 		043F96152490AD380015C2D2 /* LinkedAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F96142490AD380015C2D2 /* LinkedAccountVC.swift */; };
 		043F96182490AEB10015C2D2 /* LinkedAccountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F96162490AEB10015C2D2 /* LinkedAccountTableViewCell.swift */; };
@@ -103,6 +107,10 @@
 		041ADC312492006100E573F7 /* notificationSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notificationSettingVC.swift; sourceTree = "<group>"; };
 		041ADC342492106600E573F7 /* renameArchiveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = renameArchiveVC.swift; sourceTree = "<group>"; };
 		041ADC372492339900E573F7 /* commonWebViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = commonWebViewVC.swift; sourceTree = "<group>"; };
+		042B96B724ED070500957A79 /* uploadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadTableViewCell.swift; sourceTree = "<group>"; };
+		042B96B824ED070500957A79 /* uploadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = uploadTableViewCell.xib; sourceTree = "<group>"; };
+		042B96BC24ED2B7400957A79 /* driveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = driveVC.swift; sourceTree = "<group>"; };
+		042B96BE24ED31F600957A79 /* subFolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = subFolderVC.swift; sourceTree = "<group>"; };
 		043127C724EC3D64004C5650 /* imgviewwerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imgviewwerVC.swift; sourceTree = "<group>"; };
 		043F96142490AD380015C2D2 /* LinkedAccountVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedAccountVC.swift; sourceTree = "<group>"; };
 		043F96162490AEB10015C2D2 /* LinkedAccountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedAccountTableViewCell.swift; sourceTree = "<group>"; };
@@ -223,6 +231,15 @@
 			path = "Common WebView";
 			sourceTree = "<group>";
 		};
+		042B96BB24ED2B5D00957A79 /* Drive */ = {
+			isa = PBXGroup;
+			children = (
+				042B96BC24ED2B7400957A79 /* driveVC.swift */,
+				042B96BE24ED31F600957A79 /* subFolderVC.swift */,
+			);
+			path = Drive;
+			sourceTree = "<group>";
+		};
 		043F96132490AD170015C2D2 /* Linked Account */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,6 +316,7 @@
 		0476BA79248F60E8005977D4 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				042B96BB24ED2B5D00957A79 /* Drive */,
 				044144BF24C32B6600FD012A /* Folders */,
 				04A875AB2493D9E900B34BF3 /* Select Charity */,
 				04A875A82493D04A00B34BF3 /* Select Curancy */,
@@ -541,6 +559,8 @@
 			children = (
 				04E7B768248FAF7700DBA769 /* VideoDetailsTableViewCell.swift */,
 				04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */,
+				042B96B724ED070500957A79 /* uploadTableViewCell.swift */,
+				042B96B824ED070500957A79 /* uploadTableViewCell.xib */,
 			);
 			path = "DetailsView Cell";
 			sourceTree = "<group>";
@@ -638,6 +658,7 @@
 				04E18B22248F6EE3003AF836 /* SourceSansPro-Light.ttf in Resources */,
 				04E18B1B248F6EE3003AF836 /* SourceSansPro-SemiboldItalic.ttf in Resources */,
 				04E18B1E248F6EE3003AF836 /* SourceSansPro-Bold.ttf in Resources */,
+				042B96BA24ED070500957A79 /* uploadTableViewCell.xib in Resources */,
 				04E18B1C248F6EE3003AF836 /* SourceSansPro-Italic.ttf in Resources */,
 				04E7B76B248FAF7700DBA769 /* VideoDetailsTableViewCell.xib in Resources */,
 				04E18B1A248F6EE3003AF836 /* SourceSansPro-Semibold.ttf in Resources */,
@@ -745,10 +766,12 @@
 				0476BAB6248F60E8005977D4 /* Globel.swift in Sources */,
 				0476BAB4248F60E8005977D4 /* AITextFieldDatePickerView.swift in Sources */,
 				0476BAB8248F60E8005977D4 /* Extension.swift in Sources */,
+				042B96B924ED070500957A79 /* uploadTableViewCell.swift in Sources */,
 				0476BABB248F60E8005977D4 /* extention.swift in Sources */,
 				04E18B31248F8CB5003AF836 /* UISideMenuNavigationController.swift in Sources */,
 				0476BABE248F60E8005977D4 /* ServiceManager.swift in Sources */,
 				04E18B30248F8CB5003AF836 /* sidemenuTableViewCell.swift in Sources */,
+				042B96BD24ED2B7400957A79 /* driveVC.swift in Sources */,
 				04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */,
 				04E18B34248F8CB5003AF836 /* SideMenuTransition.swift in Sources */,
 				04E083F524A30D830027DE04 /* KVideoRecorder.swift in Sources */,
@@ -769,6 +792,7 @@
 				0476BABD248F60E8005977D4 /* WebServiceKey.swift in Sources */,
 				04E7B766248FAEF300DBA769 /* archiveVC.swift in Sources */,
 				0476BAB1248F60E8005977D4 /* AIBaseTextField+UITextFieldDelegate.swift in Sources */,
+				042B96BF24ED31F600957A79 /* subFolderVC.swift in Sources */,
 				04E18B26248F70F6003AF836 /* sidemenuVC.swift in Sources */,
 				0476BAAD248F60E8005977D4 /* AIFloatingLabelTextFieldPickerView.swift in Sources */,
 				0484C36624BF59640020C9FA /* imageviewerVC.swift in Sources */,

@@ -57,7 +57,10 @@ enum APITYPE {
     case upload_thumb
     case folderList
     case create_folder
-    
+    case nested_folder_list
+    case copy
+    case move
+
     func getEndPoint() -> String {
         
         switch self {
@@ -121,6 +124,12 @@ enum APITYPE {
             return "create_folder"
         case .upload_chunk:
             return "upload_chunk"
+        case .nested_folder_list:
+            return "nested_folder_list"
+        case .copy:
+            return "copy"
+        case .move:
+            return "move"
         }
     }
 }

@@ -18,8 +18,6 @@ extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
-    
-    
 }
 
 class archiveVC: baseVC {
@@ -94,7 +92,7 @@ class archiveVC: baseVC {
         self.collVideogrid.delegate = self
         self.collVideogrid.dataSource = self
         mapView.delegate = self
-
+        self.tblVideoList.register(UINib(nibName: "uploadTableViewCell", bundle: nil), forCellReuseIdentifier: "uploadTableViewCell")
         self.tblVideoList.register(UINib(nibName: "VideoDetailsTableViewCell", bundle: nil), forCellReuseIdentifier: "VideoDetailsTableViewCell")
         self.Viewmap.isHidden = true
         // Do any additional setup after loading the view.
@@ -258,6 +256,7 @@ class archiveVC: baseVC {
         print()
         
     }
+    
     func setDetails(data:archivedListModel) -> Void {
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
@@ -275,7 +274,7 @@ class archiveVC: baseVC {
             self.lblDetailSharedBy.text = "YOU"
         }
         else{
-            self.lblDetailSharedBy.text = "-"
+            self.lblDetailSharedBy.text = data.uploaded_by
         }
         self.lblDetailStorageUsed.text = "-"
         let date = data.created?.uppercased()
@@ -285,6 +284,23 @@ class archiveVC: baseVC {
 
         print()
         
+    }
+    func fileAction(action:String){
+        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
+        vc.buttonName = action
+        vc.FileId = self.arrarchivedList[self.selectedIndex!.row].id!
+        vc.data = self.arrarchivedList[self.selectedIndex!.row]
+        vc.buttonName = action
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    @IBAction func btnMoveAction(_ sender: UIButton) {
+        //self.selectedIndex?.row = sender.tag
+        self.fileAction(action: "Move")
+    }
+
+    @IBAction func btnCopyAction(_ sender: UIButton) {
+        //self.selectedIndex?.row = sender.tag
+        self.fileAction(action: "Copy")
     }
     @IBAction func btnplayofflineVideo(_ sender: UIButton) {
         
@@ -445,14 +461,7 @@ class archiveVC: baseVC {
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-        if(self.isFolderSelected == true){
-            self.setFoldersDetails(data:self.arrFolderList[sender.tag])
-
-        }
-        else{
-            self.setDetails(data:self.arrarchivedList[sender.tag])
-
-        }
+        self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
@@ -546,20 +555,20 @@ class archiveVC: baseVC {
         for btn in arrOption{
             
             if(btn == selected){
-                self.isFolderSelected = false
+                
                 if(btn == self.btnRecent){
                     self.selectedType = "recent"
+                    self.isFolderSelected = false
                 }
                 else if(btn == self.btnFolders){
                     self.selectedType = "folders"
                     self.isFolderSelected = true
                 }
                 else{
+                    self.isFolderSelected = false
                     self.selectedType = "shared"
-                    
                 }
                 btn.setTitleColor(UIColor.clrSkyBlue, for: .normal)
-                
             }
             else{
                 btn.setTitleColor(UIColor.lightGray, for: .normal)
@@ -765,8 +774,10 @@ class archiveVC: baseVC {
                             objarchivedList.status       = outcome[a]["status"] as? String ?? ""
                             objarchivedList.type         = outcome[a]["type"] as? String ?? ""
                             objarchivedList.updated      = outcome[a]["updated"] as? String ?? ""
+                            objarchivedList.uploaded_by     = outcome[a]["uploaded_by"] as? String ?? ""
                             objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
                             objarchivedList.name      = outcome[a]["name"] as? String ?? ""
+                            
                             objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
 
                             self.arrarchivedList.append(objarchivedList)
@@ -858,22 +869,39 @@ extension archiveVC:sendbacktoName{
 }
 
 extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+    @objc func loadList(notification: NSNotification) {
+           self.selectOptions(selected: self.btnRecent)
+       }
+
+       func stopTimer() {
+           timer.invalidate()
+           //timerDispatchSourceTimer?.suspend() // if you want to suspend timer
+        //   timerDispatchSourceTimer?.cancel()
+       }
+       func scheduledTimerWithTimeInterval(){
+           // Scheduling timer to Call the function "updateCounting" with the interval of 1 seconds
+           timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
+       }
+       @objc func reloadcell(){
+           self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
+           self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
+       }
+    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
 func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    let padding: CGFloat = 50
-    let collectionCellSize = collectionView.frame.size.width - padding
-    return CGSize(width: collectionCellSize/2, height: collectionCellSize/2)
+        let padding: CGFloat = 50
+        let collectionCellSize = collectionView.frame.size.width - padding
+        return CGSize(width: collectionCellSize/2, height: collectionCellSize/2)
  }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 2
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             if(section == 0){
-                 
                 return appDelegate.ArrLocalVideoUploading.count
             }
             else{
@@ -883,7 +911,13 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if(self.isFolderSelected == true){
-            
+            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
+                  vc.FolderId = self.arrarchivedList[indexPath.row].id!
+                  vc.data = self.arrarchivedList[indexPath.row]
+            vc.FileId = self.arrarchivedList[indexPath.row].folder_id!
+                  vc.navigationTitle = self.arrarchivedList[indexPath.row].folder_name!
+                  vc.buttonName = ""
+                  self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
             if(indexPath.section == 0){
@@ -918,183 +952,163 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             
         }
     }
-    @objc func loadList(notification: NSNotification) {
-        self.selectOptions(selected: self.btnRecent)
-    }
-
-    func stopTimer() {
-        timer.invalidate()
-        //timerDispatchSourceTimer?.suspend() // if you want to suspend timer
-     //   timerDispatchSourceTimer?.cancel()
-    }
-    func scheduledTimerWithTimeInterval(){
-        // Scheduling timer to Call the function "updateCounting" with the interval of 1 seconds
-        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
-    }
-    @objc func reloadcell(){
-        self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
-    }
+   
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if(indexPath.section == 0){
             let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "uploadCell", for: indexPath) as! collCell
                 cell.videoThumb.image = nil
-            
             cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
-            cell.lblName.text = USER.shared.name
+            cell.lblName.text = ""
             cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
 //            appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
             cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
             cell.btnPlayvideo.tag = indexPath.row
             cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayofflineVideo(_:)),for: .touchUpInside)
-
-           // cell.progressBar.setProgress(Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress), animated: true)
-//            if(appDelegate.ArrLocalVideoUploading[indexPath.row].progress == 1.0){
-//                self.stopTimer()
-//            }
             return cell
         }
         else{
-        
-
         
         if(self.isFolderSelected == true){
         let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
             cell.lblName.text = self.arrarchivedList[indexPath.row].folder_name
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
-
-
             return cell
-
         }
         else{
         let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "collCell", for: indexPath) as! collCell
             cell.videoThumb.image = nil
-            
-            
-            
-            
             cell.btnPlayvideo.tag = indexPath.row
             cell.btnMap.tag = indexPath.row
             cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
-
             cell.btnOption.tag = indexPath.row
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
             cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
-            cell.lblName.text = self.arrarchivedList[indexPath.row].name
-//            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-//            cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-        if(arrarchivedList[indexPath.row].type == "image"){
-                  cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-                  cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+            cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
+            if(arrarchivedList[indexPath.row].type == "image"){
+                cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                 cell.imgtype.image = #imageLiteral(resourceName: "ic_playimg")
-                  
               }
-              else{
-            cell.imgtype.image = #imageLiteral(resourceName: "ic_playvid")
-            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-            //            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path ?? "")!
-//            AVAsset(url: url).generateThumbnail { [weak self] (image) in
-//                DispatchQueue.main.async {
-//                    guard let image = image else { return }
-//                    cell.videoThumb.image = image
-//                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
-//                }
-//            }
-              //cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-//                      self.getThumbnailFromUrl(arrarchivedList[indexPath.row].image_path) { (image) in
-//                       //Use image where you want to use
-//                         cell.videoThumb.image = image
-//                  }
-        }
+            else{
+                cell.imgtype.image = #imageLiteral(resourceName: "ic_playvid")
+                cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+            }
             return cell
-
-                }
-                
-
+            }
         }
 
     }
     
 }
 extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
+     // MARK: - UITableview delegate methods
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        if(self.isFolderSelected == true){
-            return self.arrFolderList.count
+        if(section == 0){
+                return appDelegate.ArrLocalVideoUploading.count
         }
         else{
             return self.arrarchivedList.count
         }
+//            return self.arrarchivedList.count
+        
     }
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return
 //    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if(self.isFolderSelected == true){
-        }
-        else{
-        if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
-        {
-            
-        }
-        else{
-        let videoURL = URL(string: self.arrarchivedList[indexPath.row].image_path!)
-        let player = AVPlayer(url: videoURL!)
-        let vc = AVPlayerViewController()
-        vc.player = player
+        if(indexPath.section == 0){
+                     let videoURL =  appDelegate.ArrLocalVideoUploading[indexPath.row].url!
+                     let player = AVPlayer(url: videoURL)
+                            let vc = AVPlayerViewController()
+                            vc.player = player
 
-        present(vc, animated: true) {
-            vc.player?.play()
+                            present(vc, animated: true) {
+                                vc.player?.play()
+                            }
+
         }
-        }
+        else{
+            if(self.isFolderSelected == true){
+                let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
+                      vc.FolderId = self.arrarchivedList[indexPath.row].id!
+                      vc.data = self.arrarchivedList[indexPath.row]
+                vc.FileId = self.arrarchivedList[indexPath.row].folder_id!
+                      vc.navigationTitle = self.arrarchivedList[indexPath.row].folder_name!
+                      vc.buttonName = ""
+                      self.navigationController?.pushViewController(vc, animated: true)
+            }
+            else{
+                if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
+                {
+                }
+                else{
+                    let videoURL = URL(string: self.arrarchivedList[indexPath.row].image_path!)
+                    let player = AVPlayer(url: videoURL!)
+                    let vc = AVPlayerViewController()
+                    vc.player = player
+                    present(vc, animated: true) {
+                        vc.player?.play()
+                    }
+                }
+            }
         }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if(self.isFolderSelected == true){
-        let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
-        cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
-        cell.selectionStyle = .none
-        cell.btnMap.isHidden = true
-        cell.btnOption.tag = indexPath.row
-        cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
-        cell.lblTitle.text = self.arrFolderList[indexPath.row].folder_name
-        cell.lblName.text = ""
-        cell.imgType.image = nil
-        return cell
+        if(indexPath.section == 0){
+            let cell:uploadTableViewCell = tableView.dequeueReusableCell(withIdentifier: "uploadTableViewCell", for: indexPath) as! uploadTableViewCell
+            cell.videoThumb.image = nil
+            cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
+            cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
+            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
+            return cell
         }
         else{
-        let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
-        cell.videoThumb.image = nil
-        cell.selectionStyle = .none
-        cell.btnMap.tag = indexPath.row
-        cell.btnOption.tag = indexPath.row
-        cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
-        cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
-        cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
-        cell.lblName.text = self.arrarchivedList[indexPath.row].name
-        
-        if(arrarchivedList[indexPath.row].type == "image"){
-            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-            cell.imgType.image = #imageLiteral(resourceName: "ic_playimg")
-        }
-        else{
-            cell.imgType.image = #imageLiteral(resourceName: "ic_playvid")
-            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-//            let url:URL = URL(string: arrarchivedList[indexPath.row].image_path!)!
-//                  AVAsset(url: url).generateThumbnail { [weak self] (image) in
-//                                 DispatchQueue.main.async {
-//                                     guard let image = image else { return }
-//                                     cell.videoThumb.image = image
-//                                    cell.videoThumb.sd_imageIndicator?.stopAnimatingIndicator()
-//                                 }
-//                             }
-        }
-        return cell
+            if(self.isFolderSelected == true){
+                let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
+                cell.videoThumb.contentMode = .scaleAspectFit
+                cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
+                cell.selectionStyle = .none
+                cell.btnMap.isHidden = true
+                cell.btnOption.tag = indexPath.row
+                cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name
+                cell.lblName.text = ""
+                cell.imgType.image = nil
+                return cell
+            }
+            else{
+                let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
+                cell.videoThumb.image = nil
+                cell.selectionStyle = .none
+                cell.btnPlayView.tag = indexPath.row
+                cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)
+                cell.btnMap.tag = indexPath.row
+                cell.btnOption.tag = indexPath.row
+                cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
+                cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
+                cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
+                if(arrarchivedList[indexPath.row].type == "image"){
+                    cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                    cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+                    cell.imgType.image = #imageLiteral(resourceName: "ic_playimg")
+                    cell.videoThumb.contentMode = .scaleAspectFit
+                    
+                }
+                else{
+                    cell.imgType.image = #imageLiteral(resourceName: "ic_playvid")
+                    cell.videoThumb.contentMode = .scaleAspectFill
+                    cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                    cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+                    
+                }
+                return cell
+            }
         }
     }
     

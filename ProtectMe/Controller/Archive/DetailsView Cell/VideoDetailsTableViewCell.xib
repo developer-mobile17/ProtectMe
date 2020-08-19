@@ -72,6 +72,9 @@
                                 <color key="textColor" red="0.34509803919999998" green="0.68235294120000001" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfx-Qe-79n">
+                                <rect key="frame" x="12" y="0.0" width="197.5" height="45"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -79,14 +82,18 @@
                             <constraint firstItem="hv6-go-yMa" firstAttribute="leading" secondItem="NEj-zO-gBj" secondAttribute="leading" constant="12" id="5b4-FA-C9M"/>
                             <constraint firstItem="GFE-4g-V9p" firstAttribute="leading" secondItem="bcn-Ui-bzE" secondAttribute="trailing" constant="8" id="7h1-jy-kBm"/>
                             <constraint firstItem="V9s-nK-S5X" firstAttribute="bottom" secondItem="hv6-go-yMa" secondAttribute="bottom" constant="-5" id="GnS-kq-hNi"/>
+                            <constraint firstItem="hfx-Qe-79n" firstAttribute="leading" secondItem="hv6-go-yMa" secondAttribute="leading" id="HxQ-MY-G60"/>
                             <constraint firstItem="kAa-tT-tdY" firstAttribute="centerY" secondItem="GFE-4g-V9p" secondAttribute="centerY" id="Jyg-xK-v29"/>
                             <constraint firstItem="hv6-go-yMa" firstAttribute="top" secondItem="NEj-zO-gBj" secondAttribute="top" id="MAg-qu-Tco"/>
                             <constraint firstItem="kAa-tT-tdY" firstAttribute="trailing" secondItem="GFE-4g-V9p" secondAttribute="trailing" constant="-7.5" id="MfI-h6-XyO"/>
+                            <constraint firstItem="hfx-Qe-79n" firstAttribute="top" secondItem="hv6-go-yMa" secondAttribute="top" id="N0Z-bc-fe8"/>
                             <constraint firstItem="tB6-bp-MjD" firstAttribute="leading" secondItem="hv6-go-yMa" secondAttribute="trailing" constant="8" id="S0u-1Z-TgS"/>
+                            <constraint firstItem="hfx-Qe-79n" firstAttribute="trailing" secondItem="KgA-cX-WRV" secondAttribute="trailing" id="SHf-4a-msX"/>
                             <constraint firstAttribute="bottom" secondItem="hv6-go-yMa" secondAttribute="bottom" id="T5F-ah-Lsg"/>
                             <constraint firstItem="bcn-Ui-bzE" firstAttribute="centerY" secondItem="hv6-go-yMa" secondAttribute="centerY" id="UK9-6i-4RN"/>
                             <constraint firstItem="kAa-tT-tdY" firstAttribute="leading" secondItem="GFE-4g-V9p" secondAttribute="leading" constant="7.5" id="WH5-BT-wqe"/>
                             <constraint firstItem="KgA-cX-WRV" firstAttribute="centerY" secondItem="hv6-go-yMa" secondAttribute="centerY" id="faS-hu-Cab"/>
+                            <constraint firstItem="hfx-Qe-79n" firstAttribute="bottom" secondItem="hv6-go-yMa" secondAttribute="bottom" id="grr-xY-HFE"/>
                             <constraint firstItem="bcn-Ui-bzE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="KgA-cX-WRV" secondAttribute="trailing" constant="8" id="i6g-yR-pdW"/>
                             <constraint firstItem="KgA-cX-WRV" firstAttribute="leading" secondItem="hv6-go-yMa" secondAttribute="trailing" constant="8" id="k1A-oM-B8t"/>
                             <constraint firstAttribute="height" constant="45" id="nvu-UV-kAk"/>
@@ -120,6 +127,7 @@
             <connections>
                 <outlet property="btnMap" destination="bcn-Ui-bzE" id="xJR-du-OTw"/>
                 <outlet property="btnOption" destination="GFE-4g-V9p" id="f14-2e-UbU"/>
+                <outlet property="btnPlayView" destination="hfx-Qe-79n" id="bQd-CL-oQI"/>
                 <outlet property="imgType" destination="V9s-nK-S5X" id="hc5-Xy-jMj"/>
                 <outlet property="lblName" destination="tB6-bp-MjD" id="a34-fF-P9E"/>
                 <outlet property="lblTitle" destination="KgA-cX-WRV" id="6gv-OY-sik"/>

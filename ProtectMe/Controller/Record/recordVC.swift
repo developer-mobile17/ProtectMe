@@ -689,18 +689,12 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                 if(strTimr >= endTime){
                                     print("video upload complete")
                                     appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-//                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.isUploaded = true
                                     NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
                                 }
                                 else{
                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
-
                                     self.WSUploadVideoR(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoRecorded!)
                                 }
-                                    //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
-                           //     }
-                                
-
                             }
                     }
                     }
@@ -708,14 +702,9 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                     {
                      //   self.myGroup.leave()
                         self.WSUploadVideoR(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoRecorded!)
-                        //
-                     //   self.WSUploadVideoR(statTime: statTime , endTime: endTime, thumimg: UIImage())
                         if let errorMessage:String = Message{
                             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                
                                     appDelegate.setLoginVC()
-                                    // Fallback on earlier versions
-                                
                             }
                         }
                     }
@@ -804,7 +793,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                 objLocalVid.url = self.videoRecorded
                 objLocalVid.thumbImage = AthumbImage
                 objLocalVid.name = "Video.mp4"
-
                 appDelegate.ArrLocalVideoUploading.append(objLocalVid)
             self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true ,OPUrl: outputFileURL)
             }
@@ -829,17 +817,12 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 //            }, completion:{
 //                // when background job finished, do something in main thread
 //            })
-                
-                 
             print(videoRecorded!.lastPathComponent)
-
             print(videoRecorded!.pathExtension)
-
             print("mimeType",videoRecorded?.mimeType())
-            
-          //  self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: videoRecorded)
+            //  self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: videoRecorded)
             if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum((videoRecorded?.path)!))
-                       {
+            {
                           // UISaveVideoAtPathToSavedPhotosAlbum((videoRecorded?.path)!, self, #selector(self.video(videoPath:didFinishSavingWithError:contextInfo:)), nil)
                        }
         //     performSegue(withIdentifier: "showVideo", sender: videoRecorded)
