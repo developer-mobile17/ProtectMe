@@ -486,7 +486,7 @@
                                 <rect key="frame" x="151" y="56" width="112" height="123.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jkd-Nr-MbQ">
-                                        <rect key="frame" x="-9" y="20" width="148.5" height="65"/>
+                                        <rect key="frame" x="23" y="20" width="84" height="65"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="65" id="vAz-LZ-gI4"/>
                                         </constraints>
@@ -2001,11 +2001,12 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                     <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="Round" value="YES"/>
                                         <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                             <real key="value" value="1"/>
                                         </userDefinedRuntimeAttribute>
                                         <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                            <color key="value" red="0.13725490200000001" green="0.1647058824" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="value" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </userDefinedRuntimeAttribute>
                                     </userDefinedRuntimeAttributes>
                                 </textField>
@@ -3415,7 +3416,7 @@
                                             <rect key="frame" x="30" y="12" width="354" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="LJM-dw-YWw">
-                                                    <rect key="frame" x="112" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="144" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="DB6-81-fhW"/>
                                                     </constraints>
@@ -3948,7 +3949,7 @@
                                             <rect key="frame" x="144" y="12" width="126" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="jUQ-cF-5Nf">
-                                                    <rect key="frame" x="-2" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="30" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="cK2-Lv-hCB"/>
                                                     </constraints>
@@ -4239,7 +4240,7 @@
                                             <rect key="frame" x="142" y="12" width="130" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="mQx-Mf-L5D">
-                                                    <rect key="frame" x="0.0" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="32" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="U0B-ZZ-hkG"/>
                                                     </constraints>
@@ -7479,6 +7480,57 @@
                         <action selector="btnhideDetails:" destination="ZIM-aR-arI" eventType="touchUpInside" id="Dwk-Ek-JSc"/>
                     </connections>
                 </view>
+                <view contentMode="scaleToFill" id="c4u-71-B5Q" customClass="UIControl">
+                    <rect key="frame" x="0.0" y="0.0" width="420" height="428"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ph6-Jr-gPc">
+                            <rect key="frame" x="144.5" y="138.5" width="131" height="151"/>
+                            <subviews>
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="ic_Aclose" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-5S-XvY">
+                                    <rect key="frame" x="332" y="12" width="16" height="16"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File Moved" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRv-SO-3GB">
+                                    <rect key="frame" x="24" y="36" width="83" height="23"/>
+                                    <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="18"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_email_done" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ctf-x5-iJp">
+                                    <rect key="frame" x="43" y="83" width="45" height="45"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="45" id="CCf-Uw-MYw"/>
+                                        <constraint firstAttribute="height" constant="45" id="fFR-xT-2c6"/>
+                                    </constraints>
+                                </imageView>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstItem="rRv-SO-3GB" firstAttribute="leading" secondItem="ph6-Jr-gPc" secondAttribute="leading" constant="24" id="5ha-en-dLU"/>
+                                <constraint firstAttribute="trailing" secondItem="rRv-SO-3GB" secondAttribute="trailing" constant="24" id="8lP-fk-yTV"/>
+                                <constraint firstItem="rRv-SO-3GB" firstAttribute="top" secondItem="ph6-Jr-gPc" secondAttribute="top" constant="36" id="HR3-bh-ZhF"/>
+                                <constraint firstItem="ctf-x5-iJp" firstAttribute="top" secondItem="rRv-SO-3GB" secondAttribute="bottom" constant="24" id="IXN-kS-AGK"/>
+                                <constraint firstItem="ctf-x5-iJp" firstAttribute="centerX" secondItem="ph6-Jr-gPc" secondAttribute="centerX" id="dbE-1T-fk2"/>
+                                <constraint firstAttribute="bottom" secondItem="ctf-x5-iJp" secondAttribute="bottom" constant="23" id="uuB-ab-MbZ"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                    <real key="value" value="9"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.84999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="ph6-Jr-gPc" firstAttribute="centerX" secondItem="c4u-71-B5Q" secondAttribute="centerX" id="DAn-ve-eOy"/>
+                        <constraint firstItem="ph6-Jr-gPc" firstAttribute="centerY" secondItem="c4u-71-B5Q" secondAttribute="centerY" id="cHx-I0-UEl"/>
+                    </constraints>
+                    <viewLayoutGuide key="safeArea" id="rIc-1J-iP4"/>
+                    <connections>
+                        <action selector="btnHideEmailPopup:" destination="B2q-mG-XQN" eventType="touchUpInside" id="2Wb-G3-tPW"/>
+                    </connections>
+                </view>
             </objects>
             <point key="canvasLocation" x="3130" y="1722"/>
         </scene>
@@ -7523,7 +7575,7 @@
         <image name="ic_thumb_view" width="23" height="23"/>
         <image name="ic_videorecordStart" width="88" height="88"/>
         <image name="image" width="750" height="1140"/>
-        <image name="logo" width="148.5" height="167"/>
+        <image name="logo" width="84" height="94"/>
         <image name="mastercard" width="60" height="36"/>
         <image name="paypal" width="512" height="512"/>
         <image name="visa" width="63" height="19.5"/>

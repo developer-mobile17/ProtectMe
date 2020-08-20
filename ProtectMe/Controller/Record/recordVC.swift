@@ -726,16 +726,12 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             }) { (DataResponce, Status, Message) in
                 //
                 //self.myGroup.leave()
-
             }
-
-          
-        
         }
     }
-       // return responsBool
+    // return responsBool
     }
-    func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
+    override func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
         DispatchQueue.global().async { //1
             let asset = AVAsset(url: url) //2
             let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3

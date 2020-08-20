@@ -52,15 +52,7 @@ class archiveVC: baseVC {
     @IBOutlet weak var lblDetailSharedBy:UILabel!
     @IBOutlet weak var lblDetailDateCreatedandLocation:UILabel!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var txtName:AIBaseTextField!{
-        didSet{
-        txtName.borderColor = .black
-        txtName.borderWidth = 1.0
-        txtName.leftViewPadding = 12
-        txtName.validationType = .alphaNumeric_WithSpace
-        //txtName.config.textFieldKeyboardType = .name
-        }
-    }
+    @IBOutlet weak var txtName:AIBaseTextField!
     var selectedType = "recent"
     var selectedFilter = "0"
     var arrselectedType = ["recent","folders","folders"]
@@ -116,7 +108,7 @@ class archiveVC: baseVC {
         if(self.isFolderSelected == true){
         }
         else{
-        self.WSDeleteArchive(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!])
+            self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
         }
     }
         @IBAction func plusButtonAction(_ sender:UIButton){
@@ -498,6 +490,7 @@ class archiveVC: baseVC {
         self.btnSelectOptions(self.btnRecent)
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
+        txtName.Round = true
         //let monthname = Date().getMonthFullname()
         //let year = Date().getYear()
         lblMonthandYear.text = "Recent"

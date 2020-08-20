@@ -55,7 +55,7 @@ class signinVC: UIViewController {
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
                self.latitude = longitude
                self.longitude = latitude
-            //   print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
+               print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
                //print(verboseMessage)
             locationManager.autoUpdate = false
            }

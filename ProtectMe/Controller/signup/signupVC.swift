@@ -199,14 +199,11 @@ override func viewWillAppear(_ animated: Bool) {
                     if let userData = dataResponce["data"] as? NSDictionary{
                         USER.shared.setData(dict: userData)
                         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "linkAccountVC") as! linkAccountVC
-                                vc.isHidden = true
+                        vc.isHidden = true
                         self.navigationController?.pushViewController(vc, animated: true)
 
                     }
                     
-                    if let outcome = dataResponce["data"] as? NSDictionary{
-                        
-                    }
                 }
                     else if(StatusCode == 307)
                     {

@@ -79,7 +79,7 @@ class linkAccountVC: UIViewController {
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
             view.endEditing(true)
 
-           self.ViewPopup.frame = UIScreen.main.bounds
+        self.ViewPopup.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewPopup)
 
            //self.view.addSubview(self.ViewPopup)
@@ -135,8 +135,27 @@ class linkAccountVC: UIViewController {
            
        }
     @IBAction func btnLinkAccountClick(_ sender: Any) {
-       let vc = storyBoards.Main.instantiateViewController(withIdentifier: "recordVC") as! recordVC
-        self.navigationController?.pushViewController(vc, animated: true)
+//       let vc = storyBoards.Main.instantiateViewController(withIdentifier: "recordVC") as! recordVC
+//        self.navigationController?.pushViewController(vc, animated: true)
+        guard let name = txtname.text, !name.isEmpty else {
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.NameMissing)
+            return
+        }
+        guard let email = txtEmail.text, !email.isEmpty else {
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.EmailNameMissing)
+            return
+        }
+        guard let validEmail = txtEmail.text,  !validEmail.isValidEmail() == false else {
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.ValidEmail)
+            return
+        }
+        guard let type = txtType.text, !type.isEmpty else {
+            showAlertWithTitleFromVC(vc: self, andMessage: "Please select type.")
+            return
+        }
+
+        
+        WSLinkAccount(Parameter: ["name":txtname.text!,"email":txtEmail.text!,"type":self.type])
     }
     @IBAction func btnRegisterClick(_ sender: Any) {
         guard let name = txtname.text, !name.isEmpty else {

@@ -21,6 +21,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     var videoRecorded: URL? = nil
     var unique_idforFile = ""
     weak var delegate: NotifyToCallListService?
+    var Baseunique_id = ""
+
 
     let imgPickerController = UIImagePickerController()
     var selectedImage:UIImage?
@@ -68,8 +70,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = longitude
-               self.longitude = latitude
+               self.latitude = latitude
+               self.longitude = longitude
             self.locationManager.autoUpdate = false
            }
     }
@@ -77,7 +79,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
            present(menu, animated: true, completion: nil)
        }
-    func WSUploadPhoneVideo(statTime:Double, endTime:Double) -> Void {
+      func WSUploadPhoneVideo(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
+        
         var etime = statTime + 5.0
         if(etime>endTime){
             etime = endTime
@@ -88,46 +91,43 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
-             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_idforFile]
-                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: UIImage(), passThumb: false, WithParams: Parameter,Progress: {
-                    (process)in
-                    print("my:",process)
-                }, Success: { (DataResponce, Status, Message) in
+             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.Baseunique_id]
+            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
+                (process)in
+                print("my:",process)
+                //set progress
+                appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
+                
+                //appDelegate.objLocalVid.progress = process!
+            }, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
                     let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                     let StatusCode = DataResponce?["status"] as? Int
                     if (StatusCode == 200){
                        if let Data = dataResponce["data"] as? NSDictionary{
                             if let videoKey = Data["unique_id"] as? String{
-                                self.unique_idforFile = videoKey
-                              //  if(chunk.count - 1 != Index){
-                                 //    Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
-                                    var strTimr = statTime + 5
-                                    if(statTime >= endTime){
-                                        print("video upload complete")
-                                        self.delegate?.getListData()
-                                    }
-                                    else{
-                                        
-                                        self.WSUploadPhoneVideo(statTime: strTimr , endTime: endTime)
-                                    }
-                                    //self.WSUploadVideoR(Parameter: Parameter, chunk: chunk, Index: Index+1)
-                           //     }
-                                
-
+                                self.Baseunique_id = videoKey
+                                let strTimr = statTime + 5
+                                if(strTimr >= endTime){
+                                    print("video upload complete")
+                                    appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
+                                    self.delegate?.getListData()
+                                    //NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                }
+                                else{
+                                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
+                                    self.WSUploadPhoneVideo(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                                }
                             }
                     }
                     }
                     else if(StatusCode == 401)
                     {
                      //   self.myGroup.leave()
-                        self.WSUploadPhoneVideo(statTime: statTime , endTime: endTime)
+                        self.WSUploadPhoneVideo(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
                         if let errorMessage:String = Message{
                             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                
                                     appDelegate.setLoginVC()
-                                    // Fallback on earlier versions
-                                
                             }
                         }
                     }
@@ -259,7 +259,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                // Use image...
                                 DispatchQueue.background(background: {
                                     // do something in background
-                                self.WSUploadImage(Parameters: ["lat":self.longitude.description,"long":self.latitude.description,"type":"image"], img: image)
+                                self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
 
                                 }, completion:{
                                    
@@ -275,7 +275,26 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                }
            
      }
-
+    func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
+           DispatchQueue.global().async { //1
+               let asset = AVAsset(url: url) //2
+               let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
+               avAssetImageGenerator.appliesPreferredTrackTransform = true //4
+               let thumnailTime = CMTimeMake(value: 0, timescale: 600) //5
+               do {
+                   let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
+                   let thumbImage = UIImage(cgImage: cgThumbImage) //7
+                   DispatchQueue.main.async { //8
+                       completion(thumbImage) //9
+                   }
+               } catch {
+                   print(error.localizedDescription) //10
+                   DispatchQueue.main.async {
+                       completion(nil) //11
+                   }
+               }
+           }
+       }
      func VideoAlbum()
      {
          let cr = CameraRoll()
@@ -293,12 +312,20 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                 self.videoURL = sourceURL as NSURL
                                 let duration = asset.duration
                                 let durationTime = CMTimeGetSeconds(duration)
-                                                     DispatchQueue.background(background: {
-                                                         // do something in background
-                                                        
-                                                         self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime) )
-                                                     }, completion:{
-                                                        self.delegate?.getListData()
+                               
+                            DispatchQueue.background(background: {
+                        self.getThumbnailImageFromVideoUrl(url: self.videoURL as! URL) { (AthumbImage) in
+                                                                      //self.thumbImageForVide = AthumImage
+                        let objLocalVid:localVideoModel = localVideoModel()
+                        objLocalVid.url = self.videoRecorded
+                        objLocalVid.thumbImage = AthumbImage
+                        objLocalVid.name = "Video.mp4"
+                        appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+                        self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
+                                }
+                                
+                            }, completion:{
+                                                       // self.delegate?.getListData()
                                                          // when background job finished, do something in main thread
                                                      })
 
