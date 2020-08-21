@@ -193,6 +193,52 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             //
         }
     }
+    func WSDownloadImage(Parameters: [String: Any],img:UIImage){
+        ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: [img], WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
+       
+            let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+            let StatusCode = DataResponce?["status"] as? Int
+            if (StatusCode == 200){
+                if let outcome = dataResponce["data"] as? NSDictionary {
+                    DispatchQueue.main.async {
+                        self.delegate?.getListData()
+                        //USER.shared.setData(dict:outcome)
+                        //USER.shared.save()
+                        //self.popTo()
+                    }
+                }
+                else
+                {
+                    print("error to save data!")
+                }
+            }
+                else if(StatusCode == 401)
+                {
+                    USER.shared.clear()
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                
+                                    appDelegate.setLoginVC()
+                                    // Fallback on earlier versions
+                                
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = DataResponce!["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                              
+                }
+            }) { (DataResponce, Status, Message) in
+            
+                if let errorMessage:String = DataResponce!["message"] as? String{
+            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+            }
+            
+        }
+            
+    }
     func WSUploadImage(Parameters: [String: Any],img:UIImage){
         ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: [img], WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
        
@@ -319,7 +365,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                         let objLocalVid:localVideoModel = localVideoModel()
                         objLocalVid.url = self.videoRecorded
                         objLocalVid.thumbImage = AthumbImage
-                        objLocalVid.name = "Video.mp4"
+                        objLocalVid.name = "video\(Date().description).mp4"
                         appDelegate.ArrLocalVideoUploading.append(objLocalVid)
                         self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
                                 }

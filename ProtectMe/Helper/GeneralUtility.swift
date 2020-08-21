@@ -836,7 +836,7 @@ extension UIView {
                    shadowOpacity: Float = 0.6,
                    shadowRadius: CGFloat = 4.0) {
         
-        layer.shadowColor = hexStringToUIColor(hex: "FCBF7A26").cgColor
+        layer.shadowColor = hexStringToUIColor(hex: "FFFFFF").cgColor
         layer.shadowOffset = shadowOffset
         layer.shadowOpacity = shadowOpacity
         layer.shadowRadius = shadowRadius
@@ -1385,7 +1385,15 @@ extension UISwitch {
 }
 
 extension UIViewController {
-    
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
     func cropVideo(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil)
     {
         

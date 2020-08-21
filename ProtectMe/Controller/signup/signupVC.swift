@@ -106,8 +106,8 @@ class signupVC: UIViewController {
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = longitude
-               self.longitude = latitude
+               self.latitude = latitude
+               self.longitude = longitude
             //   print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
                //print(verboseMessage)
             locationManager.autoUpdate = false

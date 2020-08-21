@@ -7,12 +7,15 @@
 //
 
 import UIKit
+
 protocol sendbacktoName {
+    func getselectedvire(view:String)
     func changename( name:String,index:IndexPath)
 }
 class renameArchiveVC: UIViewController {
     var FieldType = ""
     var txtValue = ""
+    var selectedView = ""
     var titleString:String = ""
     var alertStr = ""
     var fileID = ""
@@ -93,6 +96,7 @@ class renameArchiveVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    self.delegate?.getselectedvire(view: self.selectedView)
                     self.popTo()
 
 //                    if let outcome = dataResponce["data"] as? NSDictionary{

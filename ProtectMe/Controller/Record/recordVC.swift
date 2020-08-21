@@ -785,11 +785,11 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             let durationTime = CMTimeGetSeconds(duration)
             self.getThumbnailImageFromVideoUrl(url: videoRecorded!) { (AthumbImage) in
                 //self.thumbImageForVide = AthumImage
-                let objLocalVid:localVideoModel = localVideoModel()
-                objLocalVid.url = self.videoRecorded
-                objLocalVid.thumbImage = AthumbImage
-                objLocalVid.name = "Video.mp4"
-                appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+            let objLocalVid:localVideoModel = localVideoModel()
+            objLocalVid.url = self.videoRecorded
+            objLocalVid.thumbImage = AthumbImage
+            objLocalVid.name = "video\(Date().description).mp4"
+            appDelegate.ArrLocalVideoUploading.append(objLocalVid)
             self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true ,OPUrl: outputFileURL)
             }
                     //    DispatchQueue.background(background: {

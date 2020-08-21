@@ -179,6 +179,7 @@ open class AIBaseTextField: UITextField {
             {
             case TextFieldValidationType.none:
                 self.keyboardType = UIKeyboardType.default
+                
                 self.isSecureTextEntry = false
                 break;
             case TextFieldValidationType.name:

@@ -1,8 +1,8 @@
 //
-//  archiveVC.swift
+//  searchVC.swift
 //  ProtectMe
 //
-//  Created by Mac on 09/06/20.
+//  Created by Mac on 21/08/20.
 //  Copyright © 2020 ZestBrains PVT LTD. All rights reserved.
 //
 
@@ -14,18 +14,17 @@ import MapKit
 import Alamofire
 import Photos
 
-extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
+extension searchVC:MKMapViewDelegate,NotifyToCallListService{
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
 }
 
-class archiveVC: baseVC {
+class searchVC: baseVC ,UITextFieldDelegate{
     
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
-    @IBOutlet weak var ViewDownloadCompleted:UIControl!
-    @IBOutlet weak var ViewCreateFolder:UIControl!
+   @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
@@ -53,9 +52,16 @@ class archiveVC: baseVC {
     @IBOutlet weak var lblDetailSharedBy:UILabel!
     @IBOutlet weak var lblDetailDateCreatedandLocation:UILabel!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var txtName:UITextField!
+    @IBOutlet weak var txtName:AIBaseTextField!
+    @IBOutlet weak var txtSearch:UITextField!
+    {
+        didSet{
+            txtSearch.keyboardType = .webSearch
+            txtSearch.returnKeyType = UIReturnKeyType.search
+
+        }
+    }
     var selectedType = "recent"
-    var selectedView = "grid"
     var selectedFilter = "0"
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
@@ -77,6 +83,9 @@ class archiveVC: baseVC {
     var arrOption = [UIButton]()
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround()
+        self.btnChangeTableView(self.btnGreed)
+
         self.scheduledTimerWithTimeInterval()
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
 
@@ -89,10 +98,25 @@ class archiveVC: baseVC {
         self.tblVideoList.register(UINib(nibName: "uploadTableViewCell", bundle: nil), forCellReuseIdentifier: "uploadTableViewCell")
         self.tblVideoList.register(UINib(nibName: "VideoDetailsTableViewCell", bundle: nil), forCellReuseIdentifier: "VideoDetailsTableViewCell")
         self.Viewmap.isHidden = true
+        txtName.borderColor = .black
+        txtName.borderWidth = 1.0
+        txtName.Round = true
+        self.txtSearch.delegate = self
+        self.txtSearch.keyboardType = .webSearch
+        self.txtSearch.returnKeyType = UIReturnKeyType.search
+        self.txtSearch.keyboardToolbar.doneBarButton.setTarget(self, action: #selector(doneButtonClicked))
+
+
         // Do any additional setup after loading the view.
     }
    // MARK: - Button Click Action
-    
+    @objc func doneButtonClicked(_ sender: Any) {
+        if(self.txtSearch.text?.removeWhiteSpace() != ""){
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":self.txtSearch.text!])
+        }
+            //your code when clicked on done
+    }
+
       @IBAction func btnCreateFolderAction(_ sender: UIControl) {
           guard let text = txtName.text, !text.isEmpty else {
               showAlertWithTitleFromVC(vc: self, andMessage: "Please enter folder name.")
@@ -101,13 +125,7 @@ class archiveVC: baseVC {
           self.WSCreateFolder(Parameter: ["name":text])
           
       }
-    
-    
-    @IBAction func btnSearchAction(_ sender: UIButton) {
-           let vc = storyBoards.Main.instantiateViewController(withIdentifier: "searchVC") as! searchVC
-           self.navigationController?.pushViewController(vc, animated: true)
-       }
-
+        
     @IBAction func btnUserCurruntLocation(_ sender: UIButton) {
            mapView.userTrackingMode = .follow
        }
@@ -118,6 +136,15 @@ class archiveVC: baseVC {
         else{
             self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
         }
+    }
+    @IBAction func btnSearchAction(_ sender: UIButton) {
+        guard let text = txtSearch.text, !text.isEmpty else {
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.NameMissing)
+            return
+        }
+        self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":text])
+        
+        
     }
         @IBAction func plusButtonAction(_ sender:UIButton){
             let status = PHPhotoLibrary.authorizationStatus()
@@ -180,12 +207,9 @@ class archiveVC: baseVC {
                         self.PhotoAlbum()
                         
                     }
-                    else if(i == 2){
-
-                        self.VideoAlbum()
-                    }
                     else{
-                        
+                    
+                        self.VideoAlbum()
                     }
                  
                 }
@@ -461,65 +485,11 @@ class archiveVC: baseVC {
            print("could not save data")
        }
     }
-    
     @IBAction func btnDownloadVideo(_ sender: UIButton) {
-        if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
-            if let urlString = self.arrarchivedList[self.selectedIndex!.row].image_path{
-
-                ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"image"], Progress: { (progress) in
-                    print(progress)
-                }, Success: { (DataResponce, Status, Message) in
-                    print("downloaded")
-                    print("URL", Message)
-                    DispatchQueue.main.async(execute: {
-
-                    self.btnHandlerBlackBg(self)
-                    self.ViewDownloadCompleted.frame = UIScreen.main.bounds
-                    self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
-                    })
-                }) { (DataResponce, Status, Message) in
-                    print("faild download")
-                }
-                
-                
-        }
-                
-        
-    }
-    else{
-            if let urlString = self.arrarchivedList[self.selectedIndex!.row].image_path{
-
-            ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"video"], Progress: { (progress) in
-                print(progress)
-            }, Success: { (DataResponce, Status, Message) in
-                print("downloaded")
-                print("URL", Message)
-                DispatchQueue.main.async(execute: {
-
-                self.btnHandlerBlackBg(self)
-                self.ViewDownloadCompleted.frame = UIScreen.main.bounds
-                self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
-                                  
-                })
-            }) { (DataResponce, Status, Message) in
-                print("faild download")
-            }
-            }
-//            let url = self.arrarchivedList[self.selectedIndex!.row].image_path
-//            self.downloadVideoLinkAndCreateAsset(url!)
-
-        }
-    }
-    
-    @IBAction func btncelltapClick(_ sender: UIButton) {
-
-    let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
-              vc.FolderId = self.arrarchivedList[sender.tag].id!
-              vc.data = self.arrarchivedList[sender.tag]
-              vc.FileId = self.arrarchivedList[sender.tag].folder_id!
-              vc.navigationTitle = self.arrarchivedList[sender.tag].folder_name!
-              vc.buttonName = ""
-                    self.navigationController?.pushViewController(vc, animated: true)
+        let url = self.arrarchivedList[self.selectedIndex!.row].image_path
+    //    self.downloadVideoToPhotos(url:url! )
+        //self.writeToFile(urlString: url!)
+        self.downloadVideoLinkAndCreateAsset(url!)
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
@@ -527,12 +497,13 @@ class archiveVC: baseVC {
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
-    
     @IBAction func btnhideDetails(_ sender: Any)
     {
-        self.ViewDownloadCompleted.removeFromSuperview()
         self.ViewVideoDetails.removeFromSuperview()
         self.ViewCreateFolder.removeFromSuperview()
+    }
+    @IBAction func btnBackClick(_ sender: Any) {
+              self.popTo()
     }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
@@ -545,7 +516,8 @@ class archiveVC: baseVC {
         let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "renameArchiveVC") as!  renameArchiveVC
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
-            OBJchangepasswordVC.selectedView = self.selectedView
+        OBJchangepasswordVC.delegate = self
+            
         OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
         let firstPart = self.arrarchivedList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
         print(firstPart) // print Hello
@@ -559,18 +531,25 @@ class archiveVC: baseVC {
     }
     override func viewWillAppear(_ animated: Bool) {
         self.btnHandlerBlackBg(self)
-        self.btnChangeTableView(self.btnGreed)
-        self.btnSelectOptions(self.btnRecent)
-        txtName.borderColor = .black
-        txtName.borderWidth = 1.0
-        txtName.Round = true
+       // self.btnSelectOptions(self.btnRecent)
+
         //let monthname = Date().getMonthFullname()
         //let year = Date().getYear()
-        lblMonthandYear.text = "Recent"
+//        lblMonthandYear.text = "Recent"
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+         // your Action According to your textfield
+        if(textField.text?.removeWhiteSpace() != ""){
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":textField.text!])
+        }
+        else{
+            
+        }
+
+        return true
     }
     @IBAction func btnChangeTableView(_ sender: UIButton) {
         if(sender == self.btnlist){
-            self.selectedView = "table"
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
             UIView.animate(withDuration: 0.1,
@@ -587,7 +566,6 @@ class archiveVC: baseVC {
             })
         }
         else{
-            self.selectedView = "grid"
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
             UIView.animate(withDuration: 0.1,
@@ -959,17 +937,23 @@ class archiveVC: baseVC {
     }
 
 }
-extension archiveVC:sendbacktoName{
+extension searchVC:sendbacktoName{
     func getselectedvire(view: String) {
+        if(view == "grid"){
+            self.btnChangeTableView(self.btnGreed)
+        }
+        else{
+            self.btnChangeTableView(self.btnlist)
+        }
+         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":txtSearch.text!])
         
     }
-    
     func changename(name: String, index: IndexPath) {
         
     }
 }
 
-extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension searchVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     @objc func loadList(notification: NSNotification) {
            self.selectOptions(selected: self.btnRecent)
        }
@@ -1013,11 +997,11 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if(self.isFolderSelected == true){
             let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
-            vc.FolderId = self.arrarchivedList[indexPath.row].id!
-            vc.data = self.arrarchivedList[indexPath.row]
+                  vc.FolderId = self.arrarchivedList[indexPath.row].id!
+                  vc.data = self.arrarchivedList[indexPath.row]
             vc.FileId = self.arrarchivedList[indexPath.row].folder_id!
-            vc.navigationTitle = self.arrarchivedList[indexPath.row].folder_name!
-            vc.buttonName = ""
+                  vc.navigationTitle = self.arrarchivedList[indexPath.row].folder_name!
+                  vc.buttonName = ""
                   self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
@@ -1072,9 +1056,6 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         if(self.isFolderSelected == true){
         let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
             cell.lblName.text = self.arrarchivedList[indexPath.row].folder_name
-            cell.btncellTap.tag = indexPath.row
-            cell.btncellTap.addTarget(self, action: #selector(self.btncelltapClick(_:)),for: .touchUpInside)
-                  
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             return cell
         }
@@ -1106,7 +1087,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     }
     
 }
-extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
+extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
      // MARK: - UITableview delegate methods
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -1174,7 +1155,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
         else{
             if(self.isFolderSelected == true){
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
-                //cell.videoThumb.contentMode = .scaleAspectFit
+              //  cell.videoThumb.contentMode = .scaleAspectFit
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
                 cell.btnMap.isHidden = true
@@ -1206,7 +1187,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 }
                 else{
                     cell.imgType.image = #imageLiteral(resourceName: "ic_playvid")
-                    //cell.videoThumb.contentMode = .scaleAspectFill
+                    cell.videoThumb.contentMode = .scaleAspectFill
                     cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                     cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                     
@@ -1218,43 +1199,3 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
     
    
 }
-class FolderCell: UICollectionViewCell {
-    @IBOutlet weak var lblName:UILabel!
-    @IBOutlet weak var btnOption:UIButton!
-    @IBOutlet weak var btncellTap:UIButton!
-
-}
-class collCell: UICollectionViewCell {
-    @IBOutlet weak var btnMap:UIButton!
-    @IBOutlet weak var videoThumb:UIImageView!
-    @IBOutlet weak var imgtype:UIImageView!
-    @IBOutlet weak var progressBar:UIProgressView!{
-        didSet{
-            progressBar.transform = CGAffineTransform(scaleX: 1.0, y: 5.0)
-        }
-    }
-
-    @IBOutlet weak var lblTitle:UILabel!
-    @IBOutlet weak var lblName:UILabel!
-    @IBOutlet weak var btnPlayvideo:UIButton!
-
-    @IBOutlet weak var btnOption:UIButton!
-}
-extension AVAsset {
-
-    func generateThumbnail(completion: @escaping (UIImage?) -> Void) {
-        DispatchQueue.global().async {
-            let imageGenerator = AVAssetImageGenerator(asset: self)
-            let time = CMTime(seconds: 0.0, preferredTimescale: 600)
-            let times = [NSValue(time: time)]
-            imageGenerator.generateCGImagesAsynchronously(forTimes: times, completionHandler: { _, image, _, _, _ in
-                if let image = image {
-                    completion(UIImage(cgImage: image))
-                } else {
-                    completion(nil)
-                }
-            })
-        }
-    }
-}
-

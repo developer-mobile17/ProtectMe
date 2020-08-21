@@ -472,6 +472,15 @@ class FoldersVC: baseVC {
 
 }
 extension FoldersVC:sendbacktoName{
+    func getselectedvire(view: String) {
+        if(view == "grid"){
+            self.btnChangeTableView(self.btnGreed)
+        }
+        else{
+            self.btnChangeTableView(self.btnlist)
+        }
+    }
+    
     func changename(name: String, index: IndexPath) {
         
     }

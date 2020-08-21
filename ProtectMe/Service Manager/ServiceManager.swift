@@ -8,6 +8,8 @@
 
 import UIKit
 import Alamofire
+import Photos
+
 
 import SystemConfiguration
 var FileUploafProgress = Double()
@@ -675,7 +677,104 @@ class ServiceManager: NSObject{
         let needsConnection = flags.contains(.connectionRequired)
         return (isReachable && !needsConnection)
     }
-    
+        func callDownloadFile(WithType apiType:APITYPE,fileUrl:String,WithParams params:[String:String],Progress progressBlock:@escaping UploadProgressBlock, Success successBlock:@escaping APIResponseBlock,Failure failureBlock:@escaping APIResponseBlock) -> Void
+            {
+                
+                if Connectivity.isConnectedToInternet() {
+                    SHOW_CUSTOM_LOADER()
+                    let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+
+                    Alamofire.download(fileUrl, to: destination).response { response in
+                        if let localURL = response.destinationURL {
+                            if(params["type"] == "image"){
+                                DispatchQueue.main.async(execute: {
+
+                                PHPhotoLibrary.shared().performChanges({
+                                        PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: response.destinationURL!)
+                                }) { saved, error in
+                                    print("\(saved)")
+                                    print("\(error)")
+
+                                    if saved {
+                                      //show popup
+                                        HIDE_CUSTOM_LOADER()
+
+                                        successBlock(nil, true,localURL.absoluteString)
+
+
+                                    }
+                                    else{
+                                        HIDE_CUSTOM_LOADER()
+
+                                        successBlock(nil, false,localURL.absoluteString)
+
+                                        }
+                                    HIDE_CUSTOM_LOADER()
+
+                                    }
+
+                                })
+                                
+                            }
+                            else{
+                                DispatchQueue.main.async(execute: {
+
+                                    PHPhotoLibrary.shared().performChanges({
+                                        PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: response.destinationURL!)
+                                }) { saved, error in
+                                    print("\(saved)")
+                                    print("\(error)")
+
+                                    if saved {
+                                      //show popup
+                                        HIDE_CUSTOM_LOADER()
+
+                                        successBlock(nil, true,localURL.absoluteString)
+
+
+                                    }
+                                    else{
+                                        HIDE_CUSTOM_LOADER()
+                                        successBlock(nil, false,localURL.absoluteString)
+                                        
+
+                                    }
+                                    HIDE_CUSTOM_LOADER()
+
+                                }
+                                
+                                
+                                })
+                            }
+                            
+
+                        } else {
+                            HIDE_CUSTOM_LOADER()
+                            successBlock(nil, false,"")
+                        }
+//                        debugPrint(response)
+//                        debugPrint(response.destinationURL)
+//                        debugPrint(response.error)
+                    }
+
+
+                    
+                }else{
+                    HIDE_CUSTOM_LOADER()
+                    
+                    let alertController = UIAlertController(title: Constant.APP_NAME, message: "Internet Connection seems to be offline", preferredStyle: .alert)
+                    
+                    let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alertController.addAction(defaultAction)
+                    
+                    let keyWindow: UIWindow? = UIApplication.shared.keyWindow
+                    
+                    // let appWindow: UIWindow = UIWindow(frame: UIScreen.main.bounds)
+                    // keyWindow.makeKeyAndVisible()
+                    keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+                    // (alertController, animated: true, completion: nil)
+                }
+            }
     
         
     func callAPIWithVideoChunk(WithType apiType:APITYPE,VideoChunk:URL,thumbImage:UIImage,passThumb:Bool,WithParams params:[String:Any],Progress progressBlock:@escaping UploadProgressBlock, Success successBlock:@escaping APIResponseBlock,Failure failureBlock:@escaping APIResponseBlock) -> Void

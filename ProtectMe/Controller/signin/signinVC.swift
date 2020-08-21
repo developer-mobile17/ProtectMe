@@ -53,8 +53,8 @@ class signinVC: UIViewController {
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = longitude
-               self.longitude = latitude
+               self.latitude = latitude
+               self.longitude = longitude
                print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
                //print(verboseMessage)
             locationManager.autoUpdate = false
@@ -83,7 +83,7 @@ class signinVC: UIViewController {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.PasswordMin6DigitMissing)
             return
         }
-        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"IOS","vPushToken":appDelegate.FCMdeviceToken,"longitude":self.latitude.description,"latitude":self.longitude.description])
+        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"IOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":self.latitude.description,"longitude":self.longitude.description])
     }
     @IBAction func btnForgotClick(_ sender: Any) {
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "forgotVC") as! forgotVC

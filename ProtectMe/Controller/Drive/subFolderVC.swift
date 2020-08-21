@@ -11,17 +11,25 @@
 import UIKit
 import SDWebImage
 import AVFoundation
+import AVKit
+import MapKit
+import Alamofire
+import Photos
 
 
 
-class subFolderVC: baseVC {
+class subFolderVC: baseVC ,MKMapViewDelegate{
     var FileId:String = ""
     var FolderId:String = ""
     @IBOutlet weak var navigationbar: UINavigationBar!
+    @IBOutlet weak var ViewDownloadCompleted:UIControl!
 
     var buttonName:String = ""
     var data = archivedListModel()
     var navigationTitle:String = ""
+    var selectedView = "grid"
+    var actionCompleted:Bool = false
+
   
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
@@ -29,13 +37,19 @@ class subFolderVC: baseVC {
     @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var btnCancle:UIButton!
     @IBOutlet weak var btnAction:UIButton!
-
+    @IBOutlet weak var ViewMoveSucess:UIControl!
+    @IBOutlet weak var ViewCopySucess:UIControl!
     @IBOutlet weak var ViewVideoDetails:UIControl!
     @IBOutlet weak var ViewOptionMenu:UIControl!
     @IBOutlet weak var btnRecent:UIButton!
     @IBOutlet weak var btnDateAdded:UIButton!
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
+    
+    @IBOutlet weak var Viewmap:UIView!
+
+    @IBOutlet weak var mapView: MKMapView!
+
     @IBOutlet weak var lblMonthandYear:UILabel!{
         didSet{
             lblMonthandYear.text = ""
@@ -89,14 +103,45 @@ class subFolderVC: baseVC {
 //        arrOption = [btnRecent,btnFolders,btnShared]
         self.collVideogrid.delegate = self
         self.collVideogrid.dataSource = self
-   //     mapView.delegate = self
+       mapView.delegate = self
 
         self.tblVideoList.register(UINib(nibName: "VideoDetailsTableViewCell", bundle: nil), forCellReuseIdentifier: "VideoDetailsTableViewCell")
-            //self.Viewmap.isHidden = true
+        self.Viewmap.isHidden = true
         // Do any additional setup after loading the view.
     }
     
    // MARK: - Button Click Action
+    @IBAction func btnUserCurruntLocation(_ sender: UIButton) {
+              mapView.userTrackingMode = .follow
+          }
+    func setPinUsingMKPlacemark(location: CLLocationCoordinate2D) {
+           //let pin = MKPlacemark(coordinate: location)
+           let annotation = MKPointAnnotation()
+           annotation.coordinate = location
+           annotation.title = self.arrFileList[selectedIndex!.row].city! + ", " + self.arrFileList[selectedIndex!.row].country!
+           annotation.subtitle = self.arrFileList[selectedIndex!.row].city! + ", " + self.arrFileList[selectedIndex!.row].country!
+          let coordinateRegion = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 800, longitudinalMeters: 800)
+           mapView.removeAnnotations(mapView.annotations)
+           mapView.setRegion(coordinateRegion, animated: true)
+           mapView.addAnnotation(annotation)
+       }
+    @IBAction func btnmapHideClick(_ sender: UIButton) {
+        self.Viewmap.isHidden = true
+    }
+    @IBAction func btnMapShow(_ sender: UIButton) {
+          self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+          DispatchQueue.main.async {
+              
+              let lat = Double((self.arrFileList[sender.tag].latitude?.toDouble())!)
+              let lon = Double((self.arrFileList[sender.tag].longitude?.toDouble())!)
+              let coordinates = CLLocationCoordinate2D(latitude:lat
+                  , longitude:lon)
+              //        var locationManager = LocationManager.sharedInstance
+              self.setPinUsingMKPlacemark(location: coordinates)
+              self.Viewmap.isHidden = false
+
+          }
+      }
     @IBAction func btnPlusFolderAction(_ sender: Any){
         self.ViewCreateFolder.frame = UIScreen.main.bounds
 
@@ -104,7 +149,7 @@ class subFolderVC: baseVC {
                completion: {(value: Bool) in
                             self.ViewCreateFolder.alpha = 1.0
                              self.navigationController?.view.addSubview(self.ViewCreateFolder)
-                           })
+        })
 
 //        self.ViewCreateFolder.frame = UIScreen.main.bounds
 //     //   self.ViewCreateFolder.animShow()
@@ -120,11 +165,16 @@ class subFolderVC: baseVC {
         //self.navigationController?.popToRootViewController(animated: true)
     }
      @IBAction func btnAction(_ sender: Any){
+        if(self.actionCompleted == true){
+            self.btnCancleAction(self.btnAction)
+        }
+        else{
         if(self.buttonName == "Copy"){
             self.WSCopyFileHere(Parameter: ["file_id":self.FileId,"folder_id":self.FolderId])
         }
         else{
             self.WSMoveFileHere(Parameter: ["file_id":self.FileId,"folder_id":self.FolderId])
+        }
         }
      }
     @IBAction func btnBackAction(_ sender: Any)
@@ -138,61 +188,182 @@ class subFolderVC: baseVC {
         self.ViewVideoDetails.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewVideoDetails)
     }
-    func setDetails(data:FolderListMOdel) -> Void {
-        self.lblDetailName.text = ""
-        self.lblDetailName1.text = ""
-        self.lblDetailName2.text = ""
+    func setDetails(data:archivedListModel) -> Void {
+        self.lblDetailName.text = data.image_name?.uppercased()
+        self.lblDetailName1.text = data.image_name?.uppercased()
+        self.lblDetailName2.text = data.image_name?.uppercased()
 
-        self.lblDetailSize.text = ""
-        self.lblDetailType.text = ""
+        self.lblDetailSize.text = data.file_size?.uppercased()
+        if(data.type?.uppercased() == "VIDEO"){
+            self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
+        }
+        else{
+            self.lblDetailType.text = (data.type?.uppercased())! + " (JPG)"
+
+        }
         if(data.user_id == USER.shared.id){
             self.lblDetailSharedBy.text = "YOU"
         }
         else{
-            self.lblDetailSharedBy.text = "-"
+            self.lblDetailSharedBy.text = data.uploaded_by
         }
         self.lblDetailStorageUsed.text = "-"
         let date = data.created?.uppercased()
-        let city = ""
-        let country = ""
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+        let city = data.city?.uppercased()
+        let country = data.country?.uppercased()
+        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
 
         print()
         
     }
+//    func setDetails(data:FolderListMOdel) -> Void {
+//        self.lblDetailName.text = ""
+//        self.lblDetailName1.text = ""
+//        self.lblDetailName2.text = ""
+//
+//        self.lblDetailSize.text = ""
+//        self.lblDetailType.text = ""
+//        if(data.user_id == USER.shared.id){
+//            self.lblDetailSharedBy.text = "YOU"
+//        }
+//        else{
+//            self.lblDetailSharedBy.text = "-"
+//        }
+//        self.lblDetailStorageUsed.text = "-"
+//        let date = data.created?.uppercased()
+//        let city = ""
+//        let country = ""
+//        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+//
+//        print()
+//
+//    }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-        self.lblDetailName.text = self.arrFolderList[selectedIndex!.row].folder_name
- //       self.setDetails(data:self.arrarchivedList[sender.tag])
+        
+        self.lblDetailName.text = self.arrFileList[selectedIndex!.row].image_name
+        self.setDetails(data:self.arrFileList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
+    @IBAction func btnhideDownload(_ sender: Any){
+         self.ViewVideoDetails.removeFromSuperview()
+        UIView.animate(withDuration: 0.2, animations: {self.ViewDownloadCompleted.alpha = 0.0},
+        completion: {(value: Bool) in
+            self.ViewDownloadCompleted.alpha = 1.0
+            self.ViewDownloadCompleted.removeFromSuperview()
+        })
+
+    }
+
     @IBAction func btnhideDetails(_ sender: Any)
     {
+        self.ViewVideoDetails.removeFromSuperview()
+
         UIView.animate(withDuration: 0.2, animations: {self.ViewCreateFolder.alpha = 0.0},
         completion: {(value: Bool) in
             self.ViewCreateFolder.alpha = 1.0
-                      self.ViewCreateFolder.removeFromSuperview()
-                    })
+            self.ViewCreateFolder.removeFromSuperview()
+        })
 
-       // self.ViewVideoDetails.removeFromSuperview()
 
 //        self.ViewVideoDetails.removeFromSuperview()
     }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
-        //self.ViewOptionMenu.removeFromSuperview()
+        self.ViewMoveSucess.removeFromSuperview()
+        self.ViewCopySucess.removeFromSuperview()
+        self.ViewOptionMenu.removeFromSuperview()
+        
     }
+    @IBAction func btnDownloadVideo(_ sender: UIButton) {
+            if(self.arrFileList[self.selectedIndex!.row].type?.lowercased() == "image"){
+                if let urlString = self.arrFileList[self.selectedIndex!.row].image_path{
+
+                    ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"image"], Progress: { (progress) in
+                        print(progress)
+                    }, Success: { (DataResponce, Status, Message) in
+                        print("downloaded")
+                        print("URL", Message)
+                        DispatchQueue.main.async(execute: {
+
+                        self.btnHandlerBlackBg(self)
+                        self.ViewDownloadCompleted.frame = UIScreen.main.bounds
+                        self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
+                        })
+                    }) { (DataResponce, Status, Message) in
+                        print("faild download")
+                    }
+                    
+                    
+            }
+                    
+            
+        }
+        else{
+                if let urlString = self.arrFileList[self.selectedIndex!.row].image_path{
+
+                ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"video"], Progress: { (progress) in
+                    print(progress)
+                }, Success: { (DataResponce, Status, Message) in
+                    print("downloaded")
+                    print("URL", Message)
+                    DispatchQueue.main.async(execute: {
+
+                    self.btnHandlerBlackBg(self)
+                    self.ViewDownloadCompleted.frame = UIScreen.main.bounds
+                    self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
+                                      
+                    })
+                }) { (DataResponce, Status, Message) in
+                    print("faild download")
+                }
+                }
+    //            let url = self.arrarchivedList[self.selectedIndex!.row].image_path
+    //            self.downloadVideoLinkAndCreateAsset(url!)
+
+            }
+        }
     @IBAction func btnChangeRename(_ sender: Any)
     {
+        
         let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "renameArchiveVC") as!  renameArchiveVC
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
-        OBJchangepasswordVC.fileID = self.arrFolderList[selectedIndex!.row].id!
-        OBJchangepasswordVC.txtValue = self.arrFolderList[selectedIndex!.row].folder_name!
+        OBJchangepasswordVC.selectedView = self.selectedView
+        OBJchangepasswordVC.fileID = self.arrFileList[selectedIndex!.row].id!
+        //OBJchangepasswordVC.txtValue = self.arrFileList[selectedIndex!.row].image_name!
+        
+        
+        let firstPart = self.arrFileList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
+             print(firstPart) // print Hello
+    OBJchangepasswordVC.txtValue = firstPart ??  self.arrFileList[selectedIndex!.row].image_name!
+          
         
         self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
     }
+    @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
+        self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrFileList[self.selectedIndex!.row].id!])
+        }
+    
+    func fileAction(action:String){
+        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
+        vc.buttonName = action
+        vc.FileId = self.arrFileList[self.selectedIndex!.row].id!
+        vc.data = self.arrFileList[self.selectedIndex!.row]
+        vc.buttonName = action
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    @IBAction func btnMoveAction(_ sender: UIButton) {
+        //self.selectedIndex?.row = sender.tag
+        self.fileAction(action: "Move")
+    }
+
+    @IBAction func btnCopyAction(_ sender: UIButton) {
+        //self.selectedIndex?.row = sender.tag
+        self.fileAction(action: "Copy")
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         self.btnHandlerBlackBg(self)
     }
@@ -226,6 +397,8 @@ class subFolderVC: baseVC {
          }
     @IBAction func btnChangeTableView(_ sender: UIButton) {
         if(sender == self.btnlist){
+            self.selectedView = "table"
+
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
             UIView.animate(withDuration: 0.1,
@@ -242,6 +415,8 @@ class subFolderVC: baseVC {
             })
         }
         else{
+            self.selectedView = "grid"
+
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
             UIView.animate(withDuration: 0.1,
@@ -321,6 +496,11 @@ class subFolderVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    self.actionCompleted = true
+                    self.btnHandlerBlackBg(self)
+                    self.ViewMoveSucess.frame = UIScreen.main.bounds
+                    self.navigationController?.view.addSubview(self.ViewMoveSucess)
+                                  
                     self.WSFolderList(Parameter: ["folder_id":self.FolderId])
                 }
                     else if(StatusCode == 307)
@@ -339,12 +519,15 @@ class subFolderVC: baseVC {
                     }
                     else if(StatusCode == 412)
                     {
+                        self.actionCompleted = false
+                        
                         if let errorMessage:String = dataResponce["message"] as? String{
                                 showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                         }
                     }
                 else if(StatusCode == 401)
                 {
+                    self.actionCompleted = false
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                             
@@ -375,6 +558,11 @@ class subFolderVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    self.actionCompleted = true
+                    self.btnHandlerBlackBg(self)
+                    self.ViewCopySucess.frame = UIScreen.main.bounds
+                    self.navigationController?.view.addSubview(self.ViewCopySucess)
+
                     self.WSFolderList(Parameter: ["folder_id":self.FolderId])
                 }
                     else if(StatusCode == 307)
@@ -393,12 +581,14 @@ class subFolderVC: baseVC {
                     }
                     else if(StatusCode == 412)
                     {
+                        self.actionCompleted = false
                         if let errorMessage:String = dataResponce["message"] as? String{
                                 showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                         }
                     }
                 else if(StatusCode == 401)
                 {
+                    self.actionCompleted = false
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                             
@@ -487,6 +677,8 @@ class subFolderVC: baseVC {
                 if (StatusCode == 200){
                     self.btnHandlerBlackBg(self)
                     self.btnhideDetails(self)
+                    self.WSFolderList(Parameter: ["folder_id":self.FolderId])
+
                  //   self.btnSelectOptions(self.btnRecent)
 
                     if let outcome = dataResponce["data"] as? NSDictionary{
@@ -559,8 +751,8 @@ class subFolderVC: baseVC {
                                 objarchivedList.id           = FileArr[a]["id"] as? String ?? ""
                                 objarchivedList.image_name   = FileArr[a]["image_name"] as? String ?? ""
                                 objarchivedList.image_path   = FileArr[a]["image_path"] as? String ?? ""
-                                objarchivedList.longitude    = FileArr[a]["latitude"] as? String ?? ""
-                                objarchivedList.latitude     = FileArr[a]["longitude"] as? String ?? ""
+                                objarchivedList.longitude    = FileArr[a]["longitude"] as? String ?? ""
+                                objarchivedList.latitude     = FileArr[a]["latitude"] as? String ?? ""
                                 objarchivedList.state        = FileArr[a]["state"] as? String ?? ""
                                 objarchivedList.status       = FileArr[a]["status"] as? String ?? ""
                                 objarchivedList.type         = FileArr[a]["type"] as? String ?? ""
@@ -658,6 +850,15 @@ class subFolderVC: baseVC {
 
 }
 extension subFolderVC:sendbacktoName{
+    func getselectedvire(view: String) {
+        if(view == "grid"){
+            self.btnChangeTableView(self.btnGreed)
+        }
+        else{
+            self.btnChangeTableView(self.btnlist)
+        }
+    }
+    
     func changename(name: String, index: IndexPath) {
         
     }
@@ -675,9 +876,9 @@ extension subFolderVC:UICollectionViewDelegate,UITableViewDataSource{
         cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
         cell.selectionStyle = .none
         cell.btnMap.isHidden = true
-       // cell.btnOption.tag = indexPath.row
-        //cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
-     //   cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
+        cell.btnOption.tag = indexPath.row
+        cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+        cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
         cell.lblTitle.text = self.arrFolderList[indexPath.row].folder_name
         cell.lblName.text = self.arrFolderList[indexPath.row].name
         
@@ -720,7 +921,27 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
           vc.buttonName = self.buttonName
           self.navigationController?.pushViewController(vc, animated: true)
       }
-    
+    @IBAction func btnplayvideoClieck(_ sender: UIButton) {
+       
+
+        if(self.arrFileList[sender.tag].type == "image"){
+              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+                  vc.imgforview = self.arrFileList[sender.tag].image_path!
+                  
+                  self.present(vc, animated: true, completion: nil)
+        }
+        else{
+        let videoURL = URL(string: self.arrFileList[sender.tag].image_path!)
+               let player = AVPlayer(url: videoURL!)
+               let vc = AVPlayerViewController()
+               vc.player = player
+
+               present(vc, animated: true) {
+                   vc.player?.play()
+               }
+        }
+        
+    }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("section",indexPath.section)
         if(indexPath.section == 0){
@@ -735,10 +956,10 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
                        cell.videoThumb.image = nil
                        cell.btnPlayvideo.tag = indexPath.row
                        cell.btnMap.tag = indexPath.row
-                   //    cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
+                       cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
                        cell.btnOption.tag = indexPath.row
-                      // cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
-                     //  cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
+                       cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                       cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
                        cell.lblTitle.text = self.arrFileList[indexPath.row].image_name
                        cell.lblName.text = self.arrFileList[indexPath.row].name
                        if(arrFileList[indexPath.row].type == "image"){
