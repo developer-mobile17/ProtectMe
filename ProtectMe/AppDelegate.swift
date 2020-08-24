@@ -39,7 +39,7 @@ var loggedInUserData = USER()
                          application,
                          didFinishLaunchingWithOptions: launchOptions
                      )
-              self.registerForRemoteNotification()
+        self.registerForRemoteNotification()
         if(USER.shared.id != ""){
             self.setHome()
         }

@@ -9,10 +9,6 @@
 import UIKit
 
 class USER: NSObject  ,NSCoding {
-    
-    
-    
-    
         var email                               = ""
         var id                                  = ""
         var location_service                    = ""
@@ -33,8 +29,9 @@ class USER: NSObject  ,NSCoding {
         var latitude                            = ""
         var longitude                           = ""
         var voice_action                        = ""
-    var linked_account_counters               = ""
+        var linked_account_counters               = ""
         var isLogout:Bool                       = false
+        var isDeleteActionShow:Bool             = true
     
     
     
@@ -76,6 +73,11 @@ class USER: NSObject  ,NSCoding {
    
     required init?(coder aDecoder: NSCoder)    {
         super.init()
+        
+        if let value = aDecoder.decodeObject(forKey: "isDeleteActionShow") as? Bool{
+            self.isDeleteActionShow = value
+        }
+
         if let value = aDecoder.decodeObject(forKey: "longitude") as? String{
             self.longitude = value
         }
@@ -151,6 +153,7 @@ class USER: NSObject  ,NSCoding {
     }
     func encode(with aCoder: NSCoder)    {
         aCoder.encode(self.email_notification, forKey: "email_notification")
+        aCoder.encode(self.isDeleteActionShow, forKey: "isDeleteActionShow")
 
         aCoder.encode(self.city, forKey: "city")
         aCoder.encode(self.state, forKey: "state")
@@ -201,7 +204,9 @@ class USER: NSObject  ,NSCoding {
         self.type                                              = user.type
         self.vAuthToken                                        = user.vAuthToken
         self.voice_action                                      = user.voice_action
-        self.linked_account_counters                                 = user.linked_account_counters
+        self.linked_account_counters                           = user.linked_account_counters
+        self.isDeleteActionShow                                = user.isDeleteActionShow
+        
         
        
      
@@ -238,6 +243,8 @@ class USER: NSObject  ,NSCoding {
         self.voice_action                               = ""
         self.linked_account_counters                          = ""
         self.isLogout           = false
+        self.isDeleteActionShow           = true
+        
         USER.shared.save()
     }
     

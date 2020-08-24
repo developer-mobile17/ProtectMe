@@ -62,6 +62,30 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         settings.previewPhotoFormat = previewFormat
         cameraOutput.capturePhoto(with: settings, delegate: self)
     }
+    func setUserLocation(){
+        let locationManager = LocationManager.sharedInstance
+        locationManager.showVerboseMessage = false
+        locationManager.autoUpdate = true
+        locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+        if let city = dict?["locality"] as? String{
+            USER.shared.city = city
+        }
+        if let country = dict?["country"] as? String{
+            USER.shared.country = country
+        }
+        USER.shared.save()
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        DispatchQueue.main.async {
+            self.setUserLocation()
+        }
+        if USER.shared.id == ""{
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
+
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loader.stopAnimating()

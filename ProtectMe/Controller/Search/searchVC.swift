@@ -854,6 +854,10 @@ class searchVC: baseVC ,UITextFieldDelegate{
                             objarchivedList.name      = outcome[a]["name"] as? String ?? ""
                             
                             objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
+                            if(self.arrarchivedList.count > 0){
+                                self.collVideogrid.setEmptyMessage("No Data Found!")
+                                self.tblVideoList.setEmptyMessage("No Data Found!")
+                            }
 
                             self.arrarchivedList.append(objarchivedList)
                         }

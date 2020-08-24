@@ -31,8 +31,14 @@ class archiveVC: baseVC {
     @IBOutlet weak var Viewmap:UIView!
     @IBOutlet weak var ViewVideoDetails:UIControl!
     @IBOutlet weak var ViewOptionMenu:UIControl!
+    @IBOutlet weak var ViewdeleteConfirmation:UIControl!
+    @IBOutlet weak var btncheckboxAgree:UIButton!
+    @IBOutlet weak var btnOkayAgree:UIButton!
+
     @IBOutlet weak var btnRecent:UIButton!
-    @IBOutlet weak var btnDateAdded:UIButton!
+    @IBOutlet weak var btnFilter:UIButton!
+    @IBOutlet weak var btnSemiFilter:UIButton!
+
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
     @IBOutlet weak var lblMonthandYear:UILabel!{
@@ -60,14 +66,30 @@ class archiveVC: baseVC {
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
     var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
-
+    var semiFilter = "0"
     var sectionIsExpanded: Bool = true {
         didSet {
             UIView.animate(withDuration: 0.25) {
                 if self.sectionIsExpanded {
-                    self.btnDateAdded.imageView?.transform = CGAffineTransform.identity
+                    self.btnSemiFilter.imageView?.transform = CGAffineTransform.identity
+                    self.semiFilter = "0"
                 } else {
-                    self.btnDateAdded.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+                    self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+                    self.semiFilter = "1"
+                }
+            }
+        }
+    }
+    var checkBoxAction: Bool = false {
+        didSet {
+            UIView.animate(withDuration: 0.25) {
+                if self.checkBoxAction {
+                    self.btncheckboxAgree.setImage(#imageLiteral(resourceName: "ic_checkbox"), for: .normal)
+                    
+                    
+                } else {
+                    self.btncheckboxAgree.setImage(#imageLiteral(resourceName: "ic_checkboxblank"), for: .normal)
+                    
                 }
             }
         }
@@ -116,7 +138,13 @@ class archiveVC: baseVC {
         if(self.isFolderSelected == true){
         }
         else{
-            self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
+            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
+            , andMessage: "Are you sure you want to delete?", buttons: ["Cancle","Yes"]) { (index) in
+                if(index == 1){
+                    self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
+                }
+            }
+            
         }
     }
         @IBAction func plusButtonAction(_ sender:UIButton){
@@ -253,8 +281,6 @@ class archiveVC: baseVC {
         }
         self.lblDetailStorageUsed.text = "-"
         let date = data.created?.uppercased()
-        let city = ""
-        let country = ""
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
         print()
         
@@ -521,6 +547,10 @@ class archiveVC: baseVC {
               vc.buttonName = ""
                     self.navigationController?.pushViewController(vc, animated: true)
     }
+    func showAlertFolrDeleted(){
+        self.ViewdeleteConfirmation.frame = UIScreen.main.bounds
+        self.navigationController?.view.addSubview(self.ViewdeleteConfirmation)
+    }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
         self.setDetails(data:self.arrarchivedList[sender.tag])
@@ -548,7 +578,6 @@ class archiveVC: baseVC {
             OBJchangepasswordVC.selectedView = self.selectedView
         OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
         let firstPart = self.arrarchivedList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
-        print(firstPart) // print Hello
         OBJchangepasswordVC.txtValue = firstPart ??  self.arrarchivedList[selectedIndex!.row].image_name!
         
         self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
@@ -605,42 +634,66 @@ class archiveVC: baseVC {
                        })
         }
     }
-    @IBAction func btnbtnAddedClick(_ sender: UIButton) {
+    @IBAction func btnCheckBoxClickAction(_ sender: UIButton) {
+         checkBoxAction = !checkBoxAction
+    }
+    @IBAction func btnOkayAgreeClickAction(_ sender: UIButton) {
+        if(checkBoxAction == true){
+            USER.shared.isDeleteActionShow = false
+            USER.shared.save()
+        }
+        else{
+            USER.shared.isDeleteActionShow = true
+            USER.shared.save()
+        }
+        self.ViewdeleteConfirmation.removeFromSuperview()
+    }
+    @IBAction func btnSemiFilterAction(_ sender: UIButton) {
         sectionIsExpanded = !sectionIsExpanded
+        if(sectionIsExpanded == true){
+            self.semiFilter  = "0"
+        }
+        else{
+            self.semiFilter  = "1"
+        }
+         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter])
+    }
+    @IBAction func btnFilterAction(_ sender: UIButton) {
+//        sectionIsExpanded = !sectionIsExpanded
 //        if(sectionIsExpanded == true){
-//            self.selectedFilter  = "0"
+//            self.semiFilter  = "0"
 //        }
 //        else{
-//            self.selectedFilter  = "1"
+//            self.semiFilter  = "1"
 //        }
-        showActionSheetWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Choose Option", buttons: ["Date Added","Date Modified","A to Z","Z to A"], canCancel: false) { (index) in
+        showActionSheetWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Choose Option", buttons: ["Date Added","Date Modified","A to Z"], canCancel: false) { (index) in
 
             switch (index){
             
             case 0:
                 self.selectedFilter = "0"
-                self.sectionIsExpanded = !self.sectionIsExpanded
-                self.btnDateAdded.setTitle("Date Added ", for: .normal)
+                //self.sectionIsExpanded = !self.sectionIsExpanded
+                self.btnFilter.setTitle("Date Added ", for: .normal)
                 //break
             case 1:
                 self.selectedFilter = "1"
-                self.sectionIsExpanded = !self.sectionIsExpanded
-                self.btnDateAdded.setTitle("Date Modified ", for: .normal)
+                //self.sectionIsExpanded = !self.sectionIsExpanded
+                self.btnFilter.setTitle("Date Modified ", for: .normal)
             
             case 2:
                 self.selectedFilter = "2"
-                self.sectionIsExpanded = !self.sectionIsExpanded
-                self.btnDateAdded.setTitle("A to Z ", for: .normal)
+                //self.sectionIsExpanded = !self.sectionIsExpanded
+                self.btnFilter.setTitle("A to Z ", for: .normal)
                 
-            case 3:
-                self.selectedFilter = "3"
-                self.sectionIsExpanded = !self.sectionIsExpanded
-                self.btnDateAdded.setTitle("Z to A ", for: .normal)
+//            case 3:
+//                self.selectedFilter = "3"
+//                //self.sectionIsExpanded = !self.sectionIsExpanded
+//                self.btnFilter.setTitle("Z to A ", for: .normal)
 
             default:
                 break
             }
-            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter])
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter])
         }
         
 
@@ -675,7 +728,7 @@ class archiveVC: baseVC {
 //            self.WSFolderList(Parameter: [:])
 //        }
 //        else{
-            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter])
         //}
 
     }
@@ -811,6 +864,9 @@ class archiveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if(USER.shared.isDeleteActionShow == true){
+                        self.showAlertFolrDeleted()
+                    }
                     self.btnHandlerBlackBg(self)
                     self.btnhideDetails(self)
                     self.btnSelectOptions(self.btnRecent)
@@ -991,15 +1047,27 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        if section == 0 && appDelegate.ArrLocalVideoUploading.count == 0 {
+               // No insets for header in section 0
+            return UIEdgeInsets.zero
+        } else {
+                return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        }
     }
 func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat = 50
         let collectionCellSize = collectionView.frame.size.width - padding
+    if(self.isFolderSelected == true){
+        return CGSize(width: collectionCellSize/2, height: collectionCellSize/3)
+    }
+    else{
         return CGSize(width: collectionCellSize/2, height: collectionCellSize/2)
+    }
+        
  }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+            return 2
+       
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             if(section == 0){
@@ -1075,7 +1143,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             cell.btncellTap.tag = indexPath.row
             cell.btncellTap.addTarget(self, action: #selector(self.btncelltapClick(_:)),for: .touchUpInside)
                   
-            cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+          //  cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             return cell
         }
         else{
@@ -1087,7 +1155,13 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             cell.btnOption.tag = indexPath.row
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
-            cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
+            //cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
+            
+            let firstPart = self.arrarchivedList[indexPath.row].image_name!.strstr(needle: ".", beforeNeedle: true)
+                cell.lblTitle.text = firstPart ??  self.arrarchivedList[indexPath.row].image_name!
+              
+            
+            
             cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
             if(arrarchivedList[indexPath.row].type == "image"){
                 cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
@@ -1174,7 +1248,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
         else{
             if(self.isFolderSelected == true){
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
-                //cell.videoThumb.contentMode = .scaleAspectFit
+                cell.videoThumb.contentMode = .scaleAspectFit
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
                 cell.btnMap.isHidden = true
@@ -1195,7 +1269,10 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.btnOption.tag = indexPath.row
                 cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
                 cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
-                cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
+                //cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
+                let firstPart = self.arrarchivedList[indexPath.row].image_name!.strstr(needle: ".", beforeNeedle: true)
+                cell.lblTitle.text = firstPart ??  self.arrarchivedList[indexPath.row].image_name!
+                          
                 cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
                 if(arrarchivedList[indexPath.row].type == "image"){
                     cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray

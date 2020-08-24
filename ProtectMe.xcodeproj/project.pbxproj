@@ -92,6 +92,7 @@
 		04E7B76A248FAF7700DBA769 /* VideoDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E7B768248FAF7700DBA769 /* VideoDetailsTableViewCell.swift */; };
 		04E7B76B248FAF7700DBA769 /* VideoDetailsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */; };
 		04E7B76D248FB18F00DBA769 /* baseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E7B76C248FB18F00DBA769 /* baseVC.swift */; };
+		04E95C9924F3C37A00224215 /* deletedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E95C9824F3C37A00224215 /* deletedVC.swift */; };
 		04EAD24E24A4C8E50084EAB5 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */; };
 		04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FACBFD24EBC48B004CE41F /* localVideoModel.swift */; };
 		4A2E624717ABC8B994AA8705 /* Pods_ProtectMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */; };
@@ -187,6 +188,7 @@
 		04E7B768248FAF7700DBA769 /* VideoDetailsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VideoDetailsTableViewCell.xib; sourceTree = "<group>"; };
 		04E7B76C248FB18F00DBA769 /* baseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseVC.swift; sourceTree = "<group>"; };
+		04E95C9824F3C37A00224215 /* deletedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = deletedVC.swift; sourceTree = "<group>"; };
 		04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		04FACBFD24EBC48B004CE41F /* localVideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localVideoModel.swift; sourceTree = "<group>"; };
 		6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProtectMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -326,6 +328,7 @@
 		0476BA79248F60E8005977D4 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				04E95C9724F3C36300224215 /* Deleted */,
 				045CDC3024EFB44700C179A5 /* Search */,
 				042B96BB24ED2B5D00957A79 /* Drive */,
 				044144BF24C32B6600FD012A /* Folders */,
@@ -576,6 +579,14 @@
 			path = "DetailsView Cell";
 			sourceTree = "<group>";
 		};
+		04E95C9724F3C36300224215 /* Deleted */ = {
+			isa = PBXGroup;
+			children = (
+				04E95C9824F3C37A00224215 /* deletedVC.swift */,
+			);
+			path = Deleted;
+			sourceTree = "<group>";
+		};
 		5320EA9420A39EFF47A15B34 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -760,6 +771,7 @@
 				04E18B35248F8CB5003AF836 /* UITableViewVibrantCell.swift in Sources */,
 				0476BABF248F60E8005977D4 /* Reachability.swift in Sources */,
 				0410246B24A729ED00F3A71F /* Keychain.swift in Sources */,
+				04E95C9924F3C37A00224215 /* deletedVC.swift in Sources */,
 				04E7B76A248FAF7700DBA769 /* VideoDetailsTableViewCell.swift in Sources */,
 				04A875A72493C8EA00B34BF3 /* upgradeAccountVC.swift in Sources */,
 				04A875AD2493DBC600B34BF3 /* SelectcharityVC.swift in Sources */,

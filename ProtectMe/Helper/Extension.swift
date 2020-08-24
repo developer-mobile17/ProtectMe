@@ -670,7 +670,7 @@ extension UICollectionView {
         messageLabel.text = message
         messageLabel.textColor = UIColor.darkGray
         messageLabel.numberOfLines = 0
-        messageLabel.textAlignment = .left
+        messageLabel.textAlignment = .center
         messageLabel.font = UIFont.appFont_SourceSansProMedium(Size: 12)
         messageLabel.sizeToFit()
 

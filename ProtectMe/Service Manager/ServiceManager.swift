@@ -55,7 +55,10 @@ enum APITYPE {
     case upload_file
     case upload_chunk
     case delete_file
+    case recover_file
     case rename_file
+    case clear_all_deleted_files
+    case deleted_files
     case upload_thumb
     case folderList
     case create_folder
@@ -116,6 +119,8 @@ enum APITYPE {
             return "upload_file"
         case .delete_file:
             return "delete_file"
+        case .clear_all_deleted_files:
+            return "clear_all_deleted_files"
         case .rename_file:
             return "rename_file"
         case .upload_thumb:
@@ -132,6 +137,10 @@ enum APITYPE {
             return "copy"
         case .move:
             return "move"
+        case .deleted_files:
+            return "deleted_files"
+        case .recover_file:
+            return "recover_file"
         }
     }
 }

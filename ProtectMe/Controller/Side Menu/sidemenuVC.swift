@@ -23,40 +23,24 @@ class sidemenuVC: UIViewController {
             //lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tblMenu.delegate = self
         tblMenu.dataSource = self
-        let locationManager = LocationManager.sharedInstance
-              locationManager.showVerboseMessage = false
-              locationManager.autoUpdate = true
-              print(USER.shared.latitude.toDouble()!)
-              print(USER.shared.longitude.toDouble()!)
-              
-
-//              locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-//                  if let city = dict?["locality"] as? String{
-//                      USER.shared.city = city
-//                  }
-//                  if let country = dict?["country"] as? String{
-//                      USER.shared.country = country
-//                  }
-//                  USER.shared.save()
-//                  self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-//              }
+    
 
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
-        lblName.text = USER.shared.name
+//        lblName.text = USER.shared.name
         lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-        if(USER.shared.city == ""){
-        lblStateCountry.text = "\(USER.shared.country)"
-        }
-        else{
-            lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-        }
+//        if(USER.shared.city == ""){
+//        lblStateCountry.text = "\(USER.shared.country)"
+//        }
+//        else{
+//            lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+//        }
         
 
     }
@@ -99,7 +83,7 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
             self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
         }
         else if(indexPath.row == 4){
-            let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "FoldersVC") as!  FoldersVC
+            let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "deletedVC") as!  deletedVC
                 self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
             }
         else if(indexPath.row == 1){
@@ -121,8 +105,8 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
     }
     func LogOut(){
       
-        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage:AlertMessage.logoutMessage, buttons: ["Yes","Cancel"]) { (i) in
-            if(i == 0){
+        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage:AlertMessage.logoutMessage, buttons: ["Cancel","Logout"]) { (i) in
+            if(i == 1){
                 self.WSLogout(Parameter: [:])
             }
                 
