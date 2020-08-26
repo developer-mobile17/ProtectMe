@@ -151,6 +151,14 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.btnHandlerBlackBg(self)
                     self.ViewEmailConfirmation.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewEmailConfirmation)
@@ -208,6 +216,14 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if(Parameter["action"] == "1"){
                         self.ViewAcceptRequest.frame = UIScreen.main.bounds
                         self.navigationController?.view.addSubview(self.ViewAcceptRequest)
@@ -264,6 +280,14 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let msg = DataResponce?["message"] as? String{
                         //showAlertWithTitleFromVC(vc: self, andMessage: msg)
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: msg, buttons: ["Dismiss"]) { (i) in
@@ -323,6 +347,14 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                          self.arrLinkedAccList.removeAll()
                         for a : Int in (0..<(outcome.count))

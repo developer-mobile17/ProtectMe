@@ -94,7 +94,6 @@ class LocationManager: NSObject,CLLocationManagerDelegate {
     
     
     fileprivate override init(){
-        
         super.init()
         
         if(!autoUpdate){

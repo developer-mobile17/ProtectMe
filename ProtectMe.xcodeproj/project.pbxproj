@@ -34,6 +34,9 @@
 		044B6DDD24E6E63500709A1A /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 044B6DDC24E6E63500709A1A /* Intents.intentdefinition */; };
 		04510A1F24B4BFF10046864A /* uploadProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04510A1E24B4BFF10046864A /* uploadProgress.swift */; };
 		045CDC3224EFB46100C179A5 /* searchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045CDC3124EFB46100C179A5 /* searchVC.swift */; };
+		045DD32524F4DF0A00A2171F /* multiselectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045DD32324F4DF0A00A2171F /* multiselectionTableViewCell.swift */; };
+		045DD32624F4DF0A00A2171F /* multiselectionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 045DD32424F4DF0A00A2171F /* multiselectionTableViewCell.xib */; };
+		045DD32824F4E06200A2171F /* multiSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045DD32724F4E06200A2171F /* multiSelectionVC.swift */; };
 		0476BAA5248F60E8005977D4 /* recordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0476BA7B248F60E8005977D4 /* recordVC.swift */; };
 		0476BAA6248F60E8005977D4 /* signupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0476BA7D248F60E8005977D4 /* signupVC.swift */; };
 		0476BAA7248F60E8005977D4 /* linkAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0476BA7E248F60E8005977D4 /* linkAccountVC.swift */; };
@@ -129,6 +132,9 @@
 		044B6DDC24E6E63500709A1A /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		04510A1E24B4BFF10046864A /* uploadProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadProgress.swift; sourceTree = "<group>"; };
 		045CDC3124EFB46100C179A5 /* searchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchVC.swift; sourceTree = "<group>"; };
+		045DD32324F4DF0A00A2171F /* multiselectionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = multiselectionTableViewCell.swift; path = "ProtectMe/Controller/Multi Selection/multiselectionTableViewCell.swift"; sourceTree = SOURCE_ROOT; };
+		045DD32424F4DF0A00A2171F /* multiselectionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = multiselectionTableViewCell.xib; path = "ProtectMe/Controller/Multi Selection/multiselectionTableViewCell.xib"; sourceTree = SOURCE_ROOT; };
+		045DD32724F4E06200A2171F /* multiSelectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = multiSelectionVC.swift; sourceTree = "<group>"; };
 		0476BA7B248F60E8005977D4 /* recordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = recordVC.swift; sourceTree = "<group>"; };
 		0476BA7D248F60E8005977D4 /* signupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = signupVC.swift; sourceTree = "<group>"; };
 		0476BA7E248F60E8005977D4 /* linkAccountVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = linkAccountVC.swift; sourceTree = "<group>"; };
@@ -325,9 +331,20 @@
 			path = Search;
 			sourceTree = "<group>";
 		};
+		045DD32224F4DEE100A2171F /* Multi Selection */ = {
+			isa = PBXGroup;
+			children = (
+				045DD32324F4DF0A00A2171F /* multiselectionTableViewCell.swift */,
+				045DD32424F4DF0A00A2171F /* multiselectionTableViewCell.xib */,
+				045DD32724F4E06200A2171F /* multiSelectionVC.swift */,
+			);
+			path = "Multi Selection";
+			sourceTree = "<group>";
+		};
 		0476BA79248F60E8005977D4 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				045DD32224F4DEE100A2171F /* Multi Selection */,
 				04E95C9724F3C36300224215 /* Deleted */,
 				045CDC3024EFB44700C179A5 /* Search */,
 				042B96BB24ED2B5D00957A79 /* Drive */,
@@ -682,6 +699,7 @@
 				04E18B1E248F6EE3003AF836 /* SourceSansPro-Bold.ttf in Resources */,
 				042B96BA24ED070500957A79 /* uploadTableViewCell.xib in Resources */,
 				04E18B1C248F6EE3003AF836 /* SourceSansPro-Italic.ttf in Resources */,
+				045DD32624F4DF0A00A2171F /* multiselectionTableViewCell.xib in Resources */,
 				04E7B76B248FAF7700DBA769 /* VideoDetailsTableViewCell.xib in Resources */,
 				04E18B1A248F6EE3003AF836 /* SourceSansPro-Semibold.ttf in Resources */,
 				043F96192490AEB10015C2D2 /* LinkedAccountTableViewCell.xib in Resources */,
@@ -773,6 +791,7 @@
 				0410246B24A729ED00F3A71F /* Keychain.swift in Sources */,
 				04E95C9924F3C37A00224215 /* deletedVC.swift in Sources */,
 				04E7B76A248FAF7700DBA769 /* VideoDetailsTableViewCell.swift in Sources */,
+				045DD32824F4E06200A2171F /* multiSelectionVC.swift in Sources */,
 				04A875A72493C8EA00B34BF3 /* upgradeAccountVC.swift in Sources */,
 				04A875AD2493DBC600B34BF3 /* SelectcharityVC.swift in Sources */,
 				0449B38B248F5B5300A911A9 /* RecorderViewController.swift in Sources */,
@@ -810,6 +829,7 @@
 				043127C824EC3D65004C5650 /* imgviewwerVC.swift in Sources */,
 				0476BABA248F60E8005977D4 /* StringExtension.swift in Sources */,
 				0476BAC1248F60E8005977D4 /* USER.swift in Sources */,
+				045DD32524F4DF0A00A2171F /* multiselectionTableViewCell.swift in Sources */,
 				0476BAA9248F60E8005977D4 /* signinVC.swift in Sources */,
 				043F961D2490C65C0015C2D2 /* settingVC.swift in Sources */,
 				0476BABD248F60E8005977D4 /* WebServiceKey.swift in Sources */,

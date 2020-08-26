@@ -66,15 +66,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         let locationManager = LocationManager.sharedInstance
         locationManager.showVerboseMessage = false
         locationManager.autoUpdate = true
-        locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-        if let city = dict?["locality"] as? String{
-            USER.shared.city = city
-        }
-        if let country = dict?["country"] as? String{
-            USER.shared.country = country
-        }
-        USER.shared.save()
-        }
+            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                  if let city = dict?["locality"] as? String{
+                      USER.shared.city = city
+                  }
+                  if let country = dict?["country"] as? String{
+                      USER.shared.country = country
+                  }
+                
+                  USER.shared.save()
+                  }
+
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -447,6 +450,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                             let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                             let StatusCode = DataResponce?["status"] as? Int
                             if (StatusCode == 200){
+                         
                                 if let Data = dataResponce["data"] as? NSDictionary{
                                 if let videoKey = Data["unique_id"] as? String{
                                     self.unique_id = videoKey

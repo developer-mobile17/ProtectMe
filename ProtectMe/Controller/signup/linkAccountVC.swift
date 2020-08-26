@@ -189,7 +189,14 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.ViewEmailPopup.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewEmailPopup)
 
@@ -246,7 +253,14 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.ViewEmailPopup.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewEmailPopup)
 
@@ -303,7 +317,14 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     let vc = storyBoards.Main.instantiateViewController(withIdentifier: "recordVC") as! recordVC
                      self.navigationController?.pushViewController(vc, animated: true)
 

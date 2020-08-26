@@ -23,6 +23,10 @@ var loggedInUserData = USER()
 @UIApplicationMain
     class AppDelegate: UIResponder, UIApplicationDelegate {
     var FCMdeviceToken:String = ""
+    var latitude:Double = 0.0
+    var longitude:Double = 0.0
+    let locationManager = LocationManager.sharedInstance
+
     var ArrLocalVideoUploading:[localVideoModel] = [localVideoModel]()
     var objLocalVid:localVideoModel = localVideoModel()
 
@@ -35,6 +39,7 @@ var loggedInUserData = USER()
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
+        self.getLocation()
         ApplicationDelegate.shared.application(
                          application,
                          didFinishLaunchingWithOptions: launchOptions
@@ -160,13 +165,26 @@ var loggedInUserData = USER()
 }
 
 extension AppDelegate {
-    
+
     //MARK: - Show/Hide Loading Indicator
     func SHOW_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.startLoader()
     }
     func HIDE_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.stopLoader()
+    }
+    func getLocation(){
+           locationManager.showVerboseMessage = false
+           locationManager.autoUpdate = true
+         //   locationManager.startUpdatingLocation()
+        DispatchQueue.main.async {
+            
+            self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+               self.latitude = latitude
+               self.longitude = longitude
+            self.locationManager.autoUpdate = false
+           }
+        }
     }
     
 }

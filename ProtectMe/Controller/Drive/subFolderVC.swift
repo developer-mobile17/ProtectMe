@@ -143,13 +143,15 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
           }
       }
     @IBAction func btnPlusFolderAction(_ sender: Any){
-        self.ViewCreateFolder.frame = UIScreen.main.bounds
-
-        UIView.animate(withDuration: 0.2, animations: {self.ViewCreateFolder.alpha = 0.0},
-               completion: {(value: Bool) in
-                            self.ViewCreateFolder.alpha = 1.0
-                             self.navigationController?.view.addSubview(self.ViewCreateFolder)
-        })
+        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "multiSelectionVC") as! multiSelectionVC
+        vc.FolderId = self.FolderId
+        self.navigationController?.pushViewController(vc, animated: true)
+//        self.ViewCreateFolder.frame = UIScreen.main.bounds
+//        UIView.animate(withDuration: 0.2, animations: {self.ViewCreateFolder.alpha = 0.0},
+//               completion: {(value: Bool) in
+//            self.ViewCreateFolder.alpha = 1.0
+//            self.navigationController?.view.addSubview(self.ViewCreateFolder)
+//        })
 
 //        self.ViewCreateFolder.frame = UIScreen.main.bounds
 //     //   self.ViewCreateFolder.animShow()
@@ -496,6 +498,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.actionCompleted = true
                     self.btnHandlerBlackBg(self)
                     self.ViewMoveSucess.frame = UIScreen.main.bounds
@@ -558,6 +568,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.actionCompleted = true
                     self.btnHandlerBlackBg(self)
                     self.ViewCopySucess.frame = UIScreen.main.bounds
@@ -619,6 +637,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.btnhideDetails(self)
                     self.WSFolderList(Parameter: ["folder_id":self.FolderId])
 
@@ -675,6 +701,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.btnHandlerBlackBg(self)
                     self.btnhideDetails(self)
                     self.WSFolderList(Parameter: ["folder_id":self.FolderId])
@@ -717,6 +751,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let outcome = dataResponce["data"] as? NSDictionary{
                         self.arrFolderList.removeAll()
                         self.arrFileList.removeAll()
@@ -910,7 +952,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         }
     }
     @IBAction func btnSelectFolder(_ sender:UIButton){
-          self.fileAction(Index: IndexPath(row: sender.tag, section: 0))
+          //self.fileAction(Index: IndexPath(row: sender.tag, section: 0))
       }
     func fileAction(Index:IndexPath){
           let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC

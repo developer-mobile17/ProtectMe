@@ -61,7 +61,7 @@ class signinVC: UIViewController {
            }
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.getLocation()
+       // self.getLocation()
         self.navigationController?.navigationBar.isHidden = true
     }
   
@@ -83,7 +83,7 @@ class signinVC: UIViewController {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.PasswordMin6DigitMissing)
             return
         }
-        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"IOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":self.latitude.description,"longitude":self.longitude.description])
+        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"IOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":appDelegate.latitude.description,"longitude":appDelegate.longitude.description])
     }
     @IBAction func btnForgotClick(_ sender: Any) {
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "forgotVC") as! forgotVC

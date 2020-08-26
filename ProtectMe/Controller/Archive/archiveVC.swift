@@ -24,21 +24,22 @@ class archiveVC: baseVC {
     
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
-    @IBOutlet weak var ViewDownloadCompleted:UIControl!
-    @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
+    @IBOutlet weak var VideoDuration:UIControl!
+    @IBOutlet weak var lblVideoDuration:UILabel!
     @IBOutlet weak var ViewVideoDetails:UIControl!
     @IBOutlet weak var ViewOptionMenu:UIControl!
     @IBOutlet weak var ViewdeleteConfirmation:UIControl!
+    @IBOutlet weak var ViewDownloadCompleted:UIControl!
+    @IBOutlet weak var ViewCreateFolder:UIControl!
+    
     @IBOutlet weak var btncheckboxAgree:UIButton!
     @IBOutlet weak var btnOkayAgree:UIButton!
-
     @IBOutlet weak var btnRecent:UIButton!
     @IBOutlet weak var btnFilter:UIButton!
     @IBOutlet weak var btnSemiFilter:UIButton!
-
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
     @IBOutlet weak var lblMonthandYear:UILabel!{
@@ -101,6 +102,8 @@ class archiveVC: baseVC {
         super.viewDidLoad()
         self.scheduledTimerWithTimeInterval()
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
+
 
         arrOption = [btnRecent,btnFolders,btnShared]
         self.tblVideoList.delegate = self
@@ -285,18 +288,32 @@ class archiveVC: baseVC {
         print()
         
     }
-    
+    func formatSecondsToString(_ seconds: TimeInterval) -> String {
+        if seconds.isNaN {
+            return "00:00:00"
+        }
+        let Min = Int(seconds / 60)
+        let Hours:Int = Min/60
+
+        let Sec = Int(seconds.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d:%02d",Hours, Min, Sec)
+    }
     func setDetails(data:archivedListModel) -> Void {
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
-
         self.lblDetailSize.text = data.file_size?.uppercased()
+        let asset = AVURLAsset(url: URL(string: data.image_path!)!)
+        let durationInSeconds = asset.duration.seconds
         if(data.type?.uppercased() == "VIDEO"){
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
+            self.VideoDuration.isHidden = false
+            let s = formatSecondsToString(durationInSeconds)
+            self.lblVideoDuration.text = s
         }
         else{
             self.lblDetailType.text = (data.type?.uppercased())! + " (JPG)"
+            self.VideoDuration.isHidden = true
 
         }
         if(data.user_id == USER.shared.id){
@@ -740,6 +757,14 @@ class archiveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                            USER.shared.archived_counter = archived_counter
+                            USER.shared.save()
+                    }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                        USER.shared.linked_account_counters = linked_account_counters
+                        USER.shared.save()
+                    }
                     self.btnhideDetails(self)
                     self.WSFolderList(Parameter: [:])
                 }
@@ -907,7 +932,17 @@ class archiveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                    USER.shared.archived_counter = archived_counter
+                    USER.shared.save()
+                    }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                    USER.shared.linked_account_counters = linked_account_counters
+                    USER.shared.save()
+                    }
+                    
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
+                        
                         self.arrarchivedList.removeAll()
                         for a : Int in (0..<(outcome.count))
                         {
@@ -1029,6 +1064,9 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
     @objc func loadList(notification: NSNotification) {
            self.selectOptions(selected: self.btnRecent)
        }
+    @objc func RefreshList(notification: NSNotification) {
+             self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter])
+         }
 
        func stopTimer() {
            timer.invalidate()
@@ -1252,8 +1290,9 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
                 cell.btnMap.isHidden = true
-                cell.btnOption.tag = indexPath.row
-                cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                cell.btnOption.isHidden = true
+               // cell.btnOption.tag = indexPath.row
+               // cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
                 cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name
                 cell.lblName.text = ""
                 cell.imgType.image = nil
@@ -1334,4 +1373,3 @@ extension AVAsset {
         }
     }
 }
-

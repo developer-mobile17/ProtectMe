@@ -8,7 +8,7 @@
 
 import UIKit
 
-class sidemenuVC: UIViewController {
+class sidemenuVC: baseVC {
     
     //["img":#imageLiteral(resourceName: "ic_folders"),"name":"Folders"],
     let menuarr = [["img":#imageLiteral(resourceName: "ic_record"),"name":"Record"],["img":#imageLiteral(resourceName: "ic_archive"),"name":"Archives"],["img":#imageLiteral(resourceName: "ic_link"),"name":"Linked Accounts"],["img":#imageLiteral(resourceName: "ic_setting"),"name":"Settings"],["img":#imageLiteral(resourceName: "ic_deleted"),"name":"Deleted"],["img":#imageLiteral(resourceName: "ic_logout"),"name":"Logout"]]
@@ -33,16 +33,19 @@ class sidemenuVC: UIViewController {
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
-//        lblName.text = USER.shared.name
         lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-//        if(USER.shared.city == ""){
-//        lblStateCountry.text = "\(USER.shared.country)"
-//        }
-//        else{
-//            lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-//        }
-        
+        DispatchQueue.main.async {
+            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                  if let city = dict?["locality"] as? String{
+                      USER.shared.city = city
+                  }
+                  if let country = dict?["country"] as? String{
+                      USER.shared.country = country
+                  }
+                  USER.shared.save()
+                  }
 
+        }
     }
         // MARK: - Navigation
 }
@@ -62,13 +65,35 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
         cell.lblNotificationCount.isHidden = false
             cell.viewRound.isHidden = false
 
-            if (USER.shared.linked_account_counters != "" || USER.shared.linked_account_counters != "0"){
+            if ( USER.shared.linked_account_counters != "0"){
                 cell.lblNotificationCount.text = USER.shared.linked_account_counters
                 print(USER.shared.linked_account_counters)
+                cell.viewRound.isHidden = false
+                cell.lblNotificationCount.isHidden = false
+
             }
             else{
-                
+                cell.viewRound.isHidden = true
+                cell.lblNotificationCount.isHidden = true
+
+
             }
+            cell.viewRound.layer.cornerRadius = cell.viewRound.layer.frame.size.height/2
+            cell.lblNotificationCount.layer.cornerRadius = cell.lblNotificationCount.layer.frame.size.height/2
+            cell.lblNotificationCount.clipsToBounds = true
+        }
+         if(indexPath.row == 1){
+        cell.lblNotificationCount.isHidden = false
+        if (USER.shared.archived_counter != "0"){
+            cell.lblNotificationCount.text = USER.shared.archived_counter
+            print(USER.shared.archived_counter)
+            cell.viewRound.isHidden = false
+            cell.lblNotificationCount.isHidden = false
+        }
+        else{
+            cell.viewRound.isHidden = true
+            cell.lblNotificationCount.isHidden = true
+        }
             cell.viewRound.layer.cornerRadius = cell.viewRound.layer.frame.size.height/2
             cell.lblNotificationCount.layer.cornerRadius = cell.lblNotificationCount.layer.frame.size.height/2
             cell.lblNotificationCount.clipsToBounds = true

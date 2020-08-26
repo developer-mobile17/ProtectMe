@@ -38,7 +38,6 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = false
         self.imgPickerController.delegate = self
-        self.getLocation()
 
 //        let photos = PHPhotoLibrary.authorizationStatus()
 //        if photos == .notDetermined {
@@ -63,12 +62,25 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.getLocation()
 
     }
     func getLocation(){
            locationManager.showVerboseMessage = false
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
+        DispatchQueue.main.async {
+            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                  if let city = dict?["locality"] as? String{
+                      USER.shared.city = city
+                  }
+                  if let country = dict?["country"] as? String{
+                      USER.shared.country = country
+                  }
+                  USER.shared.save()
+                  }
+
+        }
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
                self.latitude = latitude
                self.longitude = longitude
@@ -112,7 +124,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                     print("video upload complete")
                                     appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
                                     self.delegate?.getListData()
-                                    //NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                  //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
                                 }
                                 else{
                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
@@ -246,8 +258,11 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             let StatusCode = DataResponce?["status"] as? Int
             if (StatusCode == 200){
                 if let outcome = dataResponce["data"] as? NSDictionary {
+                    // NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
                     DispatchQueue.main.async {
-                        self.delegate?.getListData()
+                        //self.delegate?.getListData()
+                       
+                                        
                         //USER.shared.setData(dict:outcome)
                         //USER.shared.save()
                         //self.popTo()

@@ -115,7 +115,7 @@ class signupVC: UIViewController {
     }
 override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    self.getLocation()
+//    self.getLocation()
     self.navigationController?.navigationBar.isHidden = true
         if(USER.shared.isLogout == true){
             self.PushToLogin(self)
@@ -178,8 +178,8 @@ override func viewWillAppear(_ animated: Bool) {
             registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
             registerDetail["eDeviceType"] = "iOS"
             registerDetail["checkExist"] = "1"
-            registerDetail["longitude"] = self.longitude.description
-            registerDetail["latitude"] = self.latitude.description
+            registerDetail["longitude"] = appDelegate.longitude.description
+            registerDetail["latitude"] = appDelegate.latitude.description
             registerDetail["id"] = socialData.social_Id
             self.WSSocialLogin(Parameter: registerDetail as! [String : String])
         }
@@ -196,6 +196,7 @@ override func viewWillAppear(_ animated: Bool) {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    
                     if let userData = dataResponce["data"] as? NSDictionary{
                         USER.shared.setData(dict: userData)
                         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "linkAccountVC") as! linkAccountVC

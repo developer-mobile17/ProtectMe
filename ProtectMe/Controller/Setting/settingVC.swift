@@ -228,6 +228,14 @@ class settingVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.WSGetAllData(Parameter: [:])
                     if let outcome = dataResponce["data"] as? NSDictionary{
                     }
@@ -283,6 +291,14 @@ class settingVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let outcome = dataResponce["data"] as? NSDictionary{
                         USER.shared.setData(dict: outcome)
                         self.setData()
@@ -340,6 +356,14 @@ class settingVC: baseVC {
                   let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                   let StatusCode = DataResponce?["status"] as? Int
                   if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.WSGetAllData(Parameter: [:])
                       if let outcome = dataResponce["data"] as? NSDictionary{
                       }

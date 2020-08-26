@@ -34,6 +34,9 @@ class searchVC: baseVC ,UITextFieldDelegate{
     @IBOutlet weak var btnDateAdded:UIButton!
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
+    @IBOutlet weak var VideoDuration:UIControl!
+    @IBOutlet weak var lblVideoDuration:UILabel!
+
     @IBOutlet weak var lblMonthandYear:UILabel!{
         didSet{
             lblMonthandYear.text = ""
@@ -283,19 +286,34 @@ class searchVC: baseVC ,UITextFieldDelegate{
         print()
         
     }
-    
+    func formatSecondsToString(_ seconds: TimeInterval) -> String {
+        if seconds.isNaN {
+            return "00:00:00"
+        }
+        let Min = Int(seconds / 60)
+        let Hours:Int = Min/60
+
+        let Sec = Int(seconds.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d:%02d",Hours, Min, Sec)
+    }
     func setDetails(data:archivedListModel) -> Void {
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
 
         self.lblDetailSize.text = data.file_size?.uppercased()
+        let asset = AVURLAsset(url: URL(string: data.image_path!)!)
+        let durationInSeconds = asset.duration.seconds
+
         if(data.type?.uppercased() == "VIDEO"){
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
+            self.VideoDuration.isHidden = false
+            let s = formatSecondsToString(durationInSeconds)
+            self.lblVideoDuration.text = s
         }
         else{
             self.lblDetailType.text = (data.type?.uppercased())! + " (JPG)"
-
+            self.VideoDuration.isHidden = true
         }
         if(data.user_id == USER.shared.id){
             self.lblDetailSharedBy.text = "YOU"
@@ -665,6 +683,14 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.btnhideDetails(self)
                     self.WSFolderList(Parameter: [:])
                 }
@@ -720,6 +746,14 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                          self.arrFolderList.removeAll()
                         for a : Int in (0..<(outcome.count))
@@ -789,6 +823,14 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     self.btnHandlerBlackBg(self)
                     self.btnhideDetails(self)
                     self.btnSelectOptions(self.btnRecent)
@@ -829,6 +871,14 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? String{
+                                       USER.shared.archived_counter = archived_counter
+                                       USER.shared.save()
+                                       }
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
+                                       USER.shared.linked_account_counters = linked_account_counters
+                                       USER.shared.save()
+                                       }
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                         self.arrarchivedList.removeAll()
                         for a : Int in (0..<(outcome.count))

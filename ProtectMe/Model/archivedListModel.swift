@@ -29,7 +29,8 @@ class archivedListModel: NSObject {
     var user_id         :String?
     var uploaded_by     :String?
     var thumb_image         :String?
-    
+    var isChecked         :Bool = false
+
     var thumbImage         :UIImage?
     
 

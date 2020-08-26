@@ -30,8 +30,13 @@ class USER: NSObject  ,NSCoding {
         var longitude                           = ""
         var voice_action                        = ""
         var linked_account_counters               = ""
+    
         var isLogout:Bool                       = false
         var isDeleteActionShow:Bool             = true
+    
+        var archived_counter                       = ""
+
+    
     
     
     
@@ -143,6 +148,9 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "linked_account_counters") as? String{
             self.linked_account_counters = value
         }
+        if let value = aDecoder.decodeObject(forKey: "archived_counter") as? String{
+            self.archived_counter = value
+        }
 
     }
     func loadUser() -> USER
@@ -176,6 +184,8 @@ class USER: NSObject  ,NSCoding {
         aCoder.encode(self.vAuthToken, forKey: "vAuthToken")
         aCoder.encode(self.voice_action, forKey: "voice_action")
         aCoder.encode(self.linked_account_counters, forKey: "linked_account_counters")
+        aCoder.encode(self.archived_counter, forKey: "archived_counter")
+
 
 
     }
@@ -205,6 +215,8 @@ class USER: NSObject  ,NSCoding {
         self.vAuthToken                                        = user.vAuthToken
         self.voice_action                                      = user.voice_action
         self.linked_account_counters                           = user.linked_account_counters
+        self.archived_counter                                   = user.archived_counter
+
         self.isDeleteActionShow                                = user.isDeleteActionShow
         
         
@@ -242,6 +254,7 @@ class USER: NSObject  ,NSCoding {
         self.vAuthToken                                 = ""
         self.voice_action                               = ""
         self.linked_account_counters                          = ""
+        self.archived_counter                          = ""
         self.isLogout           = false
         self.isDeleteActionShow           = true
         
@@ -316,6 +329,9 @@ class USER: NSObject  ,NSCoding {
               }
         if let value = dict.value(forKey:  "linked_account_counters") as? String{
             USER.shared.linked_account_counters = value
+        }
+        if let value = dict.value(forKey:  "archived_counter") as? String{
+            USER.shared.archived_counter = value
         }
               if let value = dict.value(forKey:  "notification") as? String{
                   USER.shared.notification = value
