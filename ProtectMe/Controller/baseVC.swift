@@ -22,7 +22,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     var unique_idforFile = ""
     weak var delegate: NotifyToCallListService?
     var Baseunique_id = ""
-
+    var isLocationEnable = USER.shared.location_service.StrTobool
 
     let imgPickerController = UIImagePickerController()
     var selectedImage:UIImage?
@@ -91,6 +91,29 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
            present(menu, animated: true, completion: nil)
        }
+    
+    
+    func WSVideoUploadSuces(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .successfully_upload_video, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                   
+                }
+                else if(StatusCode == 401)
+                {
+                }
+                else{
+                }
+            }
+            else{
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
+    
       func WSUploadPhoneVideo(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
         
         var etime = statTime + 5.0
@@ -122,6 +145,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                                 let strTimr = statTime + 5
                                 if(strTimr >= endTime){
                                     print("video upload complete")
+                                    self.WSVideoUploadSuces(Parameter: ["unique_video_id":videoKey])
                                     appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
                                     self.delegate?.getListData()
                                   //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)

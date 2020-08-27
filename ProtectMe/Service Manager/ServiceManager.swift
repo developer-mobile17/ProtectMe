@@ -65,6 +65,8 @@ enum APITYPE {
     case nested_folder_list
     case copy
     case move
+    case successfully_upload_video
+    case reset_archived_counter
 
     func getEndPoint() -> String {
         
@@ -141,6 +143,10 @@ enum APITYPE {
             return "deleted_files"
         case .recover_file:
             return "recover_file"
+        case .successfully_upload_video:
+            return "successfully_upload_video"
+        case .reset_archived_counter:
+            return "reset_archived_counter"
         }
     }
 }

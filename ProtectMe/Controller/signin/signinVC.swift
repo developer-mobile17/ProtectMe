@@ -83,7 +83,7 @@ class signinVC: UIViewController {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.PasswordMin6DigitMissing)
             return
         }
-        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"IOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":appDelegate.latitude.description,"longitude":appDelegate.longitude.description])
+        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"iOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":appDelegate.latitude.description,"longitude":appDelegate.longitude.description])
     }
     @IBAction func btnForgotClick(_ sender: Any) {
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "forgotVC") as! forgotVC

@@ -34,6 +34,24 @@ var loggedInUserData = USER()
     var window: UIWindow?
     let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        application.registerForRemoteNotifications()
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        if #available(iOS 10.0, *) {
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_,_ in })
+
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+
+        } else {
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+
+              //  self.registerForRemoteNotification()
         self.SetNavigationBar()
         IQKeyboardManager.shared.enable = true
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
@@ -151,6 +169,17 @@ var loggedInUserData = USER()
       self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "onboardNav")
       self.window?.makeKeyAndVisible()
     }
+    func setLinkAccountVC(){
+            //homnav
+            self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "linkedaccNav")
+            self.window?.makeKeyAndVisible()
+           }
+
+    func setArchiveVC(){
+            //homnav
+            self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "archiveNav")
+            self.window?.makeKeyAndVisible()
+           }
     func setHome(){
         //homnav
         self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")
@@ -188,26 +217,39 @@ extension AppDelegate {
     }
     
 }
-extension AppDelegate : UNUserNotificationCenterDelegate,MessagingDelegate {
-    
+//extension AppDelegate : UNUserNotificationCenterDelegate,MessagingDelegate {
+    /*
     
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
-        // Called to let your app know which action was selected by the user for a given notification.
-        
-        let userInfo = response.notification.request.content.userInfo as NSDictionary
-//        let data_item = userInfo as NSDictionary
-        let pust_type = userInfo.value(forKey:"push_type")!  as? String
-        if(pust_type == "4"){
-            let type = userInfo.value(forKey:"type")! as? String
-                appDelegate.setHome()
-        }
-        
-        else{
+        if let userInfo = response.notification.request.content.userInfo as? NSDictionary {
+            print("\(String(describing: userInfo))")
             
+            let apsvalue = userInfo.getString(key: "push_type")
+            
+            print("value  : \(apsvalue)")
+            switch apsvalue {
+             case "1" :
+                appDelegate.setLinkAccountVC()
+                break
+            case "2" :
+                appDelegate.setArchiveVC()
+                break
+            case "3" :
+                appDelegate.setArchiveVC()
+                break
+            case "4" :
+                appDelegate.setHome()
+                break
+          
+            default:
+                print("opration")
+                break
+            }
         }
         
+        completionHandler()
     }
     
     //MARK: - Register Remote Notification Methods // <= iOS 9.x
@@ -273,5 +315,113 @@ extension AppDelegate : UNUserNotificationCenterDelegate,MessagingDelegate {
         //print("InstanceID token: \(refreshedToken)")
         //self.deviceToken = fcmToken
         self.FCMdeviceToken = fcmToken
+    } */
+//}
+extension Data {
+    var hexString: String {
+        let hexString = map { String(format: "%02.2hhx", $0) }.joined()
+        return hexString
+    }
+}
+extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate{
+
+
+func pushNotificationSettings(application: UIApplication) {
+    if #available(iOS 10.0, *) {
+        // For iOS 10 display notification (sent via APNS)
+        UNUserNotificationCenter.current().delegate = self
+        
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_, _ in })
+    } else {
+        let settings: UIUserNotificationSettings =
+            UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+        application.registerUserNotificationSettings(settings)
+    }
+    application.registerForRemoteNotifications()
+}
+}
+extension AppDelegate {
+    
+    
+    @available(iOS 10.0, *)
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        // Called to let your app know which action was selected by the user for a given notification.
+        let userInfo = response.notification.request.content.userInfo as NSDictionary
+        let lNotification = UILocalNotification()
+        lNotification.userInfo = response.notification.request.content.userInfo
+        print(userInfo)
+                
+        
+        
+        
+    }
+    
+    //MARK: - Register Remote Notification Methods // <= iOS 9.x
+    func registerForRemoteNotification() {
+        if #available(iOS 10.0, *) {
+            let center  = UNUserNotificationCenter.current()
+            center.delegate = self
+            center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
+                if error == nil {
+                    DispatchQueue.main.async(execute: {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    })
+                }
+            }
+        } else {
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.sound, .alert, .badge], categories: nil))
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+    }
+    
+    //MARK: - Remote Notification Methods // <= iOS 9.x
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
+        _ = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
+        //self.deviceToken = deviceTokenString
+        
+        print(deviceToken.hexString)
+        print(deviceToken)
+        self.FCMdeviceToken = deviceToken.hexString
+        
+        //print(deviceTokenString)
+        //NSLog("The NutTagDeviceToken is:- \(deviceTokenString)")
+    }
+    
+    
+    // MARK: - UNUserNotificationCenter Delegate // >= iOS 10
+    //Called when a notification is delivered to a foreground app.
+    
+    @objc(applicationReceivedRemoteMessage:) func application(received remoteMessage: MessagingRemoteMessage)
+    {
+        
+    }
+    
+    
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+
+        
+
+        print("get push :  " , userInfo ,  UIApplication.shared.applicationState )
+
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+             completionHandler([.alert, .badge, .sound])
+
+    }
+
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+            print("Firebase registration token: \(fcmToken)")
+        //self.DeviceToken = fcmToken
     }
 }

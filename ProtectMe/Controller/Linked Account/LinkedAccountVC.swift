@@ -341,6 +341,40 @@ class LinkedAccountVC: baseVC {
             //
         }
     }
+    func WSClearCount(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .reset_archived_counter, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    
+                }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                           
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                           
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSLinkedAccList(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .linked_account_list, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){

@@ -400,7 +400,7 @@
                                 <color key="currentPageIndicatorTintColor" red="0.23921568630000001" green="0.59215686270000001" blue="0.72549019609999998" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                             </pageControl>
                             <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n6G-v6-Q0J">
-                                <rect key="frame" x="312" y="44" width="78" height="22"/>
+                                <rect key="frame" x="303" y="44" width="87" height="30"/>
                                 <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Sign Up " image="ic_next">
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -410,7 +410,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UME-fP-6HC">
-                                <rect key="frame" x="12" y="37.5" width="35" height="35"/>
+                                <rect key="frame" x="12" y="41.5" width="35" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="elY-mN-Njn"/>
                                     <constraint firstAttribute="width" constant="35" id="nMy-km-nmh"/>
@@ -486,7 +486,7 @@
                                 <rect key="frame" x="151" y="56" width="112" height="123.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jkd-Nr-MbQ">
-                                        <rect key="frame" x="23" y="20" width="84" height="65"/>
+                                        <rect key="frame" x="-19" y="20" width="168" height="65"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="65" id="vAz-LZ-gI4"/>
                                         </constraints>
@@ -2245,7 +2245,7 @@
                     </connections>
                 </view>
             </objects>
-            <point key="canvasLocation" x="4904" y="117"/>
+            <point key="canvasLocation" x="7218.8405797101459" y="1899.7767857142856"/>
         </scene>
         <!--ImageviewerVC-->
         <scene sceneID="b7J-vm-gvc">
@@ -2686,7 +2686,7 @@
                     </connections>
                 </view>
             </objects>
-            <point key="canvasLocation" x="6309" y="121"/>
+            <point key="canvasLocation" x="7992.753623188406" y="120.53571428571428"/>
         </scene>
         <!--Settings-->
         <scene sceneID="VEI-Hu-bt5">
@@ -2948,7 +2948,7 @@
                     </connections>
                 </view>
             </objects>
-            <point key="canvasLocation" x="9313.04347826087" y="508.92857142857139"/>
+            <point key="canvasLocation" x="10223.188405797102" y="508.92857142857139"/>
         </scene>
         <!--Settings-->
         <scene sceneID="L33-Yc-riX">
@@ -3579,7 +3579,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dmo-6E-v4U" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9963.7681159420299" y="508.92857142857139"/>
+            <point key="canvasLocation" x="10873.913043478262" y="508.92857142857139"/>
         </scene>
         <!--SignupVC-->
         <scene sceneID="HJV-eD-YOu">
@@ -3600,7 +3600,7 @@
                                             <rect key="frame" x="30" y="12" width="354" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="LJM-dw-YWw">
-                                                    <rect key="frame" x="144" y="20" width="84" height="65"/>
+                                                    <rect key="frame" x="102" y="20" width="168" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="DB6-81-fhW"/>
                                                     </constraints>
@@ -3727,7 +3727,7 @@
                                             <rect key="frame" x="30" y="454" width="354" height="44"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create an Account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nm8-a6-jET">
-                                                    <rect key="frame" x="109" y="10.5" width="136.5" height="23"/>
+                                                    <rect key="frame" x="102" y="11.5" width="150.5" height="21"/>
                                                     <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="18"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -4014,7 +4014,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EVU-ge-7wE" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="10657.971014492754" y="508.92857142857139"/>
+            <point key="canvasLocation" x="11568.115942028986" y="508.92857142857139"/>
         </scene>
         <!--ImgviewwerVC-->
         <scene sceneID="mML-hP-6gf">
@@ -4133,7 +4133,7 @@
                                             <rect key="frame" x="144" y="12" width="126" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="jUQ-cF-5Nf">
-                                                    <rect key="frame" x="30" y="20" width="84" height="65"/>
+                                                    <rect key="frame" x="-12" y="20" width="168" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="cK2-Lv-hCB"/>
                                                     </constraints>
@@ -4424,7 +4424,7 @@
                                             <rect key="frame" x="142" y="12" width="130" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="mQx-Mf-L5D">
-                                                    <rect key="frame" x="32" y="20" width="84" height="65"/>
+                                                    <rect key="frame" x="-10" y="20" width="168" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="U0B-ZZ-hkG"/>
                                                     </constraints>
@@ -4854,7 +4854,7 @@
                     </connections>
                 </view>
             </objects>
-            <point key="canvasLocation" x="8644.927536231884" y="508.92857142857139"/>
+            <point key="canvasLocation" x="9553.6231884057979" y="508.92857142857139"/>
         </scene>
         <!--Upgrade Account-->
         <scene sceneID="f92-fB-4PP">
@@ -5308,7 +5308,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kF8-LS-cUH" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8443.4782608695659" y="-516.29464285714289"/>
+            <point key="canvasLocation" x="9353.6231884057979" y="-516.29464285714289"/>
         </scene>
         <!--Charity/ Fundraiser-->
         <scene sceneID="nio-yk-6CE">
@@ -5409,7 +5409,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9jS-4v-smp" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9133.3333333333339" y="-516.29464285714289"/>
+            <point key="canvasLocation" x="10043.478260869566" y="-516.29464285714289"/>
         </scene>
         <!--Payment Curancy-->
         <scene sceneID="2aa-TH-Jnn">
@@ -5530,7 +5530,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uA0-0i-hMM" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9798.5507246376819" y="-516.29464285714289"/>
+            <point key="canvasLocation" x="10708.695652173914" y="-516.29464285714289"/>
         </scene>
         <!--Change Password-->
         <scene sceneID="0qD-1k-cS4">
@@ -5954,7 +5954,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Usd-HU-CCX" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7805.7971014492759" y="-516.29464285714289"/>
+            <point key="canvasLocation" x="8715.9420289855079" y="-516.29464285714289"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="KZH-qe-5yr">
@@ -9996,6 +9996,42 @@
                 </collectionViewCell>
             </objects>
             <point key="canvasLocation" x="4954" y="-1140"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ey3-kq-HRg">
+            <objects>
+                <navigationController storyboardIdentifier="archiveNav" automaticallyAdjustsScrollViewInsets="NO" id="Owo-Cg-qWv" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="yY4-33-snV">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="d4K-9q-eS5" kind="relationship" relationship="rootViewController" id="nrb-R9-H9x"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="es3-4J-Z90" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6308.6956521739139" y="1899.7767857142856"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="BWK-7o-hqp">
+            <objects>
+                <navigationController storyboardIdentifier="linkedaccNav" automaticallyAdjustsScrollViewInsets="NO" id="TAA-Z9-JGt" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="3bN-Y2-Eg4">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Jv7-X8-O5t" kind="relationship" relationship="rootViewController" id="MXE-0L-UVR"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OZN-33-vBC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7082.6086956521749" y="120.53571428571428"/>
         </scene>
     </scenes>
     <resources>

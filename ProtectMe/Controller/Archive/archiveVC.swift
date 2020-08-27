@@ -21,7 +21,7 @@ extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
 }
 
 class archiveVC: baseVC {
-    
+
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
     @IBOutlet weak var tblVideoList:UITableView!
@@ -610,6 +610,9 @@ class archiveVC: baseVC {
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
+        DispatchQueue.main.async {
+            self.WSClearCount(Parameter: [:])
+        }
         //let monthname = Date().getMonthFullname()
         //let year = Date().getYear()
         lblMonthandYear.text = "Recent"
@@ -751,6 +754,40 @@ class archiveVC: baseVC {
     }
     
     // MARK: - WEB Service
+    func WSClearCount(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .reset_archived_counter, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    
+                }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                           
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                           
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSCreateFolder(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .create_folder, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
@@ -1198,7 +1235,12 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             let firstPart = self.arrarchivedList[indexPath.row].image_name!.strstr(needle: ".", beforeNeedle: true)
                 cell.lblTitle.text = firstPart ??  self.arrarchivedList[indexPath.row].image_name!
               
-            
+            if(self.isLocationEnable == true){
+                cell.btnMap.isHidden = false
+            }
+            else{
+                cell.btnMap.isHidden = true
+            }
             
             cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
             if(arrarchivedList[indexPath.row].type == "image"){
@@ -1301,6 +1343,13 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             else{
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
                 cell.videoThumb.image = nil
+
+                if(self.isLocationEnable == true){
+                    cell.btnMap.isHidden = false
+                }
+                else{
+                    cell.btnMap.isHidden = true
+                }
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row
                 cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)

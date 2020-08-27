@@ -1116,6 +1116,12 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         else{
         let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "collCell", for: indexPath) as! collCell
             cell.videoThumb.image = nil
+            if(self.isLocationEnable == true){
+                cell.btnMap.isHidden = false
+            }
+            else{
+                cell.btnMap.isHidden = true
+            }
             cell.btnPlayvideo.tag = indexPath.row
             cell.btnMap.tag = indexPath.row
             cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
@@ -1223,6 +1229,12 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
             else{
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
                 cell.videoThumb.image = nil
+                if(self.isLocationEnable == true){
+                    cell.btnMap.isHidden = false
+                }
+                else{
+                    cell.btnMap.isHidden = true
+                }
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row
                 cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)
