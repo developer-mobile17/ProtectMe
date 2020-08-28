@@ -169,8 +169,20 @@ var loggedInUserData = USER()
       self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "onboardNav")
       self.window?.makeKeyAndVisible()
     }
-    func setLinkAccountVC(){
+    func setLinkAccountVC(selectd : String){
             //homnav
+        if(selectd == "receiver"){
+            USER.shared.LinkedAccSenederSelected = false
+            USER.shared.save()
+            
+        }
+        else{
+            
+                USER.shared.LinkedAccSenederSelected = true
+                USER.shared.save()
+                
+            
+        }
             self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "linkedaccNav")
             self.window?.makeKeyAndVisible()
            }
@@ -355,7 +367,43 @@ extension AppDelegate {
         lNotification.userInfo = response.notification.request.content.userInfo
         print(userInfo)
                 
-        
+        if let userInfo = response.notification.request.content.userInfo as? NSDictionary {
+                  print("\(String(describing: userInfo))")
+            if let payload = userInfo.value(forKey: "payload") as? NSDictionary{
+                let push_type = payload.value(forKey: "push_type") as? Int
+//                let apsvalue = userInfo.getString(key: "push_type")
+
+            let body = payload.value(forKey: "body") as? String
+                
+                  
+                  print("value  : \(push_type)")
+                  switch push_type {
+                   case 1 :
+                    if body?.lowercased().range(of:"receiver") != nil {
+                        appDelegate.setLinkAccountVC(selectd: "sender")
+                    }
+                    else{
+                        appDelegate.setLinkAccountVC(selectd: "receiver")
+
+                    }
+                      break
+                  case 2 :
+                      appDelegate.setArchiveVC()
+                      break
+                  case 3 :
+                      appDelegate.setArchiveVC()
+                      break
+                  case 4 :
+                      appDelegate.setHome()
+                      break
+                
+                  default:
+                      print("opration")
+                      break
+                  }
+              }
+              }
+              completionHandler()
         
         
     }

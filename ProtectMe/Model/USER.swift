@@ -30,7 +30,7 @@ class USER: NSObject  ,NSCoding {
         var longitude                           = ""
         var voice_action                        = ""
         var linked_account_counters               = ""
-    
+        var LinkedAccSenederSelected            = false
         var isLogout:Bool                       = false
         var isDeleteActionShow:Bool             = true
     
@@ -78,9 +78,12 @@ class USER: NSObject  ,NSCoding {
    
     required init?(coder aDecoder: NSCoder)    {
         super.init()
-        
+         
         if let value = aDecoder.decodeObject(forKey: "isDeleteActionShow") as? Bool{
             self.isDeleteActionShow = value
+        }
+        if let value = aDecoder.decodeObject(forKey: "LinkedAccSenederSelected") as? Bool{
+            self.LinkedAccSenederSelected = value
         }
 
         if let value = aDecoder.decodeObject(forKey: "longitude") as? String{
@@ -162,6 +165,7 @@ class USER: NSObject  ,NSCoding {
     func encode(with aCoder: NSCoder)    {
         aCoder.encode(self.email_notification, forKey: "email_notification")
         aCoder.encode(self.isDeleteActionShow, forKey: "isDeleteActionShow")
+        aCoder.encode(self.LinkedAccSenederSelected, forKey: "LinkedAccSenederSelected")
 
         aCoder.encode(self.city, forKey: "city")
         aCoder.encode(self.state, forKey: "state")
@@ -199,7 +203,7 @@ class USER: NSObject  ,NSCoding {
         self.country                                          = user.country
         self.latitude                                         = user.latitude
         self.longitude                                        = user.longitude
-        
+        self.LinkedAccSenederSelected                         = user.LinkedAccSenederSelected
         self.email                                             = user.email
         self.id                                                = user.id
         self.location_service                                  = user.location_service
@@ -257,6 +261,7 @@ class USER: NSObject  ,NSCoding {
         self.archived_counter                          = ""
         self.isLogout           = false
         self.isDeleteActionShow           = true
+        self.LinkedAccSenederSelected                   = false
         
         USER.shared.save()
     }

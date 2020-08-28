@@ -38,8 +38,16 @@ class LinkedAccountVC: baseVC {
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.btnSelected = self.btnSender
-        self.btnSelectOptions(self.btnSelected)
+        if(USER.shared.LinkedAccSenederSelected == true ){
+            self.btnSelected = self.btnSender
+            self.btnSelectOptions(self.btnSelected)
+            USER.shared.LinkedAccSenederSelected = !USER.shared.LinkedAccSenederSelected
+            USER.shared.save()
+        }
+        else{
+            self.btnSelected = self.btnReciver
+            self.btnSelectOptions(self.btnSelected)
+        }
         
     }
     @IBAction func btnAcceptClick(_ sender: UIButton) {
@@ -155,8 +163,8 @@ class LinkedAccountVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     self.btnHandlerBlackBg(self)
@@ -220,8 +228,8 @@ class LinkedAccountVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     if(Parameter["action"] == "1"){
@@ -284,8 +292,8 @@ class LinkedAccountVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     if let msg = DataResponce?["message"] as? String{
@@ -385,8 +393,8 @@ class LinkedAccountVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     if let outcome = dataResponce["data"] as? [NSDictionary]{

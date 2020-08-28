@@ -82,7 +82,7 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
             cell.lblNotificationCount.layer.cornerRadius = cell.lblNotificationCount.layer.frame.size.height/2
             cell.lblNotificationCount.clipsToBounds = true
         }
-         if(indexPath.row == 1){
+        if(indexPath.row == 1){
         cell.lblNotificationCount.isHidden = false
         if (USER.shared.archived_counter != "0"){
             cell.lblNotificationCount.text = USER.shared.archived_counter

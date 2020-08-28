@@ -293,8 +293,8 @@ class deletedVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     self.btnhideDetails(self)
@@ -356,8 +356,8 @@ class deletedVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     self.arrarchivedList.removeAll()
@@ -399,8 +399,8 @@ class deletedVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     self.WSDeletedFiles(Parameter: [:])
@@ -449,8 +449,8 @@ class deletedVC: baseVC {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     self.WSDeletedFiles(Parameter: [:])
@@ -494,13 +494,15 @@ class deletedVC: baseVC {
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
                     if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
-                                       USER.shared.save()
-                                       }
+                        USER.shared.archived_counter = archived_counter
+                        USER.shared.save()
+                    }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                            USER.shared.save()
+
+                    }
+                    
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                         self.arrarchivedList.removeAll()
                         for a : Int in (0..<(outcome.count))

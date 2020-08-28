@@ -94,8 +94,8 @@ class notificationSettingVC: UIViewController {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                       self.WSGetAllData(Parameter: [:])
@@ -183,8 +183,8 @@ class notificationSettingVC: UIViewController {
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                       USER.shared.linked_account_counters = linked_account_counters
+                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                               USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                       if let outcome = dataResponce["data"] as? NSDictionary{
@@ -248,8 +248,8 @@ class notificationSettingVC: UIViewController {
                                                USER.shared.archived_counter = archived_counter
                                                USER.shared.save()
                                                }
-                                               if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                               USER.shared.linked_account_counters = linked_account_counters
+                                               if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                                       USER.shared.linked_account_counters = String(linked_account_counters)
                                                USER.shared.save()
                                                }
                           self.WSGetAllData(Parameter: [:])
@@ -311,8 +311,8 @@ class notificationSettingVC: UIViewController {
                                            USER.shared.archived_counter = archived_counter
                                            USER.shared.save()
                                            }
-                                           if let linked_account_counters = dataResponce["linked_account_counters"] as? String{
-                                           USER.shared.linked_account_counters = linked_account_counters
+                                           if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                                   USER.shared.linked_account_counters = String(linked_account_counters)
                                            USER.shared.save()
                                            }
                       self.WSGetAllData(Parameter: [:])
