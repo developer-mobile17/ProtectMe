@@ -43,6 +43,12 @@
                                 <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Arjun Chudasa" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3aJ-7b-2Rm">
+                                <rect key="frame" x="100" y="33" width="196" height="12"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="10"/>
+                                <color key="textColor" red="0.34509803919999998" green="0.68235294120000001" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z7Z-WW-rSf">
                                 <rect key="frame" x="308" y="5" width="35" height="35"/>
                                 <constraints>
@@ -55,13 +61,17 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="Z7Z-WW-rSf" firstAttribute="centerY" secondItem="YFc-yD-r0R" secondAttribute="centerY" id="0Xn-Zo-2NL"/>
+                            <constraint firstItem="3aJ-7b-2Rm" firstAttribute="top" secondItem="1gU-k7-VeN" secondAttribute="bottom" id="8Og-V0-DxP"/>
                             <constraint firstItem="1gU-k7-VeN" firstAttribute="leading" secondItem="YFc-yD-r0R" secondAttribute="trailing" constant="8" id="Mb7-Z1-GIV"/>
                             <constraint firstItem="YFc-yD-r0R" firstAttribute="leading" secondItem="Hha-TH-3NG" secondAttribute="leading" constant="12" id="NKi-Yi-ckn"/>
+                            <constraint firstItem="3aJ-7b-2Rm" firstAttribute="leading" secondItem="1gU-k7-VeN" secondAttribute="leading" id="QPP-iQ-fav"/>
                             <constraint firstAttribute="trailing" secondItem="1gU-k7-VeN" secondAttribute="trailing" constant="35" id="Qg1-RK-gn1"/>
                             <constraint firstAttribute="bottom" secondItem="YFc-yD-r0R" secondAttribute="bottom" id="U5d-pQ-U7s"/>
                             <constraint firstAttribute="trailing" secondItem="Z7Z-WW-rSf" secondAttribute="trailing" id="bT9-dA-IDj"/>
+                            <constraint firstItem="Z7Z-WW-rSf" firstAttribute="leading" secondItem="3aJ-7b-2Rm" secondAttribute="trailing" constant="12" id="cm5-8e-3kU"/>
                             <constraint firstItem="YFc-yD-r0R" firstAttribute="top" secondItem="Hha-TH-3NG" secondAttribute="top" id="eFf-mv-Ash"/>
                             <constraint firstItem="1gU-k7-VeN" firstAttribute="centerY" secondItem="YFc-yD-r0R" secondAttribute="centerY" id="fXY-Ub-3NW"/>
+                            <constraint firstAttribute="bottom" secondItem="3aJ-7b-2Rm" secondAttribute="bottom" id="r4e-bb-dmF"/>
                             <constraint firstAttribute="height" constant="45" id="wts-KV-5pK"/>
                         </constraints>
                     </view>
@@ -90,6 +100,7 @@
             <connections>
                 <outlet property="btncheckbox" destination="Z7Z-WW-rSf" id="KZ6-in-2oW"/>
                 <outlet property="lblName" destination="1gU-k7-VeN" id="X54-j5-7zl"/>
+                <outlet property="lblOwnerName" destination="3aJ-7b-2Rm" id="jOc-Xc-nJF"/>
                 <outlet property="videoThumb" destination="YFc-yD-r0R" id="a3J-73-w5F"/>
             </connections>
             <point key="canvasLocation" x="155.79710144927537" y="118.19196428571428"/>

@@ -260,7 +260,18 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 
     @IBAction func btnhideDetails(_ sender: Any)
     {
-        self.ViewVideoDetails.removeFromSuperview()
+        //self.ViewVideoDetails.removeFromSuperview()
+        
+        UIView.animate(withDuration: 0.2, animations: {self.ViewVideoDetails.alpha = 0.0},
+        completion: {(value: Bool) in
+            self.ViewVideoDetails.alpha = 1.0
+            self.ViewVideoDetails.removeFromSuperview()
+        })
+        UIView.animate(withDuration: 0.2, animations: {self.ViewOptionMenu.alpha = 0.0},
+        completion: {(value: Bool) in
+            self.ViewOptionMenu.alpha = 1.0
+            self.ViewOptionMenu.removeFromSuperview()
+        })
 
         UIView.animate(withDuration: 0.2, animations: {self.ViewCreateFolder.alpha = 0.0},
         completion: {(value: Bool) in

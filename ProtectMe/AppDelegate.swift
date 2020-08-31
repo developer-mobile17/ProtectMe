@@ -57,18 +57,20 @@ var loggedInUserData = USER()
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
-        self.getLocation()
+        
         ApplicationDelegate.shared.application(
                          application,
                          didFinishLaunchingWithOptions: launchOptions
                      )
         self.registerForRemoteNotification()
-        if(USER.shared.id != ""){
-            self.setHome()
+        if(USER.shared.id == ""){
+            self.setOnBoradingVC()
         }
         else
         {
-            self.setOnBoradingVC()
+            self.getLocation()
+            self.setHome()
+            
         }
         ApplicationDelegate.shared.application(
                    application,
@@ -206,7 +208,29 @@ var loggedInUserData = USER()
 }
 
 extension AppDelegate {
+    //MARK: - Get Location
+    func getLocation(){
+           locationManager.showVerboseMessage = false
+           locationManager.autoUpdate = true
+         //   locationManager.startUpdatingLocation()
+        DispatchQueue.main.async {
+            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                  if let city = dict?["locality"] as? String{
+                      USER.shared.city = city
+                  }
+                  if let country = dict?["country"] as? String{
+                      USER.shared.country = country
+                  }
+                  USER.shared.save()
+                  }
 
+        }
+           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+               self.latitude = latitude
+               self.longitude = longitude
+            self.locationManager.autoUpdate = false
+           }
+    }
     //MARK: - Show/Hide Loading Indicator
     func SHOW_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.startLoader()
@@ -214,19 +238,19 @@ extension AppDelegate {
     func HIDE_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.stopLoader()
     }
-    func getLocation(){
-           locationManager.showVerboseMessage = false
-           locationManager.autoUpdate = true
-         //   locationManager.startUpdatingLocation()
-        DispatchQueue.main.async {
-            
-            self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
-            self.locationManager.autoUpdate = false
-           }
-        }
-    }
+//    func getLocation(){
+//           locationManager.showVerboseMessage = false
+//           locationManager.autoUpdate = true
+//         //   locationManager.startUpdatingLocation()
+//        DispatchQueue.main.async {
+//
+//            self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//               self.latitude = latitude
+//               self.longitude = longitude
+//            self.locationManager.autoUpdate = false
+//           }
+//        }
+//    }
     
 }
 //extension AppDelegate : UNUserNotificationCenterDelegate,MessagingDelegate {

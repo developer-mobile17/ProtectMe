@@ -64,12 +64,11 @@ class multiSelectionVC: UIViewController {
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
-                   if let errorMessage:String = dataResponce["message"] as? String{
-                        //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                    showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Okay"]) { (i) in
+                    // Completed '
+                    showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Completed", buttons: ["Okay"]) { (i) in
                         self.navigationController?.popViewController(animated: true)
                     }
-                    }
+                
                 }
                     else if(StatusCode == 307)
                     {
@@ -218,6 +217,8 @@ extension multiSelectionVC:UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:multiselectionTableViewCell = tableView.dequeueReusableCell(withIdentifier: "multiselectionTableViewCell", for: indexPath) as! multiselectionTableViewCell
+        cell.lblName.text = arrarchivedList[indexPath.row].image_name
+        cell.lblOwnerName.text = arrarchivedList[indexPath.row].uploaded_by
         cell.btncheckbox.tag = indexPath.row
         cell.btncheckbox.addTarget(self, action: #selector(self.btnCheckBoxAction(_:)), for: .touchUpInside)
         cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray

@@ -11,6 +11,8 @@ import UIKit
 class multiselectionTableViewCell: UITableViewCell {
     @IBOutlet weak var btncheckbox:UIButton!
     @IBOutlet weak var lblName:UILabel!
+    @IBOutlet weak var lblOwnerName:UILabel!
+
     @IBOutlet weak var videoThumb:UIImageView!
     
     override func awakeFromNib() {

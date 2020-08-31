@@ -9,7 +9,8 @@
 import UIKit
 
 class sidemenuVC: baseVC {
-    
+    typealias CompletionHandler = (_ success:Bool) -> Void
+
     //["img":#imageLiteral(resourceName: "ic_folders"),"name":"Folders"],
     let menuarr = [["img":#imageLiteral(resourceName: "ic_record"),"name":"Record"],["img":#imageLiteral(resourceName: "ic_archive"),"name":"Archives"],["img":#imageLiteral(resourceName: "ic_link"),"name":"Linked Accounts"],["img":#imageLiteral(resourceName: "ic_setting"),"name":"Settings"],["img":#imageLiteral(resourceName: "ic_deleted"),"name":"Deleted"],["img":#imageLiteral(resourceName: "ic_logout"),"name":"Logout"]]
     @IBOutlet weak var tblMenu:UITableView!
@@ -23,7 +24,34 @@ class sidemenuVC: baseVC {
             //lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
     }
-    
+    func setUserLocation(){
+          let locationManager = LocationManager.sharedInstance
+          locationManager.showVerboseMessage = false
+          locationManager.autoUpdate = true
+            print(USER.shared.latitude)
+        print(USER.shared.longitude)
+          self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+                self.latitude = latitude
+                self.longitude = longitude
+            
+                  self.locationManager.reverseGeocodeLocationWithLatLon(latitude: latitude, longitude: longitude) { (dict, placemark, str) in
+                          if let city = dict?["locality"] as? String{
+                              USER.shared.city = city
+                          }
+                          if let country = dict?["country"] as? String{
+                              USER.shared.country = country
+                          }
+                      USER.shared.save()
+                      self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+
+                          }
+                    self.locationManager.autoUpdate = false
+                   }
+          
+
+
+          
+      }
     override func viewDidLoad() {
         super.viewDidLoad()
         tblMenu.delegate = self
@@ -33,19 +61,22 @@ class sidemenuVC: baseVC {
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
-        lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        self.lblName.text = USER.shared.name
         DispatchQueue.main.async {
-            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-                  if let city = dict?["locality"] as? String{
-                      USER.shared.city = city
-                  }
-                  if let country = dict?["country"] as? String{
-                      USER.shared.country = country
-                  }
-                  USER.shared.save()
-                  }
-
+            self.setUserLocation()
         }
+//        DispatchQueue.main.async {
+//            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+//                  if let city = dict?["locality"] as? String{
+//                      USER.shared.city = city
+//                  }
+//                  if let country = dict?["country"] as? String{
+//                      USER.shared.country = country
+//                  }
+//                  USER.shared.save()
+//                  }
+//
+//        }
     }
         // MARK: - Navigation
 }

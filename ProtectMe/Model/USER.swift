@@ -29,9 +29,10 @@ class USER: NSObject  ,NSCoding {
         var latitude                            = ""
         var longitude                           = ""
         var voice_action                        = ""
-        var linked_account_counters               = ""
+        var linked_account_counters             = ""
+        var support_email                       = ""
         var LinkedAccSenederSelected            = false
-        var isLogout:Bool                       = false
+        var isLogout                           = false
         var isDeleteActionShow:Bool             = true
     
         var archived_counter                       = ""
@@ -78,7 +79,9 @@ class USER: NSObject  ,NSCoding {
    
     required init?(coder aDecoder: NSCoder)    {
         super.init()
-         
+         if let value = aDecoder.decodeObject(forKey: "isLogout") as? Bool{
+            self.isLogout = value
+        }
         if let value = aDecoder.decodeObject(forKey: "isDeleteActionShow") as? Bool{
             self.isDeleteActionShow = value
         }
@@ -151,6 +154,9 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "linked_account_counters") as? String{
             self.linked_account_counters = value
         }
+        if let value = aDecoder.decodeObject(forKey: "support_email") as? String{
+            self.support_email = value
+        }
         if let value = aDecoder.decodeObject(forKey: "archived_counter") as? String{
             self.archived_counter = value
         }
@@ -163,10 +169,12 @@ class USER: NSObject  ,NSCoding {
         return kUSerObject
     }
     func encode(with aCoder: NSCoder)    {
+        aCoder.encode(self.isLogout, forKey: "isLogout")
+
         aCoder.encode(self.email_notification, forKey: "email_notification")
         aCoder.encode(self.isDeleteActionShow, forKey: "isDeleteActionShow")
         aCoder.encode(self.LinkedAccSenederSelected, forKey: "LinkedAccSenederSelected")
-
+        aCoder.encode(self.support_email,forKey: "support_email")
         aCoder.encode(self.city, forKey: "city")
         aCoder.encode(self.state, forKey: "state")
         aCoder.encode(self.country, forKey: "country")
@@ -197,7 +205,9 @@ class USER: NSObject  ,NSCoding {
     
     
     private func loadContent(fromUser user:USER) -> Void    {
+        self.isLogout                                         = user.isLogout
         self.email_notification                               = user.email_notification
+        self.support_email                                    = user.support_email
         self.city                                             = user.city
         self.state                                            = user.state
         self.country                                          = user.country
@@ -257,6 +267,7 @@ class USER: NSObject  ,NSCoding {
         self.type                                       = ""
         self.vAuthToken                                 = ""
         self.voice_action                               = ""
+        self.support_email                              = ""
         self.linked_account_counters                          = ""
         self.archived_counter                          = ""
         self.isLogout           = false
@@ -296,7 +307,10 @@ class USER: NSObject  ,NSCoding {
     
     
     func setData(dict:NSDictionary) -> Void {
-        
+        if let value = dict.value(forKey:  "support_email") as? String{
+            USER.shared.support_email = value
+        }
+
         if let value = dict.value(forKey:  "city") as? String{
             USER.shared.city = value
         }

@@ -55,6 +55,7 @@ enum APITYPE {
     case upload_file
     case upload_chunk
     case delete_file
+    case delete_folder
     case recover_file
     case rename_file
     case clear_all_deleted_files
@@ -67,6 +68,7 @@ enum APITYPE {
     case move
     case successfully_upload_video
     case reset_archived_counter
+    case rename_folder
 
     func getEndPoint() -> String {
         
@@ -147,6 +149,10 @@ enum APITYPE {
             return "successfully_upload_video"
         case .reset_archived_counter:
             return "reset_archived_counter"
+        case .rename_folder:
+            return "rename_folder"
+        case .delete_folder:
+            return "delete_folder"
         }
     }
 }

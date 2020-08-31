@@ -7,7 +7,80 @@
 //
 
 import UIKit
+import MessageUI
 
+extension settingVC:MFMailComposeViewControllerDelegate{
+    private func createEmailUrl(to: String, subject: String, body: String) -> URL? {
+              let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+              let bodyEncoded = body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+
+              let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+              let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
+              let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+              let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+              let defaultUrl = URL(string: "mailto:\(to)?subject=\(subjectEncoded)&body=\(bodyEncoded)")
+
+              if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
+                  return gmailUrl
+              } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
+                  return outlookUrl
+              } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
+                  return yahooMail
+              } else if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
+                  return sparkUrl
+              }
+
+              return defaultUrl
+          }
+
+          
+          func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+              switch result {
+              case .cancelled:
+                  print("Mail cancelled")
+              case .saved:
+                  print("Mail saved")
+              case .sent:
+                  print("Mail sent")
+              case .failed:
+                  print("Mail sent failure: \(error?.localizedDescription)")
+              default:
+                  break
+              }
+              controller.dismiss(animated: true)
+          }
+    func launchEmail() {
+
+        let recipientEmail = USER.shared.support_email
+          let subject = ""
+          let body = ""
+
+          // Show default mail composer
+          if MFMailComposeViewController.canSendMail() {
+              let mail = MFMailComposeViewController()
+              mail.mailComposeDelegate = self
+              mail.mailComposeDelegate = self
+                       mail.setToRecipients([recipientEmail])
+                       mail.setMessageBody("", isHTML: false)
+
+              present(mail, animated: true)
+
+          // Show third party email composer if default Mail app is not present
+          }
+          else if let emailUrl = createEmailUrl(to: recipientEmail, subject: subject, body: body) {
+              //UIApplication.shared.open(emailUrl)
+            if UIApplication.shared.canOpenURL(emailUrl) {
+                UIApplication.shared.open(emailUrl, options: [:])
+             }
+
+            // for versions below iOS 10
+            if UIApplication.shared.canOpenURL(emailUrl) {
+               UIApplication.shared.openURL(emailUrl)
+            }
+          }
+           
+       }
+}
 class settingVC: baseVC {
     var isLocationServiceOn:Bool = true
     var isVoiceActivationOn:Bool = true
@@ -217,9 +290,11 @@ class settingVC: baseVC {
         self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
     }
     @IBAction func btnContactUsClick(_ sender: Any) {
-        let ObjcommonWebViewVC = self.storyboard?.instantiateViewController(withIdentifier: "commonWebViewVC") as!  commonWebViewVC
-        ObjcommonWebViewVC.titleString = "Contact Us"
-        self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
+        self.launchEmail()
+
+//        let ObjcommonWebViewVC = self.storyboard?.instantiateViewController(withIdentifier: "commonWebViewVC") as!  commonWebViewVC
+//        ObjcommonWebViewVC.titleString = "Contact Us"
+//        self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
     }
     // MARK: - WEB Service
     func WSchangelocation(Parameter:[String:Any]) -> Void {

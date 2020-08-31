@@ -62,7 +62,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.getLocation()
+        
 
     }
     func getLocation(){

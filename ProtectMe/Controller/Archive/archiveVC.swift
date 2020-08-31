@@ -31,6 +31,8 @@ class archiveVC: baseVC {
     @IBOutlet weak var lblVideoDuration:UILabel!
     @IBOutlet weak var ViewVideoDetails:UIControl!
     @IBOutlet weak var ViewOptionMenu:UIControl!
+    @IBOutlet weak var ViewFolderOptionMenu:UIControl!
+
     @IBOutlet weak var ViewdeleteConfirmation:UIControl!
     @IBOutlet weak var ViewDownloadCompleted:UIControl!
     @IBOutlet weak var ViewCreateFolder:UIControl!
@@ -50,6 +52,7 @@ class archiveVC: baseVC {
     var selectedIndex:IndexPath? = nil
     var isFolderSelected:Bool = false
 //Detail View
+    @IBOutlet weak var lblFolderName:UILabel!
     @IBOutlet weak var lblDetailType:UILabel!
     @IBOutlet weak var lblDetailName:UILabel!
     @IBOutlet weak var lblDetailName1:UILabel!
@@ -139,6 +142,12 @@ class archiveVC: baseVC {
       
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
         if(self.isFolderSelected == true){
+            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
+                       , andMessage: "Are you sure you want to delete?", buttons: ["Cancle","Yes"]) { (index) in
+                           if(index == 1){
+                               self.WSDeleteFolder(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!])
+                           }
+                       }
         }
         else{
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
@@ -298,7 +307,30 @@ class archiveVC: baseVC {
         let Sec = Int(seconds.truncatingRemainder(dividingBy: 60))
         return String(format: "%02d:%02d:%02d",Hours, Min, Sec)
     }
+    func setFolderDetails(data:archivedListModel) -> Void {
+        self.lblFolderName.text = data.folder_name?.uppercased()
+        self.lblDetailName.text = data.folder_name?.uppercased()
+        self.lblDetailName1.text = data.folder_name?.uppercased()
+        self.lblDetailName2.text = data.folder_name?.uppercased()
+        self.lblDetailSize.text = data.file_size?.uppercased()
+        self.lblDetailType.text = "Folder"
+        self.VideoDuration.isHidden = true
+        if(data.user_id == USER.shared.id){
+            self.lblDetailSharedBy.text = "YOU"
+        }
+        else{
+            self.lblDetailSharedBy.text = data.uploaded_by
+        }
+        self.lblDetailStorageUsed.text = "-"
+        let date = data.created?.uppercased()
+        let city = data.city?.uppercased()
+        let country = data.country?.uppercased()
+        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+
+        
+    }
     func setDetails(data:archivedListModel) -> Void {
+        
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
@@ -574,7 +606,12 @@ class archiveVC: baseVC {
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
-    
+    @IBAction func btnFolderOptionMenuClick(_ sender: UIButton) {
+           self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+           self.setFolderDetails(data:self.arrarchivedList[sender.tag])
+           self.ViewFolderOptionMenu.frame = UIScreen.main.bounds
+           self.navigationController?.view.addSubview(self.ViewFolderOptionMenu)
+       }
     @IBAction func btnhideDetails(_ sender: Any)
     {
         self.ViewDownloadCompleted.removeFromSuperview()
@@ -583,7 +620,17 @@ class archiveVC: baseVC {
     }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
-        self.ViewOptionMenu.removeFromSuperview()
+        UIView.animate(withDuration: 0.2, animations: {self.ViewFolderOptionMenu.alpha = 0.0},
+                 completion: {(value: Bool) in
+                   self.ViewFolderOptionMenu.alpha = 1.0
+                   self.ViewFolderOptionMenu.removeFromSuperview()
+               })
+        UIView.animate(withDuration: 0.2, animations: {self.ViewOptionMenu.alpha = 0.0},
+          completion: {(value: Bool) in
+            self.ViewOptionMenu.alpha = 1.0
+            self.ViewOptionMenu.removeFromSuperview()
+        })
+        //self.ViewOptionMenu.removeFromSuperview()
     }
     @IBAction func btnChangeRename(_ sender: Any)
     {
@@ -598,6 +645,16 @@ class archiveVC: baseVC {
         OBJchangepasswordVC.txtValue = firstPart ??  self.arrarchivedList[selectedIndex!.row].image_name!
         
         self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
+        }
+        else{
+            let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "renameArchiveVC") as!  renameArchiveVC
+                  OBJchangepasswordVC.titleString = "Folder Name"
+                  OBJchangepasswordVC.FieldType = "folder"
+                OBJchangepasswordVC.selectedView = self.selectedView
+                  OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
+                  let firstPart = self.arrarchivedList[selectedIndex!.row].folder_name
+            OBJchangepasswordVC.txtValue = firstPart!
+                  self.navigationController?.pushViewController(OBJchangepasswordVC, animated: true)
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -920,6 +977,43 @@ class archiveVC: baseVC {
             //
         }
     }
+    func WSDeleteFolder(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .delete_folder, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                   self.btnHandlerBlackBg(self)
+                    self.btnhideDetails(self)
+                    self.btnSelectOptions(self.btnFolders)
+
+                }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                          
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                            
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSDeleteArchive(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .delete_file, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
@@ -1217,8 +1311,8 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             cell.lblName.text = self.arrarchivedList[indexPath.row].folder_name
             cell.btncellTap.tag = indexPath.row
             cell.btncellTap.addTarget(self, action: #selector(self.btncelltapClick(_:)),for: .touchUpInside)
-                  
-          //  cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+            cell.btnOption.tag = indexPath.row
+            cell.btnOption.addTarget(self, action: #selector(self.btnFolderOptionMenuClick(_:)),for: .touchUpInside)
             return cell
         }
         else{
@@ -1333,8 +1427,8 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.selectionStyle = .none
                 cell.btnMap.isHidden = true
                 cell.btnOption.isHidden = true
-               // cell.btnOption.tag = indexPath.row
-               // cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                cell.btnOption.tag = indexPath.row
+                cell.btnOption.addTarget(self, action: #selector(self.btnFolderOptionMenuClick(_:)),for: .touchUpInside)
                 cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name
                 cell.lblName.text = ""
                 cell.imgType.image = nil

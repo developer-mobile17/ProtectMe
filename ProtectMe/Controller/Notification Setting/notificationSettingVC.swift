@@ -12,7 +12,10 @@ class notificationSettingVC: UIViewController {
     var isNotificationLinkedAccOn:Bool = true
     var isSenderAccActivityOn:Bool = true
     var isEmailNotificationsOn:Bool = true
-
+    @IBOutlet weak var lblType:UILabel!
+    @IBOutlet weak var btnNewLinkedAccount:UIButton!
+    @IBOutlet weak var btnSenderLinkedAccount:UIButton!
+    
     @IBOutlet weak var lblInfoDescription:UILabel!
     @IBOutlet weak var btnLinkedAccount:UIButton!
     @IBOutlet weak var btnsenderactivity:UIButton!
@@ -71,7 +74,13 @@ class notificationSettingVC: UIViewController {
         self.popTo()
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
-       
+        if(sender == self.btnNewLinkedAccount){
+            self.lblType.text = "New Linked Accounts"
+        }
+        else{
+            self.lblType.text = "Sender Account Activity"
+
+        }
         self.ViewPopup.frame = UIScreen.main.bounds
         //self.view.addSubview(self.ViewPopup)
         self.navigationController?.view.addSubview(self.ViewPopup)

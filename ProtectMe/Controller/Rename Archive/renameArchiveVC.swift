@@ -51,6 +51,9 @@ class renameArchiveVC: UIViewController {
         else if(FieldType == "name"){
           self.WSUpdateProfile(Parameter: ["name":self.txtName.text!])
         }
+        else if(FieldType == "folder"){
+             // self.WSUpdateFolder(Parameter: ["name":self.txtName.text!])
+        }
         else{
             WSRenameFile(Parameter: ["id":fileID,"name":self.txtName.text!])
 //            self.delegate?.changename(name: self.txtName.text!, index: ind!)
@@ -74,6 +77,16 @@ class renameArchiveVC: UIViewController {
             txtName.config.textFieldKeyboardType = .name
             txtName.leftIcon = #imageLiteral(resourceName: "ic_name")
             alertStr = "please enter name."
+        }
+        else if(FieldType == "folder"){
+        let img = #imageLiteral(resourceName: "ic_folder")
+                alertStr = "please enter foldername."
+                txtName.config.textFieldKeyboardType = .name
+                txtName.validationType = .none
+                //txtName.leftIcon = #imageLiteral(resourceName: "ic_Adetails")
+                txtName.leftIcon  = img
+                //txtName.leftViewPadding = 12
+                txtName.tintColor = .clrDeselect
         }
         else{
             let img = #imageLiteral(resourceName: "ic_Adetails")

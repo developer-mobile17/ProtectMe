@@ -115,7 +115,7 @@ class signupVC: UIViewController {
     }
 override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-//    self.getLocation()
+    //self.getLocation()
     self.navigationController?.navigationBar.isHidden = true
         if(USER.shared.isLogout == true){
             self.PushToLogin(self)
