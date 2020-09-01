@@ -20,6 +20,8 @@ pod 'Firebase/Messaging'
 pod 'Firebase/Firestore'
 #pod 'CameraManager', '~> 4.3'
 pod 'CameraRoll'
+pod 'Toast-Swift', '~> 5.0.1'
+
 #pod 'MKMagneticProgress'
 
 

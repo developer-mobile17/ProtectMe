@@ -12,17 +12,8 @@ import CameraRoll
 import MobileCoreServices
 
 
-protocol NotifyToCallListService: class {
-    // The following command (ie, method) must be obeyed by any
-    // underling (ie, delegate) of the older sibling.
-    func getListData()
-}
+
 class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    var videoRecorded: URL? = nil
-    var unique_idforFile = ""
-    weak var delegate: NotifyToCallListService?
-    var Baseunique_id = ""
-    var isLocationEnable = USER.shared.location_service.StrTobool
 
     let imgPickerController = UIImagePickerController()
     var selectedImage:UIImage?
@@ -31,19 +22,20 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     var latitude:Double = 0.0
     var longitude:Double = 0.0
       let locationManager = LocationManager.sharedInstance
-
+    var videoRecorded: URL? = nil
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = false
         self.imgPickerController.delegate = self
+        self.getLocation()
 
 //        let photos = PHPhotoLibrary.authorizationStatus()
 //        if photos == .notDetermined {
 //            PHPhotoLibrary.requestAuthorization({status in
 //                if status == .authorized{
-//                    
+//
 //                } else {}
 //            })
 //        }
@@ -62,28 +54,17 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.getLocation()
+
 
     }
     func getLocation(){
            locationManager.showVerboseMessage = false
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
-        DispatchQueue.main.async {
-            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-                  if let city = dict?["locality"] as? String{
-                      USER.shared.city = city
-                  }
-                  if let country = dict?["country"] as? String{
-                      USER.shared.country = country
-                  }
-                  USER.shared.save()
-                  }
-
-        }
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
+               self.latitude = longitude
+               self.longitude = latitude
             self.locationManager.autoUpdate = false
            }
     }
@@ -91,111 +72,70 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
            present(menu, animated: true, completion: nil)
        }
-    
-    
-    func WSVideoUploadSuces(Parameter:[String:String]) -> Void {
-        ServiceManager.shared.callAPIPost(WithType: .successfully_upload_video, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
-            if(Status == true){
-                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
-                let StatusCode = DataResponce?["status"] as? Int
-                if (StatusCode == 200){
+    @IBAction func plusButtonAction(_ sender:UIButton){
+        let status = PHPhotoLibrary.authorizationStatus()
+        var acess:Bool = false
+        if (status == PHAuthorizationStatus.authorized) {
+            // Access has been granted.
+            acess = true
+        }
+
+        else if (status == PHAuthorizationStatus.denied) {
+            // Access has been denied.
+            acess = false
+            
+//
+        }
+
+        else if (status == PHAuthorizationStatus.notDetermined) {
+
+            // Access has not been determined.
+            PHPhotoLibrary.requestAuthorization({ (newStatus) in
+                if (newStatus == PHAuthorizationStatus.authorized) {
+                    acess = true
+                }
+
+                else {
+                    acess = false
                    
                 }
-                else if(StatusCode == 401)
-                {
-                }
-                else{
-                }
-            }
-            else{
-            }
-        }) { (DataResponce, Status, Message) in
-            //
+            })
         }
-    }
-    
-      func WSUploadPhoneVideo(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
-        
-        var etime = statTime + 5.0
-        if(etime>endTime){
-            etime = endTime
+
+        else if (status == PHAuthorizationStatus.restricted) {
+            // Restricted access - normally won't happen.
+            acess = false
         }
-        if(statTime < endTime){
-            self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
-        print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
+        else{
             
-           // arrOfChunks.append(FUrl)
-            let curruntChunk = FUrl
-             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.Baseunique_id]
-            ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
-                (process)in
-                print("my:",process)
-                //set progress
-                appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
-                
-                //appDelegate.objLocalVid.progress = process!
-            }, Success: { (DataResponce, Status, Message) in
-                if(Status == true){
-                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
-                    let StatusCode = DataResponce?["status"] as? Int
-                    if (StatusCode == 200){
-                       if let Data = dataResponce["data"] as? NSDictionary{
-                            if let videoKey = Data["unique_id"] as? String{
-                                self.Baseunique_id = videoKey
-                                let strTimr = statTime + 5
-                                if(strTimr >= endTime){
-                                    print("video upload complete")
-                                    self.WSVideoUploadSuces(Parameter: ["unique_video_id":videoKey])
-                                    appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-                                    self.delegate?.getListData()
-                                  //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
-                                }
-                                else{
-                                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
-                                    self.WSUploadPhoneVideo(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
-                                }
-                            }
-                    }
-                    }
-                    else if(StatusCode == 401)
-                    {
-                     //   self.myGroup.leave()
-                        self.WSUploadPhoneVideo(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
-                        if let errorMessage:String = Message{
-                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                    appDelegate.setLoginVC()
-                            }
-                        }
-                    }
-                    else{
-                   //     self.myGroup.leave()
-
-                        if let errorMessage:String = dataResponce["message"] as? String{
-                           // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                        }
-                    }
-                }
-                else{
-                    //self.myGroup.leave()
-
-                    if let errorMessage:String = Message{
-                        //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                    }
-                }
-            }) { (DataResponce, Status, Message) in
-                //
-                //self.myGroup.leave()
-
-            }
-
-          
-        
         }
+        if(acess == true){
+            self.showAction()
+
+        }
+        else{
+             //showAlertWithTitleFromVC(vc: self, andMessage: "Please grant permition to acess camera roll!")
+        }
+        
+        
+        
+        // handling code
     }
-       // return responsBool
+    func showAction(){
+        showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Photo Album","Video Album"], canCancel: true) { (i) in
+            if(i == 0){
+                self.PhotoAlbum()
+            }
+            else if(i == 1){
+                self.VideoAlbum()
+            }
+            else
+            {
+            }
+        }
     }
     func WSUploadVideo(Parameter:[String:String],urll:URL) -> Void {
-        ServiceManager.shared.callAPIWithVideo(WithType:.upload_chunk, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+        ServiceManager.shared.callAPIWithVideo(WithType:.upload_file, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
         //        ServiceManager.shared.callAPIPost(WithType: .get_pocket, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
@@ -229,64 +169,14 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
             //
         }
     }
-    func WSDownloadImage(Parameters: [String: Any],img:UIImage){
-        ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: [img], WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
+    func WSUploadImageFromBase(Parameters: [String: Any],img:UIImage){
+        ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: img, WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
        
             let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
             let StatusCode = DataResponce?["status"] as? Int
             if (StatusCode == 200){
                 if let outcome = dataResponce["data"] as? NSDictionary {
                     DispatchQueue.main.async {
-                        self.delegate?.getListData()
-                        //USER.shared.setData(dict:outcome)
-                        //USER.shared.save()
-                        //self.popTo()
-                    }
-                }
-                else
-                {
-                    print("error to save data!")
-                }
-            }
-                else if(StatusCode == 401)
-                {
-                    USER.shared.clear()
-                    if let errorMessage:String = dataResponce["message"] as? String{
-                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                
-                                    appDelegate.setLoginVC()
-                                    // Fallback on earlier versions
-                                
-                        }
-                    }
-                }
-                else{
-                    if let errorMessage:String = DataResponce!["message"] as? String{
-                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                    }
-                              
-                }
-            }) { (DataResponce, Status, Message) in
-            
-                if let errorMessage:String = DataResponce!["message"] as? String{
-            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-            }
-            
-        }
-            
-    }
-    func WSUploadImage(Parameters: [String: Any],img:UIImage){
-        ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: [img], WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
-       
-            let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
-            let StatusCode = DataResponce?["status"] as? Int
-            if (StatusCode == 200){
-                if let outcome = dataResponce["data"] as? NSDictionary {
-                    // NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
-                    DispatchQueue.main.async {
-                        //self.delegate?.getListData()
-                       
-                                        
                         //USER.shared.setData(dict:outcome)
                         //USER.shared.save()
                         //self.popTo()
@@ -342,15 +232,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             let imageData = img.mediumQualityJPEGNSData
                             if let image = UIImage(data: imageData as Data) {
                                // Use image...
-                                DispatchQueue.background(background: {
-                                    // do something in background
-                                self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
-
-                                }, completion:{
-                                   
-
-                                    // when background job finished, do something in main thread
-                                })
+                                self.WSUploadImageFromBase(Parameters: ["long":self.longitude.description,"lat":self.latitude.description,"type":"image"], img: image)
 
                             }
 
@@ -360,26 +242,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                }
            
      }
-    func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
-           DispatchQueue.global().async { //1
-               let asset = AVAsset(url: url) //2
-               let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
-               avAssetImageGenerator.appliesPreferredTrackTransform = true //4
-               let thumnailTime = CMTimeMake(value: 0, timescale: 600) //5
-               do {
-                   let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
-                   let thumbImage = UIImage(cgImage: cgThumbImage) //7
-                   DispatchQueue.main.async { //8
-                       completion(thumbImage) //9
-                   }
-               } catch {
-                   print(error.localizedDescription) //10
-                   DispatchQueue.main.async {
-                       completion(nil) //11
-                   }
-               }
-           }
-       }
+
      func VideoAlbum()
      {
          let cr = CameraRoll()
@@ -393,28 +256,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             print(vid)
                             if let nextURLAsset = vid as? AVURLAsset {
                                 let sourceURL = nextURLAsset.url
-                                let asset = AVAsset(url: sourceURL)
-                                self.videoURL = sourceURL as NSURL
-                                let duration = asset.duration
-                                let durationTime = CMTimeGetSeconds(duration)
                                
-                            DispatchQueue.background(background: {
-                        self.getThumbnailImageFromVideoUrl(url: self.videoURL as! URL) { (AthumbImage) in
-                                                                      //self.thumbImageForVide = AthumImage
-                        let objLocalVid:localVideoModel = localVideoModel()
-                        objLocalVid.url = self.videoRecorded
-                        objLocalVid.thumbImage = AthumbImage
-                        objLocalVid.name = "video\(Date().description).mp4"
-                        appDelegate.ArrLocalVideoUploading.append(objLocalVid)
-                        self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
-                                }
-                                
-                            }, completion:{
-                                                       // self.delegate?.getListData()
-                                                         // when background job finished, do something in main thread
-                                                     })
-
-                               // self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
+                                self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
                             }
                              // self.imageView.image = image
                          //   self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: vid)
@@ -442,7 +285,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-        self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+        self.WSUploadImageFromBase(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
         }
         imgPickerController.dismiss(animated: true,completion: {
                       guard let image = info[.editedImage] as? UIImage else { return }

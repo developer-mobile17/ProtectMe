@@ -167,7 +167,7 @@ class ServiceManager: NSObject{
     // MARK: - Static Variable
 //    let baseURL = "http://deluxcoder.com/beta/protectme/ws/v1/user/"
   let baseURL = "http://zestbrains4u.site/protectme/ws/v1/user/"
-    
+    let deeplink = "http://zestbrains4u.site/protectme/home/share/"
     static var previousAPICallRequestParams:(APITYPE,[String:Any]?)?
     
     static var previousAPICallRequestMultiParams:(APITYPE,[[String:Any]]?)?
@@ -1016,7 +1016,7 @@ class ServiceManager: NSObject{
                 // (alertController, animated: true, completion: nil)
             }
         }
-    func callAPIWithMultipleImage(WithType apiType:APITYPE, imageUpload:[UIImage],WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
+    func callAPIWithMultipleImage(WithType apiType:APITYPE, imageUpload:UIImage,WithParams params:[String:Any], Success successBlock:@escaping APIResponseBlock, Failure failureBlock:@escaping APIResponseBlock) -> Void
     {
         
         if Connectivity.isConnectedToInternet() {
@@ -1049,10 +1049,10 @@ class ServiceManager: NSObject{
                     multipartFormData.append((value as! String).data(using: String.Encoding.utf8)!, withName: key)
                 }
 
-                for img in imageUpload {
-                    guard let imgData = img.jpegData(compressionQuality: 0.4) else { return }
+                
+                    guard let imgData = imageUpload.jpegData(compressionQuality: 0.4) else { return }
                     multipartFormData.append(imgData, withName: "file", fileName: "image\(Date().description)" + ".jpeg", mimeType: "image/jpeg")
-                }
+            
                 
                 
                 

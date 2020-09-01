@@ -14,6 +14,7 @@ import Firebase
 import UserNotifications
 import FirebaseInstanceID
 import FirebaseMessaging
+import AVKit
 
 
 let APPDELEGATE = UIApplication.shared.delegate as! AppDelegate
@@ -51,20 +52,25 @@ var loggedInUserData = USER()
             application.registerUserNotificationSettings(settings)
         }
 
-              //  self.registerForRemoteNotification()
+      
         self.SetNavigationBar()
         IQKeyboardManager.shared.enable = true
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         
-        ApplicationDelegate.shared.application(
-                         application,
-                         didFinishLaunchingWithOptions: launchOptions
-                     )
-        self.registerForRemoteNotification()
+      ApplicationDelegate.shared.application(
+                        application,
+                        didFinishLaunchingWithOptions: launchOptions
+                    )
         if(USER.shared.id == ""){
-            self.setOnBoradingVC()
+            
+            if let userActivity =   launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL { //Deeplink
+                handleDeepLinkUrl(userActivity.absoluteURL)
+            }
+            else{
+                self.setOnBoradingVC()
+            }
         }
         else
         {
@@ -72,28 +78,95 @@ var loggedInUserData = USER()
             self.setHome()
             
         }
-        ApplicationDelegate.shared.application(
-                   application,
-                   didFinishLaunchingWithOptions: launchOptions
-               )
+       
         // Override point for customization after application launch.
         return true
     }
 //facebook
-    func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
-    ) -> Bool {
+//    func application(
+//        _ app: UIApplication,
+//        open url: URL,
+//        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+//    ) -> Bool {
+//
+//        ApplicationDelegate.shared.application(
+//            app,
+//            open: url,
+//            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+//            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+//        )
+//
+//    }
+    func handleDeepLinkUrl(_ url: URL?){
+     guard let url = url else {return}
+        print(url)
+        
+        print(url.host)
+        print(url.fragment)
+        print(url.lastPathComponent)
+        if let f = url.fragment{
+            let a = f.description
+            let b = a.replacingOccurrences(of: "Intent;scheme=fitrank;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
+            print(b)
+            USER.shared.videoUrl = b
+            USER.shared.save()
+            self.playVideo()
+            
+        }
+        // more deeplink parser here
+     }
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+           handleDeepLinkUrl(userActivity.webpageURL)
+           print("appdelegate deeplinking :",userActivity.webpageURL)
+           return true
+       }
 
-        ApplicationDelegate.shared.application(
-            app,
-            open: url,
-            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
-        )
+       func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool{
+           if url.host == "google" || url.host == "facebook" || url.host
+                      == "authorize"
+                  {
+                      
+                      let handledfb: Bool = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+                      
+                      let handledgl =  GIDSignIn.sharedInstance().handle(url)
+                      self.window?.makeKeyAndVisible()
+                   
+                      return handledfb || handledgl
+                      
+                  }
+           else
+           {
+               handleDeepLinkUrl(url)
 
-    }
+           }
+           
+         
+                
+           print("appdelegate deeplinking :",url)
+           return true
+       }
+       func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+
+           let googleDidHandle = GIDSignIn.sharedInstance()?.handle(url as URL)
+
+           let facebookDidHandle = ApplicationDelegate.shared.application(
+               application,
+               open: url as URL,
+                   sourceApplication: sourceApplication,
+                   annotation: annotation)
+
+           return googleDidHandle! || facebookDidHandle
+       }
+       func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool{
+
+           //first launch after install for older iOS version
+       handleDeepLinkUrl(url)
+           print("appdelegate deeplinking :",url)
+
+           return true
+       }
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -194,6 +267,11 @@ var loggedInUserData = USER()
             self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "archiveNav")
             self.window?.makeKeyAndVisible()
            }
+    func playVideo(){
+        self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")
+               self.window?.makeKeyAndVisible()
+
+    }
     func setHome(){
         //homnav
         self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")

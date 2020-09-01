@@ -263,12 +263,12 @@ class FoldersVC: baseVC {
                 self.navigationController?.view.addSubview(self.ViewCreateFolder)
             }
             else if(i == 1){
-                self.PhotoAlbum()
+                //self.PhotoAlbum()
                 
             }
             else
             {
-                self.VideoAlbum()
+                //self.VideoAlbum()
             }
         }
     }

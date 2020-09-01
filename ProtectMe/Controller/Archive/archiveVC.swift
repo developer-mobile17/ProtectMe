@@ -13,20 +13,30 @@ import AVKit
 import MapKit
 import Alamofire
 import Photos
+import CameraRoll
+import MobileCoreServices
 
-extension archiveVC:MKMapViewDelegate,NotifyToCallListService{
+import Toast_Swift
+
+
+extension archiveVC:MKMapViewDelegate{
+    
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
 }
 
-class archiveVC: baseVC {
+class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
 
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
+    @IBOutlet weak var SharedBy:UIControl!
+    @IBOutlet weak var NumberofFiles:UIControl!
+
     @IBOutlet weak var VideoDuration:UIControl!
     @IBOutlet weak var lblVideoDuration:UILabel!
     @IBOutlet weak var ViewVideoDetails:UIControl!
@@ -53,6 +63,8 @@ class archiveVC: baseVC {
     var isFolderSelected:Bool = false
 //Detail View
     @IBOutlet weak var lblFolderName:UILabel!
+    @IBOutlet weak var lblNuberofFiles:UILabel!
+
     @IBOutlet weak var lblDetailType:UILabel!
     @IBOutlet weak var lblDetailName:UILabel!
     @IBOutlet weak var lblDetailName1:UILabel!
@@ -61,9 +73,30 @@ class archiveVC: baseVC {
     @IBOutlet weak var lblDetailSize:UILabel!
     @IBOutlet weak var lblDetailStorageUsed:UILabel!
     @IBOutlet weak var lblDetailSharedBy:UILabel!
+    @IBOutlet weak var lblDateCreatedandLocation:UILabel!
+
     @IBOutlet weak var lblDetailDateCreatedandLocation:UILabel!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var txtName:UITextField!
+    
+    
+    
+    var videoRecorded: URL? = nil
+     var unique_idforFile = ""
+//     weak var delegate: NotifyToCallListService?
+     var Baseunique_id = ""
+     var isLocationEnable = USER.shared.location_service.StrTobool
+
+     let imgPickerController = UIImagePickerController()
+     var selectedImage:UIImage?
+     let titleName = "Photos"
+     var videoURL : NSURL?
+     var latitude:Double = 0.0
+     var longitude:Double = 0.0
+       let locationManager = LocationManager.sharedInstance
+    
+    var selectedButton:UIButton?
+
     var selectedType = "recent"
     var selectedView = "grid"
     var selectedFilter = "0"
@@ -103,9 +136,11 @@ class archiveVC: baseVC {
     var arrOption = [UIButton]()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.scheduledTimerWithTimeInterval()
-        NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
+        
+        self.imgPickerController.delegate = self
+
+        //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
+        //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
 
 
         arrOption = [btnRecent,btnFolders,btnShared]
@@ -113,6 +148,11 @@ class archiveVC: baseVC {
         self.tblVideoList.dataSource = self
         self.collVideogrid.delegate = self
         self.collVideogrid.dataSource = self
+        self.scheduledTimerWithTimeInterval()
+        self.btnHandlerBlackBg(self)
+        self.btnChangeTableView(self.btnGreed)
+        self.btnSelectOptions(self.btnRecent)
+              
         mapView.delegate = self
         self.tblVideoList.register(UINib(nibName: "uploadTableViewCell", bundle: nil), forCellReuseIdentifier: "uploadTableViewCell")
         self.tblVideoList.register(UINib(nibName: "VideoDetailsTableViewCell", bundle: nil), forCellReuseIdentifier: "VideoDetailsTableViewCell")
@@ -133,7 +173,7 @@ class archiveVC: baseVC {
     
     @IBAction func btnSearchAction(_ sender: UIButton) {
            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "searchVC") as! searchVC
-           self.navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
        }
 
     @IBAction func btnUserCurruntLocation(_ sender: UIButton) {
@@ -312,34 +352,41 @@ class archiveVC: baseVC {
         self.lblDetailName.text = data.folder_name?.uppercased()
         self.lblDetailName1.text = data.folder_name?.uppercased()
         self.lblDetailName2.text = data.folder_name?.uppercased()
-        self.lblDetailSize.text = data.file_size?.uppercased()
+        self.lblDetailSize.text = data.total_size
         self.lblDetailType.text = "Folder"
         self.VideoDuration.isHidden = true
+        self.SharedBy.isHidden = true
+        self.NumberofFiles.isHidden = false
+        self.lblNuberofFiles.text = data.number_of_files
+
+
         if(data.user_id == USER.shared.id){
             self.lblDetailSharedBy.text = "YOU"
         }
         else{
             self.lblDetailSharedBy.text = data.uploaded_by
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used
         let date = data.created?.uppercased()
-        let city = data.city?.uppercased()
-        let country = data.country?.uppercased()
+        
+        self.lblDateCreatedandLocation.text = "DATE CREATED"
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
 
         
     }
     func setDetails(data:archivedListModel) -> Void {
-        
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
         self.lblDetailSize.text = data.file_size?.uppercased()
         let asset = AVURLAsset(url: URL(string: data.image_path!)!)
         let durationInSeconds = asset.duration.seconds
+        self.SharedBy.isHidden = false
+        self.NumberofFiles.isHidden = true
         if(data.type?.uppercased() == "VIDEO"){
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
             self.VideoDuration.isHidden = false
+            
             let s = formatSecondsToString(durationInSeconds)
             self.lblVideoDuration.text = s
         }
@@ -358,10 +405,9 @@ class archiveVC: baseVC {
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
+        self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
 
-        print()
-        
     }
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
@@ -382,15 +428,17 @@ class archiveVC: baseVC {
     }
     @IBAction func btnplayofflineVideo(_ sender: UIButton) {
         
-        let videoURL =  appDelegate.ArrLocalVideoUploading[sender.tag].url!
+        if let videoURL =  appDelegate.ArrLocalVideoUploading[sender.tag].url{
         let player = AVPlayer(url: videoURL)
                let vc = AVPlayerViewController()
+        
                vc.player = player
 
                present(vc, animated: true) {
                    vc.player?.play()
                }
         }
+    }
     
     @IBAction func btnplayvideoClieck(_ sender: UIButton) {
         if(self.isFolderSelected == true){
@@ -404,8 +452,10 @@ class archiveVC: baseVC {
                   self.present(vc, animated: true, completion: nil)
         }
         else{
-        let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
+            
+            let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
                let player = AVPlayer(url: videoURL!)
+
                let vc = AVPlayerViewController()
                vc.player = player
 
@@ -501,15 +551,13 @@ class archiveVC: baseVC {
        }
     @IBAction func btnShareVideoURL(_ sender: UIButton) {
         //Set the default sharing message.
-        let message = "Please check this video link"
-        //Set the link to share.
-        if let link = NSURL(string: self.arrarchivedList[self.selectedIndex!.row].thumb_image!)
-        {
-            let objectsToShare = [message,link] as [Any]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-            activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
-            self.present(activityVC, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.btnhideDetails(self)
+            self.btnHandlerBlackBg(self)
         }
+        UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
+
+        self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
     }
     func writeToFile(urlString: String) {
 
@@ -601,10 +649,15 @@ class archiveVC: baseVC {
         self.navigationController?.view.addSubview(self.ViewdeleteConfirmation)
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
-        self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-        self.setDetails(data:self.arrarchivedList[sender.tag])
+        appDelegate.SHOW_CUSTOM_LOADER()
+        DispatchQueue.main.async {
+            self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+            self.setDetails(data:self.arrarchivedList[sender.tag])
+        }
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
+        appDelegate.HIDE_CUSTOM_LOADER()
+
     }
     @IBAction func btnFolderOptionMenuClick(_ sender: UIButton) {
            self.selectedIndex = IndexPath(row: sender.tag, section: 0)
@@ -663,7 +716,9 @@ class archiveVC: baseVC {
     override func viewWillAppear(_ animated: Bool) {
         self.btnHandlerBlackBg(self)
         self.btnChangeTableView(self.btnGreed)
-        self.btnSelectOptions(self.btnRecent)
+        //self.btnSelectOptions(self.btnRecent)
+        self.selectOptions(selected: self.selectedButton!)
+
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
@@ -784,14 +839,17 @@ class archiveVC: baseVC {
             if(btn == selected){
                 
                 if(btn == self.btnRecent){
+                    self.selectedButton = self.btnRecent
                     self.selectedType = "recent"
                     self.isFolderSelected = false
                 }
                 else if(btn == self.btnFolders){
                     self.selectedType = "folders"
+                    self.selectedButton = self.btnFolders
                     self.isFolderSelected = true
                 }
                 else{
+                    self.selectedButton = self.btnShared
                     self.isFolderSelected = false
                     self.selectedType = "shared"
                 }
@@ -1096,7 +1154,27 @@ class archiveVC: baseVC {
                             objarchivedList.uploaded_by     = outcome[a]["uploaded_by"] as? String ?? ""
                             objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
                             objarchivedList.name      = outcome[a]["name"] as? String ?? ""
+                            if let number_of_files = outcome[a]["number_of_files"] as? Int{
+                                objarchivedList.number_of_files = number_of_files.description
+                            }
+                            else{
+                                objarchivedList.number_of_files = "0"
+                            }
                             
+                            if let storage_used = outcome[a]["storage_used"] as? String{
+                                objarchivedList.storage_used = storage_used
+                            }
+                            else{
+                                objarchivedList.number_of_files = "0"
+                            }
+                            
+                            if let total_size = outcome[a]["total_size"] as? String{
+                                objarchivedList.total_size = total_size
+                            }
+                            else{
+                                objarchivedList.number_of_files = "0"
+                            }
+
                             objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
 
                             self.arrarchivedList.append(objarchivedList)
@@ -1193,7 +1271,7 @@ extension archiveVC:sendbacktoName{
 
 extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     @objc func loadList(notification: NSNotification) {
-           self.selectOptions(selected: self.btnRecent)
+        self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
        }
     @objc func RefreshList(notification: NSNotification) {
              self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter])
@@ -1515,4 +1593,411 @@ extension AVAsset {
             })
         }
     }
+}
+extension archiveVC {
+        func PhotoAlbum()
+         {
+            var controller = UIImagePickerController()
+
+                // Display Photo Library
+    //        controller.sourceType = UIImagePickerController.SourceType.savedPhotosAlbum
+    //            controller.mediaTypes = [kUTTypeImage as String]
+    //            controller.delegate = self
+    //            present(controller, animated: true, completion: nil)
+            
+             let cr = CameraRoll()
+                   cr.present(in: self, mode: .Image) { (assets) in
+                       if let assets = assets, let first = assets.first {
+                           DispatchQueue.main.async {
+                            AssetManager.sharedInstance.getOriginal(phAsset: first) { (img) in
+                                let imageData = img.mediumQualityJPEGNSData
+                                if let image = UIImage(data: imageData as Data) {
+                                   // Use image...
+                                    DispatchQueue.background(background: {
+                                        // do something in background
+                                    self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
+
+                                    }, completion:{
+                                       
+
+                                        // when background job finished, do something in main thread
+                                    })
+
+                                }
+
+                            }
+                           }
+                       }
+                   }
+               
+         }
+    func VideoAlbum()
+    {
+        let cr = CameraRoll()
+       
+             cr.present(in: self, mode: .Video) { (assets) in
+               
+                 if let assets = assets, let first = assets.first {
+                     DispatchQueue.main.async {
+                       
+                         AssetManager.sharedInstance.getVideoFromAsset(phAsset: first) { (vid) in
+                           print(vid)
+                           if let nextURLAsset = vid as? AVURLAsset {
+                               let sourceURL = nextURLAsset.url
+                               let asset = AVAsset(url: sourceURL)
+                               self.videoURL = sourceURL as NSURL
+                               let duration = asset.duration
+                               let durationTime = CMTimeGetSeconds(duration)
+                              
+                           DispatchQueue.background(background: {
+                       self.getThumbnailImageFromVideoUrl(url: self.videoURL as! URL) { (AthumbImage) in
+                                                                     //self.thumbImageForVide = AthumImage
+                       let objLocalVid:localVideoModel = localVideoModel()
+                       objLocalVid.url = self.videoRecorded
+                       objLocalVid.thumbImage = AthumbImage
+                       objLocalVid.name = "video\(Date().description).mp4"
+                       appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+                       self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
+                               }
+                               
+                           }, completion:{
+                                                      // self.delegate?.getListData()
+                                                        // when background job finished, do something in main thread
+                                                    })
+
+                              // self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
+                           }
+                            // self.imageView.image = image
+                        //   self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: vid)
+
+                           
+                         }
+                     }
+                 }
+             }
+
+    }
+    
+      func getLocation(){
+               locationManager.showVerboseMessage = false
+               locationManager.autoUpdate = true
+             //   locationManager.startUpdatingLocation()
+            DispatchQueue.main.async {
+                self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                      if let city = dict?["locality"] as? String{
+                          USER.shared.city = city
+                      }
+                      if let country = dict?["country"] as? String{
+                          USER.shared.country = country
+                      }
+                      USER.shared.save()
+                      }
+
+            }
+               locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+                   self.latitude = latitude
+                   self.longitude = longitude
+                self.locationManager.autoUpdate = false
+               }
+        }
+        @IBAction func OpenMenuBtnAction(_ sender:UIButton){
+               let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
+               present(menu, animated: true, completion: nil)
+           }
+        
+        
+        func WSVideoUploadSuces(Parameter:[String:String]) -> Void {
+            ServiceManager.shared.callAPIPost(WithType: .successfully_upload_video, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                if(Status == true){
+                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                    let StatusCode = DataResponce?["status"] as? Int
+                    if (StatusCode == 200){
+                       
+                    }
+                    else if(StatusCode == 401)
+                    {
+                    }
+                    else{
+                    }
+                }
+                else{
+                }
+            }) { (DataResponce, Status, Message) in
+                //
+            }
+        }
+        
+          func WSUploadPhoneVideo(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
+            
+            var etime = statTime + 5.0
+            if(etime>endTime){
+                etime = endTime
+            }
+            if(statTime < endTime){
+                self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
+            print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
+                
+               // arrOfChunks.append(FUrl)
+                let curruntChunk = FUrl
+                 let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.Baseunique_id]
+                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
+                    (process)in
+                    print("my:",process)
+                    //set progress
+                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
+                    
+                    //appDelegate.objLocalVid.progress = process!
+                }, Success: { (DataResponce, Status, Message) in
+                    if(Status == true){
+                        let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                        let StatusCode = DataResponce?["status"] as? Int
+                        if (StatusCode == 200){
+                           if let Data = dataResponce["data"] as? NSDictionary{
+                                if let videoKey = Data["unique_id"] as? String{
+                                    self.Baseunique_id = videoKey
+                                    let strTimr = statTime + 5
+                                    if(strTimr >= endTime){
+                                        print("video upload complete")
+                                        self.WSVideoUploadSuces(Parameter: ["unique_video_id":videoKey])
+                                        appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
+                                        self.getListData()
+                                      //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
+                                    }
+                                    else{
+                                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
+                                        self.WSUploadPhoneVideo(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                                    }
+                                }
+                        }
+                        }
+                        else if(StatusCode == 401)
+                        {
+                         //   self.myGroup.leave()
+                            self.WSUploadPhoneVideo(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                            if let errorMessage:String = Message{
+                                showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                        appDelegate.setLoginVC()
+                                }
+                            }
+                        }
+                        else{
+                       //     self.myGroup.leave()
+
+                            if let errorMessage:String = dataResponce["message"] as? String{
+                               // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                        }
+                    }
+                    else{
+                        //self.myGroup.leave()
+
+                        if let errorMessage:String = Message{
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                }) { (DataResponce, Status, Message) in
+                    //
+                    //self.myGroup.leave()
+
+                }
+
+              
+            
+            }
+        }
+           // return responsBool
+        }
+        func WSUploadVideo(Parameter:[String:String],urll:URL) -> Void {
+            ServiceManager.shared.callAPIWithVideo(WithType:.upload_chunk, VideoUrl: urll,  WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            //        ServiceManager.shared.callAPIPost(WithType: .get_pocket, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                if(Status == true){
+                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                    let StatusCode = DataResponce?["status"] as? Int
+                    if (StatusCode == 200){
+                        
+                    }
+                    else if(StatusCode == 401)
+                    {
+                        if let errorMessage:String = Message{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                
+                                    appDelegate.setLoginVC()
+                                    // Fallback on earlier versions
+                                
+                            }
+                        }
+                    }
+                    else{
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }) { (DataResponce, Status, Message) in
+                //
+            }
+        }
+        func WSDownloadImage(Parameters: [String: Any],img:UIImage){
+            ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: img, WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
+           
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    if let outcome = dataResponce["data"] as? NSDictionary {
+                        DispatchQueue.main.async {
+                            self.getListData()
+                            //USER.shared.setData(dict:outcome)
+                            //USER.shared.save()
+                            //self.popTo()
+                        }
+                    }
+                    else
+                    {
+                        print("error to save data!")
+                    }
+                }
+                    else if(StatusCode == 401)
+                    {
+                        USER.shared.clear()
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                    
+                                        appDelegate.setLoginVC()
+                                        // Fallback on earlier versions
+                                    
+                            }
+                        }
+                    }
+                    else{
+                        if let errorMessage:String = DataResponce!["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                                  
+                    }
+                }) { (DataResponce, Status, Message) in
+                
+                    if let errorMessage:String = DataResponce!["message"] as? String{
+                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+                
+            }
+                
+        }
+        func WSUploadImageArchive(Parameters: [String: Any],img:UIImage){
+            ServiceManager.shared.callAPIWithMultipleImage(WithType: .upload_file, imageUpload: img, WithParams:  Parameters, Success: { (DataResponce, Status, Message)  in
+           
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    if let outcome = dataResponce["data"] as? NSDictionary {
+                        NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
+                        DispatchQueue.main.async {
+                            self.getListData()
+                           
+                                            
+                            //USER.shared.setData(dict:outcome)
+                            //USER.shared.save()
+                            //self.popTo()
+                        }
+                    }
+                    else
+                    {
+                        print("error to save data!")
+                    }
+                }
+                    else if(StatusCode == 401)
+                    {
+                        USER.shared.clear()
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                    
+                                        appDelegate.setLoginVC()
+                                        // Fallback on earlier versions
+                                    
+                            }
+                        }
+                    }
+                    else{
+                        if let errorMessage:String = DataResponce!["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                                  
+                    }
+                }) { (DataResponce, Status, Message) in
+                
+                    if let errorMessage:String = DataResponce!["message"] as? String{
+                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+                
+            }
+                
+        }
+
+        func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
+               DispatchQueue.global().async { //1
+                   let asset = AVAsset(url: url) //2
+                   let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3
+                   avAssetImageGenerator.appliesPreferredTrackTransform = true //4
+                   let thumnailTime = CMTimeMake(value: 0, timescale: 600) //5
+                   do {
+                       let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumnailTime, actualTime: nil) //6
+                       let thumbImage = UIImage(cgImage: cgThumbImage) //7
+                       DispatchQueue.main.async { //8
+                           completion(thumbImage) //9
+                       }
+                   } catch {
+                       print(error.localizedDescription) //10
+                       DispatchQueue.main.async {
+                           completion(nil) //11
+                       }
+                   }
+               }
+           }
+
+        // MARK: - Lifecycle Delegate Methods
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+                  imgPickerController.delegate = self
+                  imgPickerController.dismiss(animated: true,completion: {
+                  })
+        }
+          //
+        func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+
+            // change title here to something other than default "Photo"
+            viewController.navigationController?.navigationBar.topItem?.title = "AAA"
+            //self.imgPickerController.navigationBar.topItem?.title = titleName
+            
+        }
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+            }
+            imgPickerController.dismiss(animated: true,completion: {
+                          guard let image = info[.editedImage] as? UIImage else { return }
+                          self.selectedImage = image
+                          })
+            imgPickerController.dismiss(animated: true,completion: {
+                guard let URLVIdeo = info[.mediaURL] as? NSURL else { return }
+            self.videoURL = URLVIdeo
+                print(self.videoURL ?? "")
+            })
+            //        do {
+    //               let asset = AVURLAsset(url: videoURL as! URL , options: nil)
+    //               let imgGenerator = AVAssetImageGenerator(asset: asset)
+    //               imgGenerator.appliesPreferredTrackTransform = true
+    ////               let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(0, 1), actualTime: nil)
+    ////               let thumbnail = UIImage(cgImage: cgImage)
+    ////               imgView.image = thumbnail
+    //           } catch let error {
+    //               print("*** Error generating thumbnail: \(error.localizedDescription)")
+    //           }
+                     
+        }
+
+
 }

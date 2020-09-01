@@ -29,6 +29,7 @@
 			<array>
 				<string>com.googleusercontent.apps.189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f</string>
 				<string>fb715023375951576</string>
+				<string>protectmedeeplink</string>
 			</array>
 		</dict>
 	</array>
@@ -78,8 +79,6 @@
 	<string>$(PRODUCT_NAME) uses Cameras</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app wants to acess your location.</string>
-	<key>NSLocationUsageDescription</key>
-	<string>This app wants to acess your location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app wants to acess your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -110,7 +109,6 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

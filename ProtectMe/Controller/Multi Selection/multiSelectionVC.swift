@@ -222,7 +222,7 @@ extension multiSelectionVC:UITableViewDelegate,UITableViewDataSource{
         cell.btncheckbox.tag = indexPath.row
         cell.btncheckbox.addTarget(self, action: #selector(self.btnCheckBoxAction(_:)), for: .touchUpInside)
         cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
-        cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+        cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                          
         if(self.arrarchivedList[indexPath.row].isChecked == true)
         {

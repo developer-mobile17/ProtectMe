@@ -20,6 +20,7 @@ import MobileCoreServices
 
 
 class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
+    
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
     let myGroup = DispatchGroup()
@@ -81,13 +82,39 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         DispatchQueue.main.async {
             self.setUserLocation()
         }
         if USER.shared.id == ""{
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
-
         }
+        else{
+            if(USER.shared.videoUrl != ""){
+                if(USER.shared.videoUrl.contains(".mp4")){
+                let videoURL = URL(string: USER.shared.videoUrl)
+                let player = AVPlayer(url: videoURL!)
+
+                let vc = AVPlayerViewController()
+                vc.player = player
+
+                present(vc, animated: true) {
+                    USER.shared.videoUrl = ""
+                    USER.shared.save()
+                    vc.player?.play()
+                }
+            }
+            
+            else{
+                let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+                vc.imgforview = USER.shared.videoUrl
+                self.present(vc, animated: true, completion: {
+                    USER.shared.videoUrl = ""
+                    USER.shared.save()
+                })
+            }
+        }
+    }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -759,7 +786,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     }
     // return responsBool
     }
-    override func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
+     func getThumbnailImageFromVideoUrl(url: URL, completion: @escaping ((_ image: UIImage?)->Void)) {
         DispatchQueue.global().async { //1
             let asset = AVAsset(url: url) //2
             let avAssetImageGenerator = AVAssetImageGenerator(asset: asset) //3

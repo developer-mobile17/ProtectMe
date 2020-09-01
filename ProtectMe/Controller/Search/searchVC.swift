@@ -14,7 +14,7 @@ import MapKit
 import Alamofire
 import Photos
 
-extension searchVC:MKMapViewDelegate,NotifyToCallListService{
+extension searchVC:MKMapViewDelegate{
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
@@ -24,6 +24,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
     
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
+    var isLocationEnable = USER.shared.location_service.StrTobool
+
    @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
@@ -149,7 +151,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         
         
     }
-        @IBAction func plusButtonAction(_ sender:UIButton){
+    @IBAction override func plusButtonAction(_ sender:UIButton){
             let status = PHPhotoLibrary.authorizationStatus()
             var acess:Bool = false
             if (status == PHAuthorizationStatus.authorized) {
@@ -198,7 +200,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
             
             // handling code
         }
-        func showAction(){
+    override func showAction(){
             
             if(self.isFolderSelected == true){
                 showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Create New Folder","Photo Album","Video Album"], canCancel: true) { (i) in

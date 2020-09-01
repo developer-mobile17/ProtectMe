@@ -52,7 +52,7 @@ class renameArchiveVC: UIViewController {
           self.WSUpdateProfile(Parameter: ["name":self.txtName.text!])
         }
         else if(FieldType == "folder"){
-             // self.WSUpdateFolder(Parameter: ["name":self.txtName.text!])
+            self.WSRenameFolder(Parameter: ["id":fileID,"name":self.txtName.text!])
         }
         else{
             WSRenameFile(Parameter: ["id":fileID,"name":self.txtName.text!])
@@ -79,7 +79,7 @@ class renameArchiveVC: UIViewController {
             alertStr = "please enter name."
         }
         else if(FieldType == "folder"){
-        let img = #imageLiteral(resourceName: "ic_folder")
+        let img = #imageLiteral(resourceName: "ic_foldericon")
                 alertStr = "please enter foldername."
                 txtName.config.textFieldKeyboardType = .name
                 txtName.validationType = .none
@@ -103,6 +103,66 @@ class renameArchiveVC: UIViewController {
     @IBAction func btnBackClick(_ sender: Any) {
         self.popTo()
     }
+        func WSRenameFolder(Parameter:[String:Any]) -> Void {
+            ServiceManager.shared.callAPIPost(WithType: .rename_folder, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                if(Status == true){
+                    let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                    let StatusCode = DataResponce?["status"] as? Int
+                    if (StatusCode == 200){
+                        if let archived_counter = dataResponce["archived_counter"] as? String{
+                                USER.shared.archived_counter = archived_counter
+                                USER.shared.save()
+                        }
+                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                USER.shared.linked_account_counters = String(linked_account_counters)
+                                USER.shared.save()
+                        }
+                        self.delegate?.getselectedvire(view: self.selectedView)
+                        self.popTo()
+                    }
+                    else if(StatusCode == 307)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                if let url = URL(string: LIveURL),
+                                UIApplication.shared.canOpenURL(url){
+                                    UIApplication.shared.openURL(url)
+                                }
+                            }
+                            }
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                    }
+                    else if(StatusCode == 412)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                    else if(StatusCode == 401)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                    appDelegate.setLoginVC()
+                            }
+                        }
+                    }
+                    else{
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }) { (DataResponce, Status, Message) in
+                //
+            }
+        }
     func WSRenameFile(Parameter:[String:Any]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .rename_file, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class sidemenuVC: baseVC {
     typealias CompletionHandler = (_ success:Bool) -> Void
@@ -16,7 +17,7 @@ class sidemenuVC: baseVC {
     @IBOutlet weak var tblMenu:UITableView!
     @IBOutlet weak var lblName:UILabel!{
         didSet{
-            //lblName.text = USER.shared.name
+            lblName.text = USER.shared.name
         }
     }
     @IBOutlet weak var lblStateCountry:UILabel!{
@@ -28,43 +29,55 @@ class sidemenuVC: baseVC {
           let locationManager = LocationManager.sharedInstance
           locationManager.showVerboseMessage = false
           locationManager.autoUpdate = true
-            print(USER.shared.latitude)
-        print(USER.shared.longitude)
+            
           self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
                 self.latitude = latitude
                 self.longitude = longitude
             
                   self.locationManager.reverseGeocodeLocationWithLatLon(latitude: latitude, longitude: longitude) { (dict, placemark, str) in
+                    var city1 = ""
                           if let city = dict?["locality"] as? String{
-                              USER.shared.city = city
+                              city1 = city
                           }
+                    var country1 = ""
                           if let country = dict?["country"] as? String{
-                              USER.shared.country = country
+                              country1 = country
                           }
                       USER.shared.save()
-                      self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+                      self.lblStateCountry.text = "\(city1),\(country1)"
 
                           }
                     self.locationManager.autoUpdate = false
                    }
-          
-
-
-          
       }
     override func viewDidLoad() {
         super.viewDidLoad()
         tblMenu.delegate = self
         tblMenu.dataSource = self
-    
+        //lblName.text = USER.shared.name
 
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.lblName.text = USER.shared.name
-        DispatchQueue.main.async {
-            self.setUserLocation()
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+                case .notDetermined, .restricted, .denied:
+                    print("No access")
+                self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+                case .authorizedAlways, .authorizedWhenInUse:
+                    print("Access")
+                DispatchQueue.main.async {
+                    self.setUserLocation()
+                }
+                @unknown default:
+                break
+            }
+            } else {
+                print("Location services are not enabled")
         }
+        lblName.text = USER.shared.name
+        self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        
 //        DispatchQueue.main.async {
 //            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
 //                  if let city = dict?["locality"] as? String{

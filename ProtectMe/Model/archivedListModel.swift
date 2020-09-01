@@ -28,6 +28,10 @@ class archivedListModel: NSObject {
     var updated         :String?
     var user_id         :String?
     var uploaded_by     :String?
+    var number_of_files     :String?
+    var total_size     :String?
+    var storage_used     :String?
+    
     var thumb_image         :String?
     var isChecked         :Bool = false
 
