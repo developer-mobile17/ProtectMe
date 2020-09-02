@@ -14,6 +14,7 @@ class linkAccountVC: UIViewController {
     var type = ""
     var objlisnkedListModel:lisnkedListModel = lisnkedListModel()
     @IBOutlet weak var ViewEmailPopup:UIControl!
+    @IBOutlet weak var lblEmailPopup:UILabel!
 
     @IBOutlet weak var ViewPopup:UIControl!
          @IBOutlet weak var txtType:AITextFieldPickerView!{
@@ -225,7 +226,8 @@ class linkAccountVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                        
+                        USER.shared.isLogout = true
+                        USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                           
@@ -261,6 +263,7 @@ class linkAccountVC: UIViewController {
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
+                    self.lblEmailPopup.text = "An email confirmation has been sent to " + (self.txtname.text ?? "") 
                     self.ViewEmailPopup.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewEmailPopup)
 
@@ -289,7 +292,8 @@ class linkAccountVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                        
+                        USER.shared.isLogout = true
+                        USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                           
@@ -322,7 +326,7 @@ class linkAccountVC: UIViewController {
                                        USER.shared.save()
                                        }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
+                                    USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
                     let vc = storyBoards.Main.instantiateViewController(withIdentifier: "recordVC") as! recordVC
@@ -353,7 +357,8 @@ class linkAccountVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                        
+                        USER.shared.isLogout = true
+                        USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                           

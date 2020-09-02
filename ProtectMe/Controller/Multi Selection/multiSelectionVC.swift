@@ -95,7 +95,8 @@ class multiSelectionVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -186,7 +187,9 @@ class multiSelectionVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }
@@ -217,6 +220,7 @@ extension multiSelectionVC:UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:multiselectionTableViewCell = tableView.dequeueReusableCell(withIdentifier: "multiselectionTableViewCell", for: indexPath) as! multiselectionTableViewCell
+        cell.selectionStyle = .none
         cell.lblName.text = arrarchivedList[indexPath.row].image_name
         cell.lblOwnerName.text = arrarchivedList[indexPath.row].uploaded_by
         cell.btncheckbox.tag = indexPath.row

@@ -720,7 +720,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -797,7 +798,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -845,7 +847,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -941,7 +944,9 @@ class searchVC: baseVC ,UITextFieldDelegate{
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                               USER.shared.isLogout = true
+                               USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }

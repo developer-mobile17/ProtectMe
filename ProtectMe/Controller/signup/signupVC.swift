@@ -199,8 +199,8 @@ override func viewWillAppear(_ animated: Bool) {
                     
                     if let userData = dataResponce["data"] as? NSDictionary{
                         USER.shared.setData(dict: userData)
-                        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "linkAccountVC") as! linkAccountVC
-                        vc.isHidden = true
+                        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
+                        //vc.isHidden = true
                         self.navigationController?.pushViewController(vc, animated: true)
 
                     }
@@ -230,6 +230,8 @@ override func viewWillAppear(_ animated: Bool) {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                             appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }

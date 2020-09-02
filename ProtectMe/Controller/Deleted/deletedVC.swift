@@ -105,14 +105,21 @@ class deletedVC: baseVC {
     }
       
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
-        self.WSDeleteFile(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!,"type":"1"])
+        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
+            
+                   , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                       if(index == 0){
+                           self.WSDeleteFile(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!,"type":"0"])
+                       }
+                   }
+        
     }
     
     @IBAction func btnClearAllButton(_ sender: UIButton) {
         if(arrarchivedList.count>0){
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to clear?", buttons: ["Cancle","Yes"]) { (index) in
-                if(index == 1){
+            , andMessage: "Are you sure you want to clear?", buttons: ["Yes","Cancle"]) { (index) in
+                if(index == 0){
                     self.WSCleatDeletedfiles(Parameter: [:])
                 }
             }
@@ -324,7 +331,8 @@ class deletedVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -367,7 +375,8 @@ class deletedVC: baseVC {
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -417,7 +426,8 @@ class deletedVC: baseVC {
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -465,7 +475,8 @@ class deletedVC: baseVC {
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -562,7 +573,8 @@ class deletedVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             

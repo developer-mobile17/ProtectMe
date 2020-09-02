@@ -108,7 +108,8 @@ class resetPasswordVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             

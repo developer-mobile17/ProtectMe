@@ -25,31 +25,7 @@ class sidemenuVC: baseVC {
             //lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
     }
-    func setUserLocation(){
-          let locationManager = LocationManager.sharedInstance
-          locationManager.showVerboseMessage = false
-          locationManager.autoUpdate = true
-            
-          self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-                self.latitude = latitude
-                self.longitude = longitude
-            
-                  self.locationManager.reverseGeocodeLocationWithLatLon(latitude: latitude, longitude: longitude) { (dict, placemark, str) in
-                    var city1 = ""
-                          if let city = dict?["locality"] as? String{
-                              city1 = city
-                          }
-                    var country1 = ""
-                          if let country = dict?["country"] as? String{
-                              country1 = country
-                          }
-                      USER.shared.save()
-                      self.lblStateCountry.text = "\(city1),\(country1)"
-
-                          }
-                    self.locationManager.autoUpdate = false
-                   }
-      }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tblMenu.delegate = self
@@ -58,25 +34,49 @@ class sidemenuVC: baseVC {
 
         // Do any additional setup after loading the view.
     }
+    func setUserLiveLocation(){
+    
+                        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
+                          var city1 = ""
+                                if let city = dict?["locality"] as? String{
+                                    city1 = city
+                                }
+                          var country1 = ""
+                                if let country = dict?["country"] as? String{
+                                    country1 = country
+                                }
+                            USER.shared.save()
+                            self.lblStateCountry.text = "\(city1),\(country1)"
+
+                                }
+                          self.locationManager.autoUpdate = false
+                         
+            }
     override func viewWillAppear(_ animated: Bool) {
+        lblName.text = USER.shared.name
+        if  USER.shared.city != ""{
+            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        }
+        
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
                 case .notDetermined, .restricted, .denied:
                     print("No access")
+                    self.locationManager.startUpdatingLocation()
                 self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
                 case .authorizedAlways, .authorizedWhenInUse:
                     print("Access")
                 DispatchQueue.main.async {
-                    self.setUserLocation()
+                    self.setUserLiveLocation()
                 }
                 @unknown default:
                 break
             }
             } else {
+            
                 print("Location services are not enabled")
         }
-        lblName.text = USER.shared.name
-        self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        
         
 //        DispatchQueue.main.async {
 //            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
@@ -201,7 +201,7 @@ extension sidemenuVC:UITableViewDelegate,UITableViewDataSource{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                          USER.shared.isLogout = true
                          USER.shared.save()
-
+                            
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             

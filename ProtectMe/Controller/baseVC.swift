@@ -21,7 +21,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     var videoURL : NSURL?
     var latitude:Double = 0.0
     var longitude:Double = 0.0
-      let locationManager = LocationManager.sharedInstance
+    let locationManager = LocationManager.sharedInstance
     var videoRecorded: URL? = nil
 
 
@@ -29,6 +29,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = false
         self.imgPickerController.delegate = self
+        locationManager.delegate = self as? LocationManagerDelegate
         self.getLocation()
 
 //        let photos = PHPhotoLibrary.authorizationStatus()
@@ -58,7 +59,29 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
 
 
     }
+    func setUserLocation(){
+        locationManager.showVerboseMessage = true
+        locationManager.autoUpdate = true
+        locationManager.startUpdatingLocation()
+
+        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+                  if let city = dict?["locality"] as? String{
+                      USER.shared.city = city
+                  }
+                  if let country = dict?["country"] as? String{
+                      USER.shared.country = country
+                  }
+                self.locationManager.stopUpdatingLocation()
+
+                  USER.shared.save()
+                  }
+
+        
+    }
+    
     func getLocation(){
+        locationManager.startUpdatingLocation()
+
            locationManager.showVerboseMessage = false
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
@@ -66,6 +89,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                self.latitude = longitude
                self.longitude = latitude
             self.locationManager.autoUpdate = false
+            self.locationManager.stopUpdatingLocation()
            }
     }
     @IBAction func OpenMenuBtnAction(_ sender:UIButton){
@@ -147,7 +171,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -192,7 +217,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                     USER.shared.clear()
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                
+                                USER.shared.isLogout = true
+                                USER.shared.save()
                                     appDelegate.setLoginVC()
                                     // Fallback on earlier versions
                                 

@@ -19,6 +19,7 @@ class LinkedAccountVC: baseVC {
     @IBOutlet weak var btnReciver:UIButton!
     @IBOutlet weak var lblEmail:UILabel!
     @IBOutlet weak var lblName:UILabel!
+    @IBOutlet weak var lblMessagePopup:UILabel!
 
     var btnSelected:UIButton = UIButton()
     
@@ -144,7 +145,12 @@ class LinkedAccountVC: baseVC {
     }
     @IBAction func btnUnLinkNewAcc(_ sender: UIButton){
         print(selectedUnlinkINdex)
-        self.WSUnlinkAcc(Parameter: ["linked_account_id":self.arrLinkedAccList[self.selectedUnlinkINdex].id])
+        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Are you sure you want to unlink this user?", buttons: ["Yes","Cancel"]) { (i) in
+            if(i == 0){
+                self.WSUnlinkAcc(Parameter: ["linked_account_id":self.arrLinkedAccList[self.selectedUnlinkINdex].id])
+
+            }
+        }
        }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
@@ -198,7 +204,9 @@ class LinkedAccountVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                               USER.shared.isLogout = true
+                               USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }
@@ -262,7 +270,9 @@ class LinkedAccountVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }
@@ -288,22 +298,29 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    if let usernm = self.arrLinkedAccList[self.selectedUnlinkINdex].name as? String{
+                        let a = usernm + " will be unlinked within the next 24 hours"
+                        showAlertWithTitleFromVC(vc: self, andMessage: a)
+                        self.ViewOptionMenu.removeFromSuperview()
+                        self.selectOptions(selected: self.btnSelected)
+                        //showAlert(title: Constant.APP_NAME as NSString, message: usernm + "will be unlinked within the next 24 hours")
+                    }
                     if let archived_counter = dataResponce["archived_counter"] as? String{
                                        USER.shared.archived_counter = archived_counter
                                        USER.shared.save()
                                        }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
+                                    USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
-                    if let msg = DataResponce?["message"] as? String{
-                        //showAlertWithTitleFromVC(vc: self, andMessage: msg)
-                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: msg, buttons: ["Dismiss"]) { (i) in
-                            self.ViewOptionMenu.removeFromSuperview()
-                            self.selectOptions(selected: self.btnSelected)
-                                                      // Fallback on earlier versions
-                                              }
-                    }
+//                    if let msg = DataResponce?["message"] as? String{
+//                        //showAlertWithTitleFromVC(vc: self, andMessage: msg)
+//                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: msg, buttons: ["Dismiss"]) { (i) in
+//                            self.ViewOptionMenu.removeFromSuperview()
+//                            self.selectOptions(selected: self.btnSelected)
+//                                                      // Fallback on earlier versions
+//                                              }
+//                    }
                 }
                     else if(StatusCode == 307)
                     {
@@ -329,7 +346,9 @@ class LinkedAccountVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }
@@ -361,7 +380,8 @@ class LinkedAccountVC: baseVC {
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                           
+                           USER.shared.isLogout = true
+                           USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                            
@@ -447,7 +467,9 @@ class LinkedAccountVC: baseVC {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                         }
                     }
                 }

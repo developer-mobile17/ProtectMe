@@ -551,7 +551,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                     self.actionCompleted = false
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -620,7 +621,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                     self.actionCompleted = false
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -684,7 +686,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -734,7 +737,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -848,7 +852,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -1010,11 +1015,13 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
                        cell.btnPlayvideo.tag = indexPath.row
                        cell.btnMap.tag = indexPath.row
                        cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
-                       cell.btnOption.tag = indexPath.row
-                       cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+                        cell.btnOption.isHidden = true
+            
+                       //cell.btnOption.tag = indexPath.row
+                      // cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
                        cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
                        cell.lblTitle.text = self.arrFileList[indexPath.row].image_name
-                       cell.lblName.text = self.arrFileList[indexPath.row].name
+                       cell.lblName.text = self.arrFileList[indexPath.row].uploaded_by
                        if(arrFileList[indexPath.row].type == "image"){
                            cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                            cell.videoThumb.sd_setImage(with: URL(string: arrFileList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)

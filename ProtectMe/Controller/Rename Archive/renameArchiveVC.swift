@@ -13,6 +13,9 @@ protocol sendbacktoName {
     func changename( name:String,index:IndexPath)
 }
 class renameArchiveVC: UIViewController {
+    @IBOutlet weak var ViewEmailConfirmation:UIControl!
+    @IBOutlet weak var lblMessagePopup:UILabel!
+
     var FieldType = ""
     var txtValue = ""
     var selectedView = ""
@@ -98,6 +101,11 @@ class renameArchiveVC: UIViewController {
             //txtName.leftViewPadding = 12
             txtName.tintColor = .clrDeselect
         }
+
+    }
+    @IBAction func btncloseEmailUpdate(_ sender: Any) {
+        self.ViewEmailConfirmation.removeFromSuperview()
+        self.popTo()
 
     }
     @IBAction func btnBackClick(_ sender: Any) {
@@ -214,7 +222,9 @@ class renameArchiveVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                         }
                     }
                 }
@@ -233,6 +243,7 @@ class renameArchiveVC: UIViewController {
             //
         }
     }
+    
     func WSUpdateProfile(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .edit_profile, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
@@ -240,21 +251,28 @@ class renameArchiveVC: UIViewController {
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
                     if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
-                    if let outcome = dataResponce["data"] as? NSDictionary{
-                                      USER.shared.setData(dict: outcome)
+                        USER.shared.archived_counter = archived_counter
+                        USER.shared.save()
                     }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
+                    if let outcome = dataResponce["data"] as? NSDictionary{
+                        USER.shared.setData(dict: outcome)
+                    }
+                    if(self.FieldType == "email"){
+                    self.lblMessagePopup.text = "An email confirmation has been sent to the updated " + (self.txtName.text ?? "")
+                    self.ViewEmailConfirmation.frame = UIScreen.main.bounds
+                    self.navigationController?.view.addSubview(self.ViewEmailConfirmation)
+                    }
+                    else{
                     if let message = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage:message , buttons: ["Dismiss"]) { (i) in
                             self.popTo()
                         }
 
+                    }
                     }
                 }
                 else if(StatusCode == 307)
@@ -281,7 +299,9 @@ class renameArchiveVC: UIViewController {
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                         }
                     }
                 }

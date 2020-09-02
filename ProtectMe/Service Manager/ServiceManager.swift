@@ -1051,11 +1051,8 @@ class ServiceManager: NSObject{
 
                 
                     guard let imgData = imageUpload.jpegData(compressionQuality: 0.4) else { return }
-                    multipartFormData.append(imgData, withName: "file", fileName: "image\(Date().description)" + ".jpeg", mimeType: "image/jpeg")
+                multipartFormData.append(imgData, withName: "file", fileName: "image\(Date().getyyyMMddStr().removeWhiteSpace())" + ".jpeg", mimeType: "image/jpeg")
             
-                
-                
-                
 //                for (key, value) in params {
 //                    multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: "image")
 //                }

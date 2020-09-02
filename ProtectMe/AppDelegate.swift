@@ -99,11 +99,10 @@ var loggedInUserData = USER()
 //    }
     func handleDeepLinkUrl(_ url: URL?){
      guard let url = url else {return}
-        print(url)
-        
-        print(url.host)
-        print(url.fragment)
-        print(url.lastPathComponent)
+//        print(url)
+//        print(url.host)
+//        print(url.fragment)
+//        print(url.lastPathComponent)
         if let f = url.fragment{
             let a = f.description
             let b = a.replacingOccurrences(of: "Intent;scheme=fitrank;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")

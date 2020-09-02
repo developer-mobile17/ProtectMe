@@ -1534,6 +1534,12 @@ extension Date {
       func isSmallerThan(_ date: Date) -> Bool {
          return self < date
       }
+    func getyyyMMddStr() -> String {
+           let formatter = DateFormatter()
+           formatter.dateStyle = .none
+           formatter.dateFormat = "yyyyMMddHHmmss"
+           return formatter.string(from: self)
+       }
     func getyyyMMdd() -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none

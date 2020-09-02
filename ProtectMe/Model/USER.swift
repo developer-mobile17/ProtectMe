@@ -30,7 +30,7 @@ class USER: NSObject  ,NSCoding {
         var longitude                           = ""
         var voice_action                        = ""
         var linked_account_counters             = ""
-        var support_email                       = ""
+        var support_email                       = "support@goprotectme.com"
         var LinkedAccSenederSelected            = false
         var isLogout                           = false
         var isDeleteActionShow:Bool             = true
@@ -258,7 +258,6 @@ class USER: NSObject  ,NSCoding {
     {
         
         self.videoUrl                                       = ""
-
         self.city                                       = ""
         self.state                                      = ""
         self.country                                    = ""
@@ -280,10 +279,10 @@ class USER: NSObject  ,NSCoding {
         self.vAuthToken                                 = ""
         self.voice_action                               = ""
         self.support_email                              = ""
-        self.linked_account_counters                          = ""
-        self.archived_counter                          = ""
-        self.isLogout           = false
-        self.isDeleteActionShow           = true
+        self.linked_account_counters                    = ""
+        self.archived_counter                           = ""
+        self.isLogout                                   = false
+        self.isDeleteActionShow                         = true
         self.LinkedAccSenederSelected                   = false
         
         USER.shared.save()

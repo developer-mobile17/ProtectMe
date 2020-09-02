@@ -27,7 +27,8 @@ extension archiveVC:MKMapViewDelegate{
 }
 
 class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
+    let controller = UIImagePickerController()
+
 
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
@@ -59,6 +60,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
             lblMonthandYear.text = ""
         }
     }
+    var uploadImage:Bool = false
     var selectedIndex:IndexPath? = nil
     var isFolderSelected:Bool = false
 //Detail View
@@ -94,6 +96,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
      var latitude:Double = 0.0
      var longitude:Double = 0.0
        let locationManager = LocationManager.sharedInstance
+    let accetm = AssetManager.sharedInstance
     
     var selectedButton:UIButton?
 
@@ -134,10 +137,12 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     @IBOutlet weak var btnFolders:UIButton!
     @IBOutlet weak var btnShared:UIButton!
     var arrOption = [UIButton]()
+   
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.locationManager.delegate = self as? LocationManagerDelegate
         self.imgPickerController.delegate = self
+        controller.delegate = self
 
         //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
         //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
@@ -183,16 +188,16 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
         if(self.isFolderSelected == true){
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-                       , andMessage: "Are you sure you want to delete?", buttons: ["Cancle","Yes"]) { (index) in
-                           if(index == 1){
+                       , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                           if(index == 0){
                                self.WSDeleteFolder(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!])
                            }
                        }
         }
         else{
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to delete?", buttons: ["Cancle","Yes"]) { (index) in
-                if(index == 1){
+            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                if(index == 0){
                     self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
                 }
             }
@@ -251,19 +256,22 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         func showAction(){
             
             if(self.isFolderSelected == true){
-                showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Create New Folder","Photo Album","Video Album"], canCancel: true) { (i) in
+                showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Create New Folder"], canCancel: true) { (i) in
                     if(i == 0){
                         self.ViewCreateFolder.frame = UIScreen.main.bounds
                         self.navigationController?.view.addSubview(self.ViewCreateFolder)
                     }
-                    else if(i == 1){
-                        self.PhotoAlbum()
-                        
-                    }
-                    else if(i == 2){
-
-                        self.VideoAlbum()
-                    }
+                        //,"Photo Album","Video Album"
+//                    else if(i == 1){
+//                        self.uploadImage = true
+//
+//                        self.PhotoAlbum()
+//
+//                    }
+//                    else if(i == 2){
+//                        self.uploadImage = false
+//                        self.VideoAlbum()
+//                    }
                     else{
                         
                     }
@@ -273,10 +281,10 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
             else{
             showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Photo Album","Video Album"], canCancel: true) { (i) in
                 if(i == 0){
-                    self.PhotoAlbum()
+                    self.PhotosFromAlbum()
                 }
                 else if(i == 1){
-                    self.VideoAlbum()
+                    self.VideoFromAlbum()
                 }
                 else
                 {
@@ -714,11 +722,12 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         self.btnHandlerBlackBg(self)
     }
     override func viewWillAppear(_ animated: Bool) {
+        self.getLocation()
         self.btnHandlerBlackBg(self)
         self.btnChangeTableView(self.btnGreed)
         //self.btnSelectOptions(self.btnRecent)
         self.selectOptions(selected: self.selectedButton!)
-
+        
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
@@ -881,7 +890,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                           
+                           USER.shared.isLogout = true
+                           USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                            
@@ -944,7 +954,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -1013,7 +1024,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                            
+                            USER.shared.isLogout = true
+                            USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -1050,7 +1062,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -1093,7 +1106,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = Message{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                          
+                          USER.shared.isLogout = true
+                          USER.shared.save()
                                 appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
@@ -1207,7 +1221,9 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                appDelegate.setLoginVC()
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                         }
                     }
@@ -1595,43 +1611,44 @@ extension AVAsset {
     }
 }
 extension archiveVC {
-        func PhotoAlbum()
-         {
-            var controller = UIImagePickerController()
-
-                // Display Photo Library
-    //        controller.sourceType = UIImagePickerController.SourceType.savedPhotosAlbum
-    //            controller.mediaTypes = [kUTTypeImage as String]
-    //            controller.delegate = self
-    //            present(controller, animated: true, completion: nil)
+        func PhotosFromAlbum()
+{
+       //          Display Photo Library
+    imgPickerController.sourceType = UIImagePickerController.SourceType.photoLibrary
+                imgPickerController.mediaTypes = [kUTTypeImage as String]
+                //controller.delegate = self
+    present(imgPickerController, animated: true, completion: {
+        self.imgPickerController.navigationBar.topItem?.rightBarButtonItem?.isEnabled = true
+    })
             
-             let cr = CameraRoll()
-                   cr.present(in: self, mode: .Image) { (assets) in
-                       if let assets = assets, let first = assets.first {
-                           DispatchQueue.main.async {
-                            AssetManager.sharedInstance.getOriginal(phAsset: first) { (img) in
-                                let imageData = img.mediumQualityJPEGNSData
-                                if let image = UIImage(data: imageData as Data) {
-                                   // Use image...
-                                    DispatchQueue.background(background: {
-                                        // do something in background
-                                    self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
-
-                                    }, completion:{
-                                       
-
-                                        // when background job finished, do something in main thread
-                                    })
-
-                                }
-
-                            }
-                           }
-                       }
-                   }
-               
+//             let cr = CameraRoll()
+//
+//            cr.present(in: self, mode: .Image) { (assets) in
+//
+//                let first = assets?.first
+//                          // DispatchQueue.main.async {
+//                self.accetm.getOriginal(phAsset: first!) { (myimage) in
+//                            let imageData = myimage.mediumQualityJPEGNSData
+//                            if let image = UIImage(data: imageData as Data) {
+//                                self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
+//                            }
+//
+//                            /*AssetManager.sharedInstance.getOriginal(phAsset: first) { (img) in
+//                                let imageData = img.mediumQualityJPEGNSData
+//                                if let image = UIImage(data: imageData as Data) {
+//                                    self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: image)
+//
+//                                }
+//
+//                            }
+// */
+//
+//                          // }
+//                       }
+//                   }
+//
          }
-    func VideoAlbum()
+    func VideoFromAlbum()
     {
         let cr = CameraRoll()
        
@@ -1681,7 +1698,7 @@ extension archiveVC {
       func getLocation(){
                locationManager.showVerboseMessage = false
                locationManager.autoUpdate = true
-             //   locationManager.startUpdatingLocation()
+                locationManager.startUpdatingLocation()
             DispatchQueue.main.async {
                 self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
                       if let city = dict?["locality"] as? String{
@@ -1894,21 +1911,10 @@ extension archiveVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let outcome = dataResponce["data"] as? NSDictionary {
-                        NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
+                    //self.viewWillAppear(true)
                         DispatchQueue.main.async {
                             self.getListData()
-                           
-                                            
-                            //USER.shared.setData(dict:outcome)
-                            //USER.shared.save()
-                            //self.popTo()
                         }
-                    }
-                    else
-                    {
-                        print("error to save data!")
-                    }
                 }
                     else if(StatusCode == 401)
                     {
@@ -1969,13 +1975,17 @@ extension archiveVC {
         func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
 
             // change title here to something other than default "Photo"
-            viewController.navigationController?.navigationBar.topItem?.title = "AAA"
-            //self.imgPickerController.navigationBar.topItem?.title = titleName
+            viewController.navigationController?.navigationBar.topItem?.title = "Photos"
+            self.imgPickerController.navigationBar.topItem?.title = "Photos"
             
         }
+    
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+          
+                picker.dismiss(animated: true) {
+                      self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+                }
             }
             imgPickerController.dismiss(animated: true,completion: {
                           guard let image = info[.editedImage] as? UIImage else { return }
@@ -1986,16 +1996,7 @@ extension archiveVC {
             self.videoURL = URLVIdeo
                 print(self.videoURL ?? "")
             })
-            //        do {
-    //               let asset = AVURLAsset(url: videoURL as! URL , options: nil)
-    //               let imgGenerator = AVAssetImageGenerator(asset: asset)
-    //               imgGenerator.appliesPreferredTrackTransform = true
-    ////               let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(0, 1), actualTime: nil)
-    ////               let thumbnail = UIImage(cgImage: cgImage)
-    ////               imgView.image = thumbnail
-    //           } catch let error {
-    //               print("*** Error generating thumbnail: \(error.localizedDescription)")
-    //           }
+          
                      
         }
 
