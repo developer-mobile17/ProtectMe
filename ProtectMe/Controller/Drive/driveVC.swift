@@ -309,10 +309,10 @@ class driveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -373,10 +373,10 @@ class driveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -422,10 +422,10 @@ class driveVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -572,12 +572,15 @@ extension driveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionVie
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-    }
+               // No insets for header in section 0
+            return UIEdgeInsets.zero
+        //return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+
+            }
 func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     let padding: CGFloat = 50
     let collectionCellSize = collectionView.frame.size.width - padding
-    return CGSize(width: collectionCellSize/3, height: collectionCellSize/2)
+    return CGSize(width: collectionCellSize/2, height: collectionCellSize/3)
  }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -588,7 +591,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! collCell
+        let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
         
             //cell.videoThumb.image = nil
           //  cell.btnMap.tag = indexPath.row

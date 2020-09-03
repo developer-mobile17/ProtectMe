@@ -98,6 +98,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     @IBOutlet weak var btnFolders:UIButton!
     @IBOutlet weak var btnShared:UIButton!
     var arrOption = [UIButton]()
+    var isVisibleOptionMenu = true
+    var isVisibleMapMenu = true
     override func viewDidLoad() {
         super.viewDidLoad()
 //        arrOption = [btnRecent,btnFolders,btnShared]
@@ -385,14 +387,18 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
+        self.isVisibleMapMenu = USER.shared.location_service.StrTobool!
        // txtName.cornerRadius = txtName.layer.frame.size.height/2
         if(self.buttonName != ""){
             self.btnAction.setTitle(buttonName, for: .normal)
             self.btnCancle.isHidden = false
             self.btnAction.isHidden = false
-
+            self.isVisibleOptionMenu = true
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
         }
         else{
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+            self.isVisibleOptionMenu = false
             self.btnCancle.isHidden = true
             self.btnAction.isHidden = true
         }
@@ -509,10 +515,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -580,10 +586,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -650,10 +656,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -715,10 +721,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -766,10 +772,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -1015,10 +1021,22 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
                        cell.btnPlayvideo.tag = indexPath.row
                        cell.btnMap.tag = indexPath.row
                        cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
-                        cell.btnOption.isHidden = true
-            
-                       //cell.btnOption.tag = indexPath.row
-                      // cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+            if(self.isVisibleMapMenu == true){
+                cell.btnMap.isHidden = false
+
+            }
+            else{
+                cell.btnMap.isHidden = true
+            }
+                if(self.isVisibleOptionMenu == true){
+                    cell.btnOption.isHidden = true
+                    
+                }
+                else{
+                    cell.btnOption.isHidden = false
+                }
+                       cell.btnOption.tag = indexPath.row
+                       cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
                        cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
                        cell.lblTitle.text = self.arrFileList[indexPath.row].image_name
                        cell.lblName.text = self.arrFileList[indexPath.row].uploaded_by

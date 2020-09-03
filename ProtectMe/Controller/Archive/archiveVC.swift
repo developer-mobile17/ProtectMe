@@ -383,6 +383,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         
     }
     func setDetails(data:archivedListModel) -> Void {
+        APPDELEGATE.SHOW_CUSTOM_LOADER()
         self.lblDetailName.text = data.image_name?.uppercased()
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
@@ -415,7 +416,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         let country = data.country?.uppercased()
         self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
-
+APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
@@ -657,15 +658,10 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         self.navigationController?.view.addSubview(self.ViewdeleteConfirmation)
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
-        appDelegate.SHOW_CUSTOM_LOADER()
-        DispatchQueue.main.async {
-            self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-            self.setDetails(data:self.arrarchivedList[sender.tag])
-        }
+       self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+       self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
-        appDelegate.HIDE_CUSTOM_LOADER()
-
     }
     @IBAction func btnFolderOptionMenuClick(_ sender: UIButton) {
            self.selectedIndex = IndexPath(row: sender.tag, section: 0)
@@ -807,7 +803,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
 //        else{
 //            self.semiFilter  = "1"
 //        }
-        showActionSheetWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Choose Option", buttons: ["Date Added","Date Modified","A to Z"], canCancel: false) { (index) in
+        showActionSheetWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Choose Option", buttons: ["Date Added","Date Modified","A to Z"], canCancel: true) { (index) in
 
             switch (index){
             
@@ -884,7 +880,14 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
+                if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                                                                   USER.shared.linked_account_counters = String(linked_account_counters)
+                                           USER.shared.save()
+                                       }
                 }
                 else if(StatusCode == 401)
                 {
@@ -1349,7 +1352,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             vc.FileId = self.arrarchivedList[indexPath.row].folder_id!
             vc.navigationTitle = self.arrarchivedList[indexPath.row].folder_name!
             vc.buttonName = ""
-                  self.navigationController?.pushViewController(vc, animated: true)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
             if(indexPath.section == 0){

@@ -37,6 +37,7 @@ var loggedInUserData = USER()
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         application.registerForRemoteNotifications()
         UIApplication.shared.applicationIconBadgeNumber = 0
+        
         if #available(iOS 10.0, *) {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
@@ -58,11 +59,10 @@ var loggedInUserData = USER()
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
-        
       ApplicationDelegate.shared.application(
                         application,
                         didFinishLaunchingWithOptions: launchOptions
-                    )
+        )
         if(USER.shared.id == ""){
             
             if let userActivity =   launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL { //Deeplink
@@ -110,7 +110,6 @@ var loggedInUserData = USER()
             USER.shared.videoUrl = b
             USER.shared.save()
             self.playVideo()
-            
         }
         // more deeplink parser here
      }

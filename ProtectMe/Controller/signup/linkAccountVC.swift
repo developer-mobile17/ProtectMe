@@ -12,6 +12,7 @@ class linkAccountVC: UIViewController {
     var isHidden:Bool = true
     var updateAcc:Bool = false
     var type = ""
+    var username = ""
     var objlisnkedListModel:lisnkedListModel = lisnkedListModel()
     @IBOutlet weak var ViewEmailPopup:UIControl!
     @IBOutlet weak var lblEmailPopup:UILabel!
@@ -39,6 +40,8 @@ class linkAccountVC: UIViewController {
            }
         override func viewDidLoad() {
             super.viewDidLoad()
+            self.hideKeyboardWhenTappedAround()
+
         }
     override func viewWillAppear(_ animated: Bool) {
         
@@ -190,10 +193,10 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -255,15 +258,15 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
-                    self.lblEmailPopup.text = "An email confirmation has been sent to " + (self.txtname.text ?? "") 
+                    self.lblEmailPopup.text = "An email confirmation has been sent to " + self.txtname.text!
                     self.ViewEmailPopup.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewEmailPopup)
 
@@ -321,10 +324,10 @@ class linkAccountVC: UIViewController {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                     USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()

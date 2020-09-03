@@ -163,7 +163,6 @@ class LocationManager: NSObject,CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         let Device = UIDevice.current
-        
         let iosVersion = NSString(string: Device.systemVersion).doubleValue
         
         let iOS8 = iosVersion >= 8

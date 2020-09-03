@@ -35,21 +35,19 @@ class sidemenuVC: baseVC {
         // Do any additional setup after loading the view.
     }
     func setUserLiveLocation(){
-    
-                        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
-                          var city1 = ""
-                                if let city = dict?["locality"] as? String{
-                                    city1 = city
-                                }
-                          var country1 = ""
-                                if let country = dict?["country"] as? String{
-                                    country1 = country
-                                }
-                            USER.shared.save()
-                            self.lblStateCountry.text = "\(city1),\(country1)"
-
-                                }
-                          self.locationManager.autoUpdate = false
+        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
+            var city1 = ""
+            if let city = dict?["locality"] as? String{
+                    city1 = city
+            }
+            var country1 = ""
+            if let country = dict?["country"] as? String{
+                country1 = country
+            }
+                          //  USER.shared.save()
+            self.lblStateCountry.text = "\(city1),\(country1)"
+            }
+            self.locationManager.autoUpdate = false
                          
             }
     override func viewWillAppear(_ animated: Bool) {
@@ -58,24 +56,24 @@ class sidemenuVC: baseVC {
             self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
         
-        if CLLocationManager.locationServicesEnabled() {
-            switch CLLocationManager.authorizationStatus() {
-                case .notDetermined, .restricted, .denied:
-                    print("No access")
-                    self.locationManager.startUpdatingLocation()
-                self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-                case .authorizedAlways, .authorizedWhenInUse:
-                    print("Access")
-                DispatchQueue.main.async {
-                    self.setUserLiveLocation()
-                }
-                @unknown default:
-                break
-            }
-            } else {
-            
-                print("Location services are not enabled")
-        }
+//        if CLLocationManager.locationServicesEnabled() {
+//            switch CLLocationManager.authorizationStatus() {
+//                case .notDetermined, .restricted, .denied:
+//                    print("No access")
+//                    self.locationManager.startUpdatingLocation()
+//                self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+//                case .authorizedAlways, .authorizedWhenInUse:
+//                    print("Access")
+//                DispatchQueue.main.async {
+//                    self.setUserLiveLocation()
+//                }
+//                @unknown default:
+//                break
+//            }
+//            } else {
+//
+//                print("Location services are not enabled")
+//        }
         
         
 //        DispatchQueue.main.async {

@@ -123,7 +123,6 @@ class settingVC: baseVC {
         print(USER.shared.location_service)
         isLocationServiceOn = USER.shared.location_service.StrTobool!
         isVoiceActivationOn = USER.shared.voice_action.StrTobool!
-        print(USER.shared.notification)
         if(isVoiceActivationOn == true){
             btnswtvoice.setImage(#imageLiteral(resourceName: "ic_on"), for: .normal)
         }
@@ -303,10 +302,10 @@ class settingVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -368,10 +367,10 @@ class settingVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
@@ -435,10 +434,10 @@ class settingVC: baseVC {
                   let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                   let StatusCode = DataResponce?["status"] as? Int
                   if (StatusCode == 200){
-                    if let archived_counter = dataResponce["archived_counter"] as? String{
-                                       USER.shared.archived_counter = archived_counter
-                                       USER.shared.save()
-                                       }
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
                                        if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
