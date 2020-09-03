@@ -964,7 +964,7 @@
                                 <rect key="frame" x="0.0" y="181" width="414" height="35"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="April 2020" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pe2-SD-Zz8">
-                                        <rect key="frame" x="25" y="7.5" width="69" height="20.5"/>
+                                        <rect key="frame" x="25" y="8" width="72.5" height="19"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -1281,7 +1281,7 @@
                                                             </subviews>
                                                         </stackView>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_more" translatesAutoresizingMaskIntoConstraints="NO" id="IEU-Ws-Efu">
-                                                            <rect key="frame" x="62.5" y="77.5" width="15" height="7"/>
+                                                            <rect key="frame" x="62.5" y="74" width="15" height="14"/>
                                                         </imageView>
                                                     </subviews>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -1323,7 +1323,7 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nLx-Bc-AzY">
-                                <rect key="frame" x="345" y="793" width="37" height="37"/>
+                                <rect key="frame" x="308" y="756" width="74" height="74"/>
                                 <state key="normal" image="ic_add"/>
                                 <connections>
                                     <action selector="plusButtonAction:" destination="d4K-9q-eS5" eventType="touchUpInside" id="DGk-m7-h2a"/>
@@ -1460,7 +1460,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cGZ-qv-3Nx">
-                            <rect key="frame" x="30" y="180.5" width="360" height="367.5"/>
+                            <rect key="frame" x="30" y="179" width="360" height="369"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3pB-GH-dAJ">
                                     <rect key="frame" x="140" y="5" width="80" height="4"/>
@@ -1477,7 +1477,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iT0-Xi-JfB">
-                                    <rect key="frame" x="0.0" y="45.5" width="360" height="1"/>
+                                    <rect key="frame" x="0.0" y="47" width="360" height="1"/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1" id="paN-am-xMy"/>
@@ -1490,13 +1490,13 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12 APRIL, 9.00 PM - LONDON UK " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W67-5q-Xca">
-                                    <rect key="frame" x="12" y="17" width="336" height="16.5"/>
+                                    <rect key="frame" x="12" y="17" width="336" height="18"/>
                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="14"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="l3u-gP-jsK">
-                                    <rect key="frame" x="12" y="58.5" width="328" height="269"/>
+                                    <rect key="frame" x="12" y="60" width="328" height="269"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5W7-M6-xHS" customClass="UIControl">
                                             <rect key="frame" x="0.0" y="0.0" width="240" height="35"/>
@@ -1607,7 +1607,7 @@
                                                         <constraint firstAttribute="width" secondItem="evk-3T-dRN" secondAttribute="height" multiplier="1:1" id="4Or-ZA-yEh"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MOVE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WDx-Jq-HgM">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD TO FOLDER" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WDx-Jq-HgM">
                                                     <rect key="frame" x="29" y="8" width="207" height="19"/>
                                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="13"/>
                                                     <nil key="textColor"/>
@@ -7165,7 +7165,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_folder" translatesAutoresizingMaskIntoConstraints="NO" id="6gR-qx-Aii">
-                                                            <rect key="frame" x="25" y="0.0" width="50" height="80.5"/>
+                                                            <rect key="frame" x="25" y="0.0" width="50" height="82"/>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                                     <real key="value" value="9"/>
@@ -7173,13 +7173,13 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </imageView>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23K-WS-wYW">
-                                                            <rect key="frame" x="0.0" y="0.0" width="100" height="80.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="100" height="82"/>
                                                         </button>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1np-pn-10u">
-                                                            <rect key="frame" x="25" y="80.5" width="60" height="15.5"/>
+                                                            <rect key="frame" x="25" y="82" width="60" height="14"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Arjun Chudasa" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O8w-7g-fU5">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="60" height="15.5"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="60" height="14"/>
                                                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="12"/>
                                                                     <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <nil key="highlightedColor"/>
@@ -8115,7 +8115,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j3q-QI-I3i">
-                            <rect key="frame" x="30" y="180.5" width="360" height="367.5"/>
+                            <rect key="frame" x="30" y="179" width="360" height="369"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a9v-Y7-KZf">
                                     <rect key="frame" x="140" y="5" width="80" height="4"/>
@@ -8132,7 +8132,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bO9-Nb-xat">
-                                    <rect key="frame" x="0.0" y="45.5" width="360" height="1"/>
+                                    <rect key="frame" x="0.0" y="47" width="360" height="1"/>
                                     <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1" id="DuS-0F-TVY"/>
@@ -8145,13 +8145,13 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12 APRIL, 9.00 PM - LONDON UK " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tsa-eh-JRZ">
-                                    <rect key="frame" x="12" y="17" width="336" height="16.5"/>
+                                    <rect key="frame" x="12" y="17" width="336" height="18"/>
                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="14"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="MMd-to-tau">
-                                    <rect key="frame" x="12" y="58.5" width="328" height="269"/>
+                                    <rect key="frame" x="12" y="60" width="328" height="269"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fMv-Bf-C6s" customClass="UIControl">
                                             <rect key="frame" x="0.0" y="0.0" width="240" height="35"/>
@@ -8259,7 +8259,7 @@
                                                         <constraint firstAttribute="width" secondItem="chx-ez-Qj7" secondAttribute="height" multiplier="1:1" id="X3y-mK-Prt"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MOVE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WeJ-3y-DgE">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD TO FOLDER" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WeJ-3y-DgE">
                                                     <rect key="frame" x="29" y="8" width="207" height="19"/>
                                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="13"/>
                                                     <nil key="textColor"/>
@@ -9342,7 +9342,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iSH-dI-DwE">
-                            <rect key="frame" x="30" y="180.5" width="360" height="367.5"/>
+                            <rect key="frame" x="30" y="179" width="360" height="369"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kr1-33-lAX">
                                     <rect key="frame" x="140" y="5" width="80" height="4"/>
@@ -9359,7 +9359,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dBi-1V-kcz">
-                                    <rect key="frame" x="0.0" y="45.5" width="360" height="1"/>
+                                    <rect key="frame" x="0.0" y="47" width="360" height="1"/>
                                     <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1" id="wnV-Rh-vle"/>
@@ -9372,13 +9372,13 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12 APRIL, 9.00 PM - LONDON UK " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K3p-bI-jjV">
-                                    <rect key="frame" x="12" y="17" width="336" height="16.5"/>
+                                    <rect key="frame" x="12" y="17" width="336" height="18"/>
                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="14"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-S1-SmZ">
-                                    <rect key="frame" x="12" y="58.5" width="328" height="269"/>
+                                    <rect key="frame" x="12" y="60" width="328" height="269"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O0O-y5-E3B" customClass="UIControl">
                                             <rect key="frame" x="0.0" y="0.0" width="240" height="35"/>
@@ -9489,7 +9489,7 @@
                                                         <constraint firstAttribute="width" secondItem="EzS-FO-Nmk" secondAttribute="height" multiplier="1:1" id="lfx-f2-Z6a"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MOVE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q8F-QV-ENg">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD TO FOLDER" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q8F-QV-ENg">
                                                     <rect key="frame" x="29" y="8" width="207" height="19"/>
                                                     <fontDescription key="fontDescription" name="SourceSansPro-Semibold" family="Source Sans Pro" pointSize="13"/>
                                                     <nil key="textColor"/>
