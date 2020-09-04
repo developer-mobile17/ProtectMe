@@ -535,9 +535,6 @@ extension AppDelegate {
         print(deviceToken.hexString)
         print(deviceToken)
         self.FCMdeviceToken = deviceToken.hexString
-        
-        //print(deviceTokenString)
-        //NSLog("The NutTagDeviceToken is:- \(deviceTokenString)")
     }
     
     

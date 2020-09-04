@@ -24,6 +24,8 @@ extension signupVC:SignupVCdelegate{
 }
 class signupVC: UIViewController {
   let appleSignIn = HSAppleSignIn()
+    var SocialData:socialModel = socialModel()
+
     @IBOutlet weak var viewAppleButton: UIControl!
     var isFromLogin:Bool = false
     var socialData:socialModel = socialModel()
@@ -196,12 +198,19 @@ override func viewWillAppear(_ animated: Bool) {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    
+                    if let message = DataResponce?["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: message)
+                    }
+                    self.dismissKeyboard()
+                    self.txtName.text = ""
+                    self.txtemail.text = ""
+                    self.txtpassword.text = ""
+                    self.txtConfirmpassword.text = ""
                     if let userData = dataResponce["data"] as? NSDictionary{
-                        USER.shared.setData(dict: userData)
-                        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
-                        //vc.isHidden = true
-                        self.navigationController?.pushViewController(vc, animated: true)
+//                        USER.shared.setData(dict: userData)
+//                        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
+//                        //vc.isHidden = true
+//                        self.navigationController?.pushViewController(vc, animated: true)
 
                     }
                     
@@ -306,25 +315,26 @@ override func viewWillAppear(_ animated: Bool) {
                 GIDSignIn.sharedInstance().presentingViewController = self
                GIDSignIn.sharedInstance().signIn()
         }
-    @IBAction func addSignInWithAppleButton(){
-              
-              if #available(iOS 13.0, *) {
-                appleSignIn.loginWithApple { (userInfo, message) in
-                     if let userInfo = userInfo{
-                            print(userInfo.email)
-                            print(userInfo.userid)
-                            print(userInfo.firstName)
-                            print(userInfo.lastName)
-                            print(userInfo.fullName)
-                    }else if let message = message{
-                        print("Error Message: \(message)")
-                    }else{
-                        print("Unexpected error!")
-                    }
-            }
-                }
-
-      }
+   @IBAction func addSignInWithAppleButton(){
+    if #available(iOS 13.0, *) {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+        
+        
+    } else {
+        // Fallback on earlier versions
+    }
+                
+                
+           
+         }
     func GetFacebookData()
     {
             let fbLoginManager : LoginManager = LoginManager()
@@ -501,7 +511,131 @@ override func viewWillAppear(_ animated: Bool) {
 
 }
 
+// MARK: - Apple Login
+@available(iOS 13.0, *)
+extension signupVC : ASAuthorizationControllerDelegate
+{
+    @available(iOS 13.0, *)
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization)
+    {
+        switch authorization.credential {
+            
+        case let credentials as ASAuthorizationAppleIDCredential:
+            DispatchQueue.main.async {
+                
+                if "\(credentials.user)" != "" {
+                    print(credentials.user)
+                    self.SocialData.social_Id = credentials.user
+                }
+                else{
+                    self.SocialData.social_Id = ""
+                }
+                
+                if credentials.email != nil {
+                    print(credentials.email!)
+                    self.SocialData.email = credentials.email!
+                   // UserDefaults.standard.set("\(credentials.email!)", forKey: "User_Email")
+                }
+                else{
+                    
+                    self.SocialData.email = ""
+                }
+                if credentials.fullName!.givenName != nil {
+                    print(credentials.fullName!.givenName!)
+                    self.SocialData.name = credentials.fullName!.givenName!
+                }
+                if credentials.fullName!.familyName != nil {
+                    print(credentials.fullName!.familyName!)
+                    self.SocialData.social_Id = credentials.fullName!.familyName!
+                }
+                
+                var registerDetail:[String:Any] = [String : Any]()
+                registerDetail["name"] = self.SocialData.name
+                registerDetail["email"] = self.SocialData.email
+                registerDetail["type"] = "apple"
+                registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
+                registerDetail["eDeviceType"] = "iOS"
+                registerDetail["id"] = self.SocialData.social_Id
+                registerDetail["checkExist"] = "1"
+                
+                registerDetail["longitude"] = self.longitude.description
+                registerDetail["latitude"] = self.latitude.description
+                   
+                if(self.SocialData.email != "" || self.SocialData.name != ""){
+                    self.WSSocialLogin(Parameter: registerDetail as! [String : String])
+                }
+                else{
+                    //self.WSSocialLoginCheck(Parameter: registerDetail as! [String : String])
+                   
+                }
+                
+                        
+  //              UserDefaults.standard.synchronize()
+//                self.setupUserInfoAndOpenView()
+            }
+            
+        case let credentials as ASPasswordCredential:
+            DispatchQueue.main.async {
+            
+                if "\(credentials.user)" != "" {
 
+                    UserDefaults.standard.set("\(credentials.user)", forKey: "User_AppleID")
+                }
+                if "\(credentials.password)" != "" {
+
+                    UserDefaults.standard.set("\(credentials.password)", forKey: "User_Password")
+                }
+                UserDefaults.standard.synchronize()
+                self.setupUserInfoAndOpenView()
+            }
+            
+        default :
+            let alert: UIAlertController = UIAlertController(title: "Apple Sign In", message: "Something went wrong with your Apple Sign In!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            break
+        }
+    }
+    @objc func actionHandleAppleSignin()
+    {
+         let appleIDProvider = ASAuthorizationAppleIDProvider()
+         
+         let request = appleIDProvider.createRequest()
+         request.requestedScopes = [.fullName, .email]
+         
+         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+         authorizationController.delegate = self
+         authorizationController.presentationContextProvider = self
+         authorizationController.performRequests()
+    }
+    func setupUserInfoAndOpenView()
+    {
+        DispatchQueue.main.async {
+            
+//            if "\(UserDefaults.standard.value(forKey: "User_FirstName")!)" != "" || "\(UserDefaults.standard.value(forKey: "User_LastName")!)" != "" || "\(UserDefaults.standard.value(forKey: "User_Email")!)" != "" {
+//
+//            //    self.lblID.text = "\(UserDefaults.standard.value(forKey: "User_AppleID")!)"
+//            //   self.lblFirstname.text = "\(UserDefaults.standard.value(forKey: "User_FirstName")!)"
+//            //    self.lblLastname.text = "\(UserDefaults.standard.value(forKey: "User_LastName")!)"
+//            //    self.lblEmail.text = "\(UserDefaults.standard.value(forKey: "User_Email")!)"
+//            } else {
+//
+//
+//            }
+            
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error)
+    {
+        let alert: UIAlertController = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+}
 extension signupVC : GIDSignInDelegate {
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
@@ -654,3 +788,9 @@ extension signupVC : GIDSignInDelegate {
 //        return self.view.window!
 //    }
 //}
+extension signupVC: ASAuthorizationControllerPresentationContextProviding {
+    @available(iOS 13.0, *)
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+}

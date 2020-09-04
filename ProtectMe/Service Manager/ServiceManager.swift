@@ -27,8 +27,6 @@ class Connectivity {
     }
 }
 enum APITYPE {
-    
-    
     case register_user
     case login
     case social_login
@@ -69,6 +67,7 @@ enum APITYPE {
     case successfully_upload_video
     case reset_archived_counter
     case rename_folder
+    case resent_verification_mail
 
     func getEndPoint() -> String {
         
@@ -140,7 +139,8 @@ enum APITYPE {
         case .copy:
             return "copy"
         case .move:
-            return "move"
+            //return "move"
+            return "copy2"
         case .deleted_files:
             return "deleted_files"
         case .recover_file:
@@ -153,6 +153,8 @@ enum APITYPE {
             return "rename_folder"
         case .delete_folder:
             return "delete_folder"
+        case .resent_verification_mail:
+            return "resent_verification_mail"
         }
     }
 }

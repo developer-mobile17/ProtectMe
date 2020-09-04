@@ -757,6 +757,7 @@ extension UIColor {
 
     static let approveColor:UIColor = UIColor.init(red: 100/255.0, green: 183/255.0, blue: 163/255.0, alpha: 1.0)
 
+    static let navcoler:UIColor = UIColor.init(red: 32/255.0, green: 42/255.0, blue: 52/255.0, alpha: 1.0)
 
     
     convenience init(red: Int, green: Int, blue: Int) {

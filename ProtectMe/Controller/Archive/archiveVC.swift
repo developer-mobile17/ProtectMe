@@ -37,6 +37,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     @IBOutlet weak var Viewmap:UIView!
     @IBOutlet weak var SharedBy:UIControl!
     @IBOutlet weak var NumberofFiles:UIControl!
+    @IBOutlet weak var Viewrename:UIControl!
 
     @IBOutlet weak var VideoDuration:UIControl!
     @IBOutlet weak var lblVideoDuration:UILabel!
@@ -52,6 +53,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     @IBOutlet weak var btnOkayAgree:UIButton!
     @IBOutlet weak var btnRecent:UIButton!
     @IBOutlet weak var btnFilter:UIButton!
+    @IBOutlet weak var btnPlus:UIButton!
+
     @IBOutlet weak var btnSemiFilter:UIButton!
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
@@ -79,7 +82,11 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
 
     @IBOutlet weak var lblDetailDateCreatedandLocation:UILabel!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var txtName:UITextField!
+    @IBOutlet weak var txtName:AIBaseTextField!{
+        didSet{
+            txtName.leftViewPadding = 12
+        }
+    }
     
     
     
@@ -258,6 +265,9 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
             if(self.isFolderSelected == true){
                 showActionSheetWithTitleFromVC(vc: self, title:Constant.APP_NAME, andMessage: "Choose action", buttons: ["Create New Folder"], canCancel: true) { (i) in
                     if(i == 0){
+                        self.txtName.Round = true
+                        self.txtName.borderColor = .black
+                        self.txtName.borderWidth = 1.0
                         self.ViewCreateFolder.frame = UIScreen.main.bounds
                         self.navigationController?.view.addSubview(self.ViewCreateFolder)
                     }
@@ -388,11 +398,12 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         self.lblDetailName1.text = data.image_name?.uppercased()
         self.lblDetailName2.text = data.image_name?.uppercased()
         self.lblDetailSize.text = data.file_size?.uppercased()
-        let asset = AVURLAsset(url: URL(string: data.image_path!)!)
-        let durationInSeconds = asset.duration.seconds
         self.SharedBy.isHidden = false
         self.NumberofFiles.isHidden = true
         if(data.type?.uppercased() == "VIDEO"){
+            let asset = AVURLAsset(url: URL(string: data.image_path!)!)
+                   let durationInSeconds = asset.duration.seconds
+                  
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
             self.VideoDuration.isHidden = false
             
@@ -421,6 +432,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
         vc.buttonName = action
+        vc.isThreeDotVible = false
         vc.FileId = self.arrarchivedList[self.selectedIndex!.row].id!
         vc.data = self.arrarchivedList[self.selectedIndex!.row]
         vc.buttonName = action
@@ -428,7 +440,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     @IBAction func btnMoveAction(_ sender: UIButton) {
         //self.selectedIndex?.row = sender.tag
-        self.fileAction(action: "Move")
+        self.fileAction(action: "  Add  ")
     }
 
     @IBAction func btnCopyAction(_ sender: UIButton) {
@@ -504,7 +516,6 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
 
            // check if the file already exist at the destination folder if you don't want to download it twice
            if !FileManager.default.fileExists(atPath: documentsDirectoryURL.appendingPathComponent(videoURL.lastPathComponent).path) {
-
                // set up your download task
                URLSession.shared.downloadTask(with: videoURL) { (location, response, error) -> Void in
 
@@ -593,7 +604,9 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
            print("could not save data")
        }
     }
-    
+    @IBAction func btnDownloadFolder(_ sender: UIButton) {
+        
+    }
     @IBAction func btnDownloadVideo(_ sender: UIButton) {
         if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
             if let urlString = self.arrarchivedList[self.selectedIndex!.row].image_path{
@@ -661,6 +674,12 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
        self.selectedIndex = IndexPath(row: sender.tag, section: 0)
        self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
+        if(self.arrarchivedList[selectedIndex!.row].user_id == USER.shared.id){
+            self.Viewrename.isHidden = false
+        }
+        else{
+            self.Viewrename.isHidden = true
+        }
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
     @IBAction func btnFolderOptionMenuClick(_ sender: UIButton) {
@@ -847,16 +866,21 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                     self.selectedButton = self.btnRecent
                     self.selectedType = "recent"
                     self.isFolderSelected = false
+                    self.btnPlus.isHidden = false
                 }
                 else if(btn == self.btnFolders){
                     self.selectedType = "folders"
                     self.selectedButton = self.btnFolders
                     self.isFolderSelected = true
+                    self.btnPlus.isHidden = false
                 }
                 else{
                     self.selectedButton = self.btnShared
                     self.isFolderSelected = false
                     self.selectedType = "shared"
+                    self.btnPlus.isHidden = true
+                    
+                    
                 }
                 btn.setTitleColor(UIColor.clrSkyBlue, for: .normal)
             }
@@ -1578,7 +1602,7 @@ class FolderCell: UICollectionViewCell {
     @IBOutlet weak var lblName:UILabel!
     @IBOutlet weak var btnOption:UIButton!
     @IBOutlet weak var btncellTap:UIButton!
-
+    @IBOutlet weak var imgMore:UIImageView!
 }
 class collCell: UICollectionViewCell {
     @IBOutlet weak var btnMap:UIButton!
@@ -1666,6 +1690,7 @@ extension archiveVC {
                                let sourceURL = nextURLAsset.url
                                let asset = AVAsset(url: sourceURL)
                                self.videoURL = sourceURL as NSURL
+                            self.videoRecorded = sourceURL
                                let duration = asset.duration
                                let durationTime = CMTimeGetSeconds(duration)
                               
@@ -1675,7 +1700,7 @@ extension archiveVC {
                        let objLocalVid:localVideoModel = localVideoModel()
                        objLocalVid.url = self.videoRecorded
                        objLocalVid.thumbImage = AthumbImage
-                       objLocalVid.name = "video\(Date().description).mp4"
+                        objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
                        appDelegate.ArrLocalVideoUploading.append(objLocalVid)
                        self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
                                }
@@ -1756,8 +1781,7 @@ extension archiveVC {
             if(statTime < endTime){
                 self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
             print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
-                
-               // arrOfChunks.append(FUrl)
+                 // arrOfChunks.append(FUrl)
                 let curruntChunk = FUrl
                  let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.Baseunique_id]
                 ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {

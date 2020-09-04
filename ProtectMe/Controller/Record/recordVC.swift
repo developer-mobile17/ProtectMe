@@ -693,6 +693,26 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             }
        // }
     }
+    func WSVideoUploadSuces1(Parameter:[String:String]) -> Void {
+               ServiceManager.shared.callAPIPost(WithType: .successfully_upload_video, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+                   if(Status == true){
+                       let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                       let StatusCode = DataResponce?["status"] as? Int
+                       if (StatusCode == 200){
+                          
+                       }
+                       else if(StatusCode == 401)
+                       {
+                       }
+                       else{
+                       }
+                   }
+                   else{
+                   }
+               }) { (DataResponce, Status, Message) in
+                   //
+               }
+           }
     //Parameter:[String:String],chunk:[URL,Index:Int,
     func WSUploadVideoR(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
         
@@ -725,8 +745,9 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                 let strTimr = statTime + 5
                                 if(strTimr >= endTime){
                                     print("video upload complete")
+                                        self.WSVideoUploadSuces1(Parameter: ["unique_video_id":videoKey])
                                     appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-                                    NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                    //NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
                                 }
                                 else{
                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0

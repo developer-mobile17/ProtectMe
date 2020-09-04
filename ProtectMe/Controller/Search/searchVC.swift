@@ -36,6 +36,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
     @IBOutlet weak var btnDateAdded:UIButton!
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
+    @IBOutlet weak var Viewrename:UIControl!
+
     @IBOutlet weak var VideoDuration:UIControl!
     @IBOutlet weak var lblVideoDuration:UILabel!
 
@@ -335,6 +337,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
         vc.buttonName = action
+        vc.isThreeDotVible = false
         vc.FileId = self.arrarchivedList[self.selectedIndex!.row].id!
         vc.data = self.arrarchivedList[self.selectedIndex!.row]
         vc.buttonName = action
@@ -342,7 +345,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
     }
     @IBAction func btnMoveAction(_ sender: UIButton) {
         //self.selectedIndex?.row = sender.tag
-        self.fileAction(action: "Move")
+        self.fileAction(action: "  Add  ")
     }
 
     @IBAction func btnCopyAction(_ sender: UIButton) {
@@ -515,6 +518,12 @@ class searchVC: baseVC ,UITextFieldDelegate{
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
         self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
+        if(self.arrarchivedList[selectedIndex!.row].user_id == USER.shared.id){
+                   self.Viewrename.isHidden = false
+               }
+               else{
+                      self.Viewrename.isHidden = true
+        }
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
     @IBAction func btnhideDetails(_ sender: Any)

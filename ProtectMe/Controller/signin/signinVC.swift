@@ -17,7 +17,7 @@ protocol SignupVCdelegate {
 }
 
 class signinVC: UIViewController {
-    let appleSignIn = HSAppleSignIn()
+    //let appleSignIn = HSAppleSignIn()
     var SocialData:socialModel = socialModel()
     var latitude:Double = 0.0
      var longitude:Double = 0.0
@@ -61,7 +61,7 @@ class signinVC: UIViewController {
            }
     }
     override func viewWillAppear(_ animated: Bool) {
-       // self.getLocation()
+        self.getLocation()
         self.navigationController?.navigationBar.isHidden = true
     }
   
@@ -83,7 +83,7 @@ class signinVC: UIViewController {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.PasswordMin6DigitMissing)
             return
         }
-        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"iOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":appDelegate.latitude.description,"longitude":appDelegate.longitude.description])
+        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"iOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":self.latitude.description,"longitude":self.longitude.description])
     }
     @IBAction func btnForgotClick(_ sender: Any) {
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "forgotVC") as! forgotVC
@@ -386,12 +386,52 @@ class signinVC: UIViewController {
                    
                }
            }
+    
+    func WSResendEmailRequest(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .resent_verification_mail, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                           
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                           
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSLogin(Parameter:[String:Any]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .login, isAuth: false, WithParams: Parameter, Success:  { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
+                
                 if (StatusCode == 200){
+                    self.txtpassword.text = ""
+                    self.txtemail.text = ""
                     if let outcome = dataResponce["data"] as? NSDictionary {
                     USER.shared.setData(dict:outcome)
                         appDelegate.setHome()
@@ -413,10 +453,21 @@ class signinVC: UIViewController {
                         //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                         }
                 }
+                    else if(StatusCode == 203)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Resend","Cancel"]) { (i) in
+                                if(i == 0){
+                                    self.WSResendEmailRequest(Parameter: ["email":self.txtemail.text!])
+                                }
+                            }
+                        }
+                    }
                 else if(StatusCode == 412)
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
-                            showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                     }
                 }
                 else if(StatusCode == 401)
@@ -472,12 +523,14 @@ extension signinVC : ASAuthorizationControllerDelegate
                 else{
                     self.SocialData.social_Id = ""
                 }
+                
                 if credentials.email != nil {
                     print(credentials.email!)
                     self.SocialData.email = credentials.email!
                    // UserDefaults.standard.set("\(credentials.email!)", forKey: "User_Email")
                 }
                 else{
+                    
                     self.SocialData.email = ""
                 }
                 if credentials.fullName!.givenName != nil {

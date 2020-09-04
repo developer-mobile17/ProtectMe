@@ -17,6 +17,7 @@ extension driveVC:MKMapViewDelegate{
 }
 
 class driveVC: baseVC {
+    var isThreeDotVible = true
     var FileId:String = ""
     var buttonName:String = ""
     var data = archivedListModel()
@@ -592,11 +593,20 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
-        
+        if(self.isThreeDotVible == true){
+            cell.btnOption.tag = indexPath.row
+            cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
+            cell.btnOption.isHidden = false
+            cell.imgMore.isHidden = false
+        }
+        else{
+            cell.btncellTap.tag = indexPath.row
+            cell.btncellTap.addTarget(self, action: #selector(self.btnSelectFolder(_:)),for: .touchUpInside)
+            cell.btnOption.isHidden = true
+            cell.imgMore.isHidden = true
+        }
             //cell.videoThumb.image = nil
           //  cell.btnMap.tag = indexPath.row
-            cell.btnOption.tag = indexPath.row
-            cell.btnOption.addTarget(self, action: #selector(self.btnSelectFolder(_:)),for: .touchUpInside)
             //cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
           //  cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name
             cell.lblName.text = self.arrarchivedList[indexPath.row].folder_name

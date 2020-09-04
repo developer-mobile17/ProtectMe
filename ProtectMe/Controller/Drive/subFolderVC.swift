@@ -30,7 +30,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     var selectedView = "grid"
     var actionCompleted:Bool = false
 
-  
+  @IBOutlet weak var Viewrename:UIControl!
+
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
    // @IBOutlet weak var Viewmap:UIView!
@@ -55,6 +56,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
             lblMonthandYear.text = ""
         }
     }
+    
+
     @IBOutlet weak var txtName:AIBaseTextField!{
            didSet{
           // txtName.borderColor = .black
@@ -144,6 +147,21 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 
           }
       }
+     @objc func btnMoveFolderAction(){
+            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "multiSelectionVC") as! multiSelectionVC
+            vc.FolderId = self.FolderId
+            self.navigationController?.pushViewController(vc, animated: true)
+    //        self.ViewCreateFolder.frame = UIScreen.main.bounds
+    //        UIView.animate(withDuration: 0.2, animations: {self.ViewCreateFolder.alpha = 0.0},
+    //               completion: {(value: Bool) in
+    //            self.ViewCreateFolder.alpha = 1.0
+    //            self.navigationController?.view.addSubview(self.ViewCreateFolder)
+    //        })
+
+    //        self.ViewCreateFolder.frame = UIScreen.main.bounds
+    //     //   self.ViewCreateFolder.animShow()
+    //        self.navigationController?.view.addSubview(self.ViewCreateFolder)
+        }
     @IBAction func btnPlusFolderAction(_ sender: Any){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "multiSelectionVC") as! multiSelectionVC
         vc.FolderId = self.FolderId
@@ -248,6 +266,12 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
         self.lblDetailName.text = self.arrFileList[selectedIndex!.row].image_name
         self.setDetails(data:self.arrFileList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
+        if(self.arrFileList[selectedIndex!.row].user_id == USER.shared.id){
+            self.Viewrename.isHidden = false
+        }
+        else{
+            self.Viewrename.isHidden = true
+        }
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
     @IBAction func btnhideDownload(_ sender: Any){
@@ -364,6 +388,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
         vc.buttonName = action
+        vc.isThreeDotVible = false
         vc.FileId = self.arrFileList[self.selectedIndex!.row].id!
         vc.data = self.arrFileList[self.selectedIndex!.row]
         vc.buttonName = action
@@ -371,7 +396,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     }
     @IBAction func btnMoveAction(_ sender: UIButton) {
         //self.selectedIndex?.row = sender.tag
-        self.fileAction(action: "Move")
+        self.fileAction(action: "  Add  ")
     }
 
     @IBAction func btnCopyAction(_ sender: UIButton) {
@@ -384,6 +409,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = navigationTitle
+        
+
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
@@ -394,10 +421,14 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
             self.btnCancle.isHidden = false
             self.btnAction.isHidden = false
             self.isVisibleOptionMenu = true
+            self.navigationItem.rightBarButtonItem?.tintColor = .navcoler
             self.navigationItem.rightBarButtonItem?.isEnabled = false
         }
         else{
+            self.navigationItem.rightBarButtonItem?.tintColor = .white
             self.navigationItem.rightBarButtonItem?.isEnabled = true
+            let rightBarButtonItem = UIBarButtonItem.init(image: UIImage(named: "ic_movefile"), style: .done, target: self, action:#selector(self.btnMoveFolderAction))
+            self.navigationItem.rightBarButtonItem = rightBarButtonItem
             self.isVisibleOptionMenu = false
             self.btnCancle.isHidden = true
             self.btnAction.isHidden = true

@@ -25,55 +25,75 @@ class sidemenuVC: baseVC {
             //lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
         }
     }
+    var citya = ""
+    var countrya = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tblMenu.delegate = self
         tblMenu.dataSource = self
+        lblName.text = USER.shared.name
+        if  USER.shared.city != ""{
+            citya = USER.shared.city
+            countrya = USER.shared.country
+            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        }
         //lblName.text = USER.shared.name
 
         // Do any additional setup after loading the view.
     }
     func setUserLiveLocation(){
-        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
-            var city1 = ""
-            if let city = dict?["locality"] as? String{
-                    city1 = city
-            }
-            var country1 = ""
-            if let country = dict?["country"] as? String{
-                country1 = country
-            }
-                          //  USER.shared.save()
-            self.lblStateCountry.text = "\(city1),\(country1)"
-            }
+        locationManager.startUpdatingLocation()
+                  locationManager.showVerboseMessage = false
+                  locationManager.autoUpdate = true
+                //   locationManager.startUpdatingLocation()
+                  locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+                      self.latitude = longitude
+                      self.longitude = latitude
+                    self.getAddressFromLatLon(pdblLatitude: latitude.description, withLongitude: longitude.description)
+                    self.locationManager.autoUpdate = false
+                   self.locationManager.stopUpdatingLocation()
+                  }
+        
+//        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
+//            var city1 = ""
+//            if let city = dict?["locality"] as? String{
+//                    city1 = city
+//            }
+//            var country1 = ""
+//            if let country = dict?["country"] as? String{
+//                country1 = country
+//            }
+//                          //  USER.shared.save()
+//            self.lblStateCountry.text = "\(city1),\(country1)"
+//            }
             self.locationManager.autoUpdate = false
-                         
+            self.locationManager.stopUpdatingLocation()
             }
     override func viewWillAppear(_ animated: Bool) {
         lblName.text = USER.shared.name
-        if  USER.shared.city != ""{
-            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-        }
-        
-//        if CLLocationManager.locationServicesEnabled() {
-//            switch CLLocationManager.authorizationStatus() {
-//                case .notDetermined, .restricted, .denied:
-//                    print("No access")
-//                    self.locationManager.startUpdatingLocation()
-//                self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-//                case .authorizedAlways, .authorizedWhenInUse:
-//                    print("Access")
-//                DispatchQueue.main.async {
-//                    self.setUserLiveLocation()
-//                }
-//                @unknown default:
-//                break
-//            }
-//            } else {
-//
-//                print("Location services are not enabled")
+//        if  USER.shared.city != ""{
+//            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
 //        }
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+                case .notDetermined, .restricted, .denied:
+                    print("No access")
+                    self.locationManager.startUpdatingLocation()
+                //self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+                case .authorizedAlways, .authorizedWhenInUse:
+                    //self.setUserLiveLocation()
+
+                DispatchQueue.main.async {
+                    self.setUserLiveLocation()
+                }
+                @unknown default:
+                break
+            }
+            } else {
+            
+                print("Location services are not enabled")
+        }
         
         
 //        DispatchQueue.main.async {
@@ -88,6 +108,149 @@ class sidemenuVC: baseVC {
 //                  }
 //
 //        }
+    }
+    func getAddressFromLatLon(pdblLatitude: String, withLongitude pdblLongitude: String) {
+        var center: CLLocationCoordinate2D = CLLocationCoordinate2D()
+        let lat: Double = Double("\(pdblLatitude)")!
+        let lon: Double = Double("\(pdblLongitude)")!
+        
+        let ceo: CLGeocoder = CLGeocoder()
+        center.latitude = lat
+        center.longitude = lon
+        
+        let loc: CLLocation = CLLocation(latitude: center.latitude, longitude: center.longitude)
+        
+        ceo.reverseGeocodeLocation(loc, completionHandler:
+            { (placemarks, error) in
+                if (error != nil)
+                {
+                    print("reverse geodcode fail: \(error!.localizedDescription)")
+                }
+                print(placemarks)
+                
+                if placemarks != nil
+                {
+                    if placemarks!.count > 0
+                    {
+                        
+                        let pm = placemarks! as [CLPlacemark]
+                        
+                        if pm.count > 0 {
+                            let pm = placemarks![0]
+                            var addressString: String = ""
+                            
+                            if pm.subLocality != nil {
+                                addressString = addressString + pm.subLocality! + ", "
+                            }
+                            if pm.thoroughfare != nil {
+                                addressString = addressString + pm.thoroughfare! + ", "
+                            }
+                            if pm.locality != nil {
+                                addressString = addressString + pm.locality! + ", "
+                            }
+                            if pm.country != nil {
+                                addressString = addressString + pm.country! + ", "
+                            }
+                            if pm.postalCode != nil {
+                                addressString = addressString + pm.postalCode! + " "
+                            }
+                            
+                            
+                            
+//                            if pm.postalCode!.isEmpty == false
+//                            {
+//                                //self.txtZipCode.text = "\(pm.postalCode!)"
+//                            }
+                            self.lblStateCountry.text = "\(pm.locality!),\(pm.country!)"
+//                            USER.shared.city = "\(pm.locality!)"
+//                            USER.shared.country = "\(pm.country!)"
+//                            USER.shared.save()
+                            self.countrya = "\(pm.country!)"
+                            self.citya = "\(pm.locality!)"
+                            
+                            
+                        }
+                    }
+                }
+                else
+                    
+                {
+                    
+                  //  let urlString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(pdblLatitude),\(pdblLongitude)&sensor=true_or_false&key=AIzaSyB_esPyf3orZGf4e6DbUczwVFApgue6w1o"
+                    
+                    
+                    
+//                    Alamofire.request(urlString, method: .post, parameters: nil, encoding: URLEncoding.default,headers:nil).responseJSON { response in
+//                        //            debugPrint(response)
+//                        if let json = response.result.value {
+//                            let dict:NSDictionary = (json as? NSDictionary)!
+//                            print(dict)
+//                            print(response)
+//
+//
+//                            let GetResults = dict.value(forKey: "results") as! NSArray
+//                            print(GetResults)
+//
+//                            if GetResults.count == 0
+//                            {
+//
+//                            }
+//                            else
+//                            {
+//                                let NewCheck = GetResults.value(forKey: "address_components") as! NSArray
+//                                print(NewCheck)
+//                                //let New = GetResults.value(forKey: "formatted_address") as! NSArray
+//
+//                                if NewCheck.count > 0
+//                                {
+//                                    let New = NewCheck.object(at: 0) as! NSArray
+//
+//
+//                                    for Object1 in New
+//                                    {
+//                                        print(Object1)
+//
+//                                        let p_z = Object1 as! NSDictionary
+//                                        let types = p_z.value(forKey: "types") as! NSArray
+//
+//                                        if types.count > 0
+//                                        {
+//                                            var value = String()
+//                                            value = types.object(at: 0) as! String
+//
+//                                            if value == "postal_code"
+//                                            {
+//                                                self.txtZipCode.text = "\(p_z.value(forKey: "long_name") as! String)"
+//                                            }
+//
+//                                            if value == "administrative_area_level_2" || value == "political"
+//                                            {
+//                                                self.txtCity.text = "\(p_z.value(forKey: "long_name") as! String)"
+//                                            }
+//
+//                                            if value == "country" || value == "political"
+//                                            {
+//                                                self.isCountrySelected = "\(p_z.value(forKey: "long_name") as! String)"
+//                                            }
+//
+//                                        }
+//                                    }
+//
+//                                }
+//
+//                            }
+//
+//                        }
+//
+//                    }
+                    
+                }
+                
+                
+                
+                
+        })
+        
     }
         // MARK: - Navigation
 }
