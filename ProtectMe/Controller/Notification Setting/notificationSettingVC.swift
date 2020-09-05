@@ -76,10 +76,12 @@ class notificationSettingVC: UIViewController {
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
         if(sender == self.btnNewLinkedAccount){
             self.lblType.text = "New Linked Accounts"
+            self.lblInfoDescription.text = "Receive a notification when a user requests to link you to their account."
+
         }
         else{
             self.lblType.text = "Sender Account Activity"
-
+            self.lblInfoDescription.text = "Receive a notification when a user shaes a video or image with you."
         }
         self.ViewPopup.frame = UIScreen.main.bounds
         //self.view.addSubview(self.ViewPopup)

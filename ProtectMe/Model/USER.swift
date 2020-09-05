@@ -35,8 +35,10 @@ class USER: NSObject  ,NSCoding {
         var isLogout                           = false
         var isDeleteActionShow:Bool             = true
         var videoUrl = ""
-    
         var archived_counter                       = ""
+        var selectedView                        = "grid"
+        var selectedFilter                      = "0"
+        var selectedSubFilter               = true
 
     
     
@@ -80,7 +82,18 @@ class USER: NSObject  ,NSCoding {
    
     required init?(coder aDecoder: NSCoder)    {
         super.init()
-         if let value = aDecoder.decodeObject(forKey: "videoUrl") as? String{
+        
+        if let value = aDecoder.decodeObject(forKey: "selectedView") as? String{
+            self.selectedView = value
+        }
+        if let value = aDecoder.decodeObject(forKey: "selectedFilter") as? String{
+            self.selectedFilter = value
+        }
+        if let value = aDecoder.decodeObject(forKey: "selectedSubFilter") as? Bool{
+            self.selectedSubFilter = value
+        }
+
+        if let value = aDecoder.decodeObject(forKey: "videoUrl") as? String{
             self.videoUrl = value
         }
 
@@ -176,6 +189,9 @@ class USER: NSObject  ,NSCoding {
     func encode(with aCoder: NSCoder)    {
         aCoder.encode(self.isLogout, forKey: "isLogout")
         aCoder.encode(self.videoUrl, forKey: "videoUrl")
+        aCoder.encode(self.selectedView, forKey: "selectedView")
+        aCoder.encode(self.selectedFilter, forKey: "selectedFilter")
+        aCoder.encode(self.selectedSubFilter, forKey: "selectedSubFilter")
 
         aCoder.encode(self.email_notification, forKey: "email_notification")
         aCoder.encode(self.isDeleteActionShow, forKey: "isDeleteActionShow")
@@ -213,7 +229,9 @@ class USER: NSObject  ,NSCoding {
     private func loadContent(fromUser user:USER) -> Void    {
 
         self.videoUrl                                         = user.videoUrl
-
+        self.selectedView                                     = user.selectedView
+        self.selectedSubFilter                                     = user.selectedSubFilter
+        self.selectedFilter                                     = user.selectedFilter
         self.isLogout                                         = user.isLogout
         self.email_notification                               = user.email_notification
         self.support_email                                    = user.support_email
@@ -256,7 +274,9 @@ class USER: NSObject  ,NSCoding {
     
     func clear() -> Void
     {
-        
+        self.selectedFilter                             = ""
+        self.selectedSubFilter                             = true
+        self.selectedView                                = ""
         self.videoUrl                                       = ""
         self.city                                       = ""
         self.state                                      = ""

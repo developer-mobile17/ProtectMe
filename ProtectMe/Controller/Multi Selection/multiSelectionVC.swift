@@ -118,7 +118,7 @@ class multiSelectionVC: UIViewController {
             //
         }
     }
-    func WSArchiveList(Parameter:[String:String]) -> Void {
+    func WSArchiveList(Parameter:[String:Any]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .archived_list, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>

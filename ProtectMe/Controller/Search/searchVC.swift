@@ -69,7 +69,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         }
     }
     var selectedType = "recent"
-    var selectedFilter = "0"
+    var selectedFilter = USER.shared.selectedFilter
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
     var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
@@ -90,7 +90,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
     var arrOption = [UIButton]()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboardWhenTappedAround()
+      //  self.hideKeyboardWhenTappedAround()
         self.btnChangeTableView(self.btnGreed)
 
         self.scheduledTimerWithTimeInterval()

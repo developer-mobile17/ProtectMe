@@ -178,13 +178,13 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 //        self.navigationController?.view.addSubview(self.ViewCreateFolder)
     }
     @IBAction func btnCancleAction(_ sender: Any){
-       for controller in self.navigationController!.viewControllers as Array {
-            if controller.isKind(of: archiveVC.self) {
-                _ =  self.navigationController!.popToViewController(controller, animated: true)
-                break
-            }
-        }
-        //self.navigationController?.popToRootViewController(animated: true)
+//       for controller in self.navigationController!.viewControllers as Array {
+//            if controller.isKind(of: archiveVC.self) {
+//                _ =  self.navigationController!.popToViewController(controller, animated: true)
+//                break
+//            }
+//        }
+        self.navigationController?.popToRootViewController(animated: true)
     }
      @IBAction func btnAction(_ sender: Any){
         if(self.actionCompleted == true){

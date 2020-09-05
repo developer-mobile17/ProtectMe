@@ -104,28 +104,29 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
      var longitude:Double = 0.0
        let locationManager = LocationManager.sharedInstance
     let accetm = AssetManager.sharedInstance
-    
     var selectedButton:UIButton?
-
     var selectedType = "recent"
-    var selectedView = "grid"
-    var selectedFilter = "0"
+    var selectedView = USER.shared.selectedView
+    var selectedFilter = USER.shared.selectedFilter
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
     var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
-    var semiFilter = "0"
-    var sectionIsExpanded: Bool = true {
+    var semiFilter = USER.shared.selectedSubFilter ? 1 : 0
+    var sectionIsExpanded: Bool = USER.shared.selectedSubFilter {
         didSet {
-            UIView.animate(withDuration: 0.25) {
-                if self.sectionIsExpanded {
-                    self.btnSemiFilter.imageView?.transform = CGAffineTransform.identity
-                    self.semiFilter = "0"
-                } else {
-                    self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
-                    self.semiFilter = "1"
-                }
-            }
+//            UIView.animate(withDuration: 0.25) {
+//                if self.sectionIsExpanded {
+//                    self.btnSemiFilter.imageView?.transform = CGAffineTransform.identity
+//                    self.semiFilter = "0"
+//
+//                } else {
+//                    self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+//                    self.semiFilter = "1"
+//
+//                }
+//            }
         }
+        
     }
     var checkBoxAction: Bool = false {
         didSet {
@@ -162,8 +163,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         self.collVideogrid.dataSource = self
         self.scheduledTimerWithTimeInterval()
         self.btnHandlerBlackBg(self)
-        self.btnChangeTableView(self.btnGreed)
-        self.btnSelectOptions(self.btnRecent)
+        //self.btnChangeTableView(self.btnGreed)
+        //self.btnSelectOptions(self.btnRecent)
               
         mapView.delegate = self
         self.tblVideoList.register(UINib(nibName: "uploadTableViewCell", bundle: nil), forCellReuseIdentifier: "uploadTableViewCell")
@@ -736,12 +737,47 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     override func viewWillDisappear(_ animated: Bool) {
         self.btnHandlerBlackBg(self)
     }
+    func setInitialView(){
+        if(selectedView == "grid"){
+            self.btnChangeTableView(self.btnGreed)
+        }
+        else{
+            self.btnChangeTableView(self.btnlist)
+        }
+        //semiFilter
+        if(USER.shared.selectedSubFilter){
+            let img = UIImage(named: "ic_down" )
+            self.btnSemiFilter.setImage( img , for:  .normal)
+        }
+        else{
+            let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
+            self.btnSemiFilter.setImage( img , for:  .normal)
+            //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+        }
+        switch (USER.shared.selectedFilter.toInt()){
+                    
+                    case 0:
+                        self.selectedFilter = "0"
+                        self.btnFilter.setTitle("Date Added ", for: .normal)
+                        //break
+                    case 1:
+                        self.selectedFilter = "1"
+                        self.btnFilter.setTitle("Date Modified ", for: .normal)
+                    
+                    case 2:
+                        self.selectedFilter = "2"
+                        self.btnFilter.setTitle("A to Z ", for: .normal)
+                        
+                    default:
+                        break
+                    }
+    }
     override func viewWillAppear(_ animated: Bool) {
         self.getLocation()
         self.btnHandlerBlackBg(self)
-        self.btnChangeTableView(self.btnGreed)
         //self.btnSelectOptions(self.btnRecent)
-        self.selectOptions(selected: self.selectedButton!)
+        self.setInitialView()
+        self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
         
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
@@ -752,9 +788,13 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         //let monthname = Date().getMonthFullname()
         //let year = Date().getYear()
         lblMonthandYear.text = "Recent"
+        
+
     }
     @IBAction func btnChangeTableView(_ sender: UIButton) {
         if(sender == self.btnlist){
+            USER.shared.selectedView = "table"
+            USER.shared.save()
             self.selectedView = "table"
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
@@ -773,6 +813,8 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         }
         else{
             self.selectedView = "grid"
+            USER.shared.selectedView = "grid"
+            USER.shared.save()
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
             UIView.animate(withDuration: 0.1,
@@ -794,7 +836,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
          checkBoxAction = !checkBoxAction
     }
     @IBAction func btnOkayAgreeClickAction(_ sender: UIButton) {
-        if(checkBoxAction == true){
+        if(!checkBoxAction){
             USER.shared.isDeleteActionShow = false
             USER.shared.save()
         }
@@ -805,14 +847,16 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.ViewdeleteConfirmation.removeFromSuperview()
     }
     @IBAction func btnSemiFilterAction(_ sender: UIButton) {
-        sectionIsExpanded = !sectionIsExpanded
-        if(sectionIsExpanded == true){
-            self.semiFilter  = "0"
+        USER.shared.selectedSubFilter = !USER.shared.selectedSubFilter
+        USER.shared.save()
+
+        UIView.animate(withDuration: 0.25) {
+           
+            self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+        
         }
-        else{
-            self.semiFilter  = "1"
-        }
-         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter])
+       
+        self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
     }
     @IBAction func btnFilterAction(_ sender: UIButton) {
 //        sectionIsExpanded = !sectionIsExpanded
@@ -828,19 +872,26 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
             
             case 0:
                 self.selectedFilter = "0"
+                USER.shared.selectedFilter = "0"
+                USER.shared.save()
                 //self.sectionIsExpanded = !self.sectionIsExpanded
                 self.btnFilter.setTitle("Date Added ", for: .normal)
+                self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
                 //break
             case 1:
                 self.selectedFilter = "1"
+                USER.shared.selectedFilter = "1"
+                USER.shared.save()
                 //self.sectionIsExpanded = !self.sectionIsExpanded
                 self.btnFilter.setTitle("Date Modified ", for: .normal)
-            
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
             case 2:
                 self.selectedFilter = "2"
+                USER.shared.selectedFilter = "2"
+                USER.shared.save()
                 //self.sectionIsExpanded = !self.sectionIsExpanded
                 self.btnFilter.setTitle("A to Z ", for: .normal)
-                
+                self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
 //            case 3:
 //                self.selectedFilter = "3"
 //                //self.sectionIsExpanded = !self.sectionIsExpanded
@@ -849,7 +900,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
             default:
                 break
             }
-            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter])
+            
         }
         
 
@@ -892,7 +943,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
 //            self.WSFolderList(Parameter: [:])
 //        }
 //        else{
-            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter])
+            self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
         //}
 
     }
@@ -1118,12 +1169,12 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if(USER.shared.isDeleteActionShow == true){
+                    if(!USER.shared.isDeleteActionShow){
                         self.showAlertFolrDeleted()
                     }
                     self.btnHandlerBlackBg(self)
                     self.btnhideDetails(self)
-                    self.btnSelectOptions(self.btnRecent)
+                    self.btnSelectOptions(self.selectedButton ?? self.btnRecent)
 
                     if let outcome = dataResponce["data"] as? NSDictionary{
                         
@@ -1159,6 +1210,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     func WSArchiveList(Parameter:[String:String]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .archived_list, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
+                
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
@@ -1167,11 +1219,10 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                     USER.shared.save()
                     }
                     if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                            USER.shared.linked_account_counters = String(linked_account_counters)
+                    USER.shared.linked_account_counters = String(linked_account_counters)
                     USER.shared.save()
                     }
-                    
-                    if let outcome = dataResponce["data"] as? [NSDictionary]{
+                        if let outcome = dataResponce["data"] as? [NSDictionary]{
                         
                         self.arrarchivedList.removeAll()
                         for a : Int in (0..<(outcome.count))
@@ -1317,7 +1368,7 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
        }
     @objc func RefreshList(notification: NSNotification) {
-             self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter])
+             self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
          }
 
        func stopTimer() {
