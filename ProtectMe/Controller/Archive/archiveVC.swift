@@ -21,6 +21,7 @@ import Toast_Swift
 
 extension archiveVC:MKMapViewDelegate{
     
+    
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
@@ -133,11 +134,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
             UIView.animate(withDuration: 0.25) {
                 if self.checkBoxAction {
                     self.btncheckboxAgree.setImage(#imageLiteral(resourceName: "ic_checkbox"), for: .normal)
-                    
-                    
                 } else {
                     self.btncheckboxAgree.setImage(#imageLiteral(resourceName: "ic_checkboxblank"), for: .normal)
-                    
                 }
             }
         }
@@ -148,11 +146,10 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.locationManager.delegate = self as? LocationManagerDelegate
         self.imgPickerController.delegate = self
         controller.delegate = self
 
-        //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
         //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
 
 
@@ -997,6 +994,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
+                    self.txtName.text = ""
                     if let archived_counter = dataResponce["archived_counter"] as? String{
                             USER.shared.archived_counter = archived_counter
                             USER.shared.save()
@@ -1062,20 +1060,23 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
-                         self.arrFolderList.removeAll()
-                        for a : Int in (0..<(outcome.count))
-                        {
-                            let objarchivedList : FolderListMOdel = FolderListMOdel()
-                            objarchivedList.created      = outcome[a]["created"] as? String ?? ""
-                            objarchivedList.folder_name  = outcome[a]["folder_name"] as? String ?? ""
-                            objarchivedList.id           = outcome[a]["id"] as? String ?? ""
-                            objarchivedList.updated      = outcome[a]["updated"] as? String ?? ""
-                            objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
-                            objarchivedList.name      = outcome[a]["name"] as? String ?? ""
-                            self.arrFolderList.append(objarchivedList)
-                        }
-                        self.tblVideoList.reloadData()
-                        self.collVideogrid.reloadData()
+                        self.btnHandlerBlackBg(self)
+                                           self.btnhideDetails(self)
+                                           self.btnSelectOptions(self.btnFolders)
+//                        self.arrFolderList.removeAll()
+//                        for a : Int in (0..<(outcome.count))
+//                        {
+//                            let objarchivedList : FolderListMOdel = FolderListMOdel()
+//                            objarchivedList.created      = outcome[a]["created"] as? String ?? ""
+//                            objarchivedList.folder_name  = outcome[a]["folder_name"] as? String ?? ""
+//                            objarchivedList.id           = outcome[a]["id"] as? String ?? ""
+//                            objarchivedList.updated      = outcome[a]["updated"] as? String ?? ""
+//                            objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
+//                            objarchivedList.name      = outcome[a]["name"] as? String ?? ""
+//                            self.arrFolderList.append(objarchivedList)
+//                        }
+//                        self.tblVideoList.reloadData()
+//                        self.collVideogrid.reloadData()
                     }
                 }
                     else if(StatusCode == 307)

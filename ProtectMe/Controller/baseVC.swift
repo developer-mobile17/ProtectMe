@@ -86,8 +86,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
            locationManager.autoUpdate = true
          //   locationManager.startUpdatingLocation()
            locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = longitude
-               self.longitude = latitude
+               self.latitude = latitude
+               self.longitude = longitude
             self.locationManager.autoUpdate = false
             self.locationManager.stopUpdatingLocation()
            }

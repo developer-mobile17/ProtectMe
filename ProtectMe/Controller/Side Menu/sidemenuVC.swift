@@ -139,34 +139,25 @@ class sidemenuVC: baseVC {
                             let pm = placemarks![0]
                             var addressString: String = ""
                             
-                            if pm.subLocality != nil {
-                                addressString = addressString + pm.subLocality! + ", "
-                            }
-                            if pm.thoroughfare != nil {
-                                addressString = addressString + pm.thoroughfare! + ", "
-                            }
+//                            if pm.subLocality != nil {
+//                                addressString = addressString + pm.subLocality! + ", "
+//                            }
+//                            if pm.thoroughfare != nil {
+//                                addressString = addressString + pm.thoroughfare! + ", "
+//                            }
                             if pm.locality != nil {
                                 addressString = addressString + pm.locality! + ", "
                             }
                             if pm.country != nil {
-                                addressString = addressString + pm.country! + ", "
-                            }
-                            if pm.postalCode != nil {
-                                addressString = addressString + pm.postalCode! + " "
+                                addressString = addressString + pm.country!
                             }
                             
-                            
-                            
-//                            if pm.postalCode!.isEmpty == false
-//                            {
-//                                //self.txtZipCode.text = "\(pm.postalCode!)"
-//                            }
-                            self.lblStateCountry.text = "\(pm.locality!),\(pm.country!)"
+                            self.lblStateCountry.text = addressString
 //                            USER.shared.city = "\(pm.locality!)"
 //                            USER.shared.country = "\(pm.country!)"
 //                            USER.shared.save()
-                            self.countrya = "\(pm.country!)"
-                            self.citya = "\(pm.locality!)"
+                            self.countrya = "\(pm.country ?? "")"
+                            self.citya = "\(pm.locality ?? "")"
                             
                             
                         }

@@ -747,7 +747,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                     print("video upload complete")
                                         self.WSVideoUploadSuces1(Parameter: ["unique_video_id":videoKey])
                                     appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-                                    //NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                    NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
                                 }
                                 else{
                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
