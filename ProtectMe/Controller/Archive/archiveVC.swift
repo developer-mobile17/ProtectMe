@@ -16,6 +16,7 @@ import Photos
 import CameraRoll
 import MobileCoreServices
 
+
 import Toast_Swift
 
 
@@ -472,6 +473,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         }
         else{
             
+            
             let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
                let player = AVPlayer(url: videoURL!)
 
@@ -657,10 +659,11 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     @IBAction func btncelltapClick(_ sender: UIButton) {
 
     let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
-              vc.FolderId = self.arrarchivedList[sender.tag].id!
-              vc.data = self.arrarchivedList[sender.tag]
-              vc.FileId = self.arrarchivedList[sender.tag].folder_id!
-              vc.navigationTitle = self.arrarchivedList[sender.tag].folder_name!
+    vc.FolderId = self.arrarchivedList[sender.tag].id!
+    vc.data = self.arrarchivedList[sender.tag]
+    vc.FileId = self.arrarchivedList[sender.tag].folder_id!
+        vc.navigationTitle = self.arrarchivedList[sender.tag].folder_name!
+        
               vc.buttonName = ""
                     self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -847,10 +850,14 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         USER.shared.selectedSubFilter = !USER.shared.selectedSubFilter
         USER.shared.save()
 
-        UIView.animate(withDuration: 0.25) {
-           
-            self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
-        
+        if(USER.shared.selectedSubFilter){
+            let img = UIImage(named: "ic_down" )
+            self.btnSemiFilter.setImage( img , for:  .normal)
+        }
+        else{
+            let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
+            self.btnSemiFilter.setImage( img , for:  .normal)
+            //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
         }
        
         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
@@ -2079,5 +2086,8 @@ extension archiveVC {
                      
         }
 
+
+}
+extension archiveVC{
 
 }

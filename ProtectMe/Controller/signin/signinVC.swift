@@ -18,6 +18,8 @@ protocol SignupVCdelegate {
 
 class signinVC: UIViewController {
     //let appleSignIn = HSAppleSignIn()
+    var registersendDetail:[String:Any] = [String : Any]()
+
     var SocialData:socialModel = socialModel()
     var latitude:Double = 0.0
      var longitude:Double = 0.0
@@ -312,15 +314,16 @@ class signinVC: UIViewController {
                         }
                         else if(StatusCode == 412)
                         {
-                          //  if let errorMessage:String = dataResponce["message"] as? String{
-                                self.delegate.copydata(data: self.SocialData)
-                                self.popTo()
-                                //    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                            //}
+                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
+                            vc.socialID = self.SocialData.social_Id!
+                            vc.socialData = self.SocialData
+                            vc.name = self.SocialData.name!
+                            self.navigationController?.pushViewController(vc, animated: true)
                         }
-                       
                        else{
-
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
                        }
                    }
                    else{
@@ -364,7 +367,16 @@ class signinVC: UIViewController {
                         else if(StatusCode == 412)
                         {
                             if let errorMessage:String = dataResponce["message"] as? String{
+                                if(errorMessage == "The email field is required."){
+                                    let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
+                                    vc.socialID = self.SocialData.social_Id!
+                                    vc.name = ""
+                                    self.navigationController?.pushViewController(vc, animated: true)
+                                }
+                                else{
                                     showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                }
+                                    
                             }
                         }
                        else if (StatusCode == 412){
@@ -539,7 +551,7 @@ extension signinVC : ASAuthorizationControllerDelegate
                 }
                 if credentials.fullName!.familyName != nil {
                     print(credentials.fullName!.familyName!)
-                    self.SocialData.social_Id = credentials.fullName!.familyName!
+                    self.SocialData.name = credentials.fullName!.familyName!
                 }
                 
                 var registerDetail:[String:Any] = [String : Any]()
@@ -553,8 +565,17 @@ extension signinVC : ASAuthorizationControllerDelegate
                 
                 registerDetail["longitude"] = self.longitude.description
                 registerDetail["latitude"] = self.latitude.description
-                   
-                if(self.SocialData.email != "" || self.SocialData.name != ""){
+                
+                self.SocialData.name        = self.SocialData.name
+                self.SocialData.email       = self.SocialData.email
+                self.SocialData.type        = "apple"
+                self.SocialData.vPushToken   = appDelegate.FCMdeviceToken
+                self.SocialData.eDeviceType   = "iOS"
+                self.SocialData.id          = self.SocialData.social_Id
+                self.SocialData.checkExist   = "1"
+                self.SocialData.longitude   = self.longitude.description
+                self.SocialData.latitude    = self.latitude.description
+                if(self.SocialData.email != "" && self.SocialData.name != ""){
                     self.WSSocialLogin(Parameter: registerDetail as! [String : String])
                 }
                 else{
@@ -711,4 +732,10 @@ class socialModel: NSObject {
     var social_Id:String?
     var name:String?
     var email:String?
+    var vPushToken:String?
+    var eDeviceType:String?
+    var id:String?
+    var checkExist:String?
+    var longitude:String?
+    var latitude:String?
 }

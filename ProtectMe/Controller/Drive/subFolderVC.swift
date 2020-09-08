@@ -21,6 +21,9 @@ import Photos
 class subFolderVC: baseVC ,MKMapViewDelegate{
     var FileId:String = ""
     var FolderId:String = ""
+    var name = ""
+    var filetype = ""
+    
     @IBOutlet weak var navigationbar: UINavigationBar!
     @IBOutlet weak var ViewDownloadCompleted:UIControl!
 
@@ -46,7 +49,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     @IBOutlet weak var btnDateAdded:UIButton!
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
-    
+    @IBOutlet weak var lblPopUpText:UILabel!
+
     @IBOutlet weak var Viewmap:UIView!
 
     @IBOutlet weak var mapView: MKMapView!
@@ -147,6 +151,16 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 
           }
       }
+    @IBAction func btnShareVideoURL(_ sender: Any) {
+          //Set the default sharing message.
+          DispatchQueue.main.async {
+              self.btnhideDetails(self)
+              self.btnHandlerBlackBg(self)
+          }
+          UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrFileList[self.selectedIndex!.row].image_path!
+
+          self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
+      }
      @objc func btnMoveFolderAction(){
             let vc = storyBoards.Main.instantiateViewController(withIdentifier: "multiSelectionVC") as! multiSelectionVC
             vc.FolderId = self.FolderId
@@ -188,7 +202,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     }
      @IBAction func btnAction(_ sender: Any){
         if(self.actionCompleted == true){
-            self.btnCancleAction(self.btnAction)
+            self.navigationController?.popViewController(animated: true)
         }
         else{
         if(self.buttonName == "Copy"){
@@ -550,12 +564,18 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
+                if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                }
                     self.actionCompleted = true
                     self.btnHandlerBlackBg(self)
+                    if(self.data.type == "image"){
+                        self.lblPopUpText.text = "Image has been added to the \(self.navigationTitle)"
+                    }
+                    else{
+                        self.lblPopUpText.text = "Video has been added to the \(self.navigationTitle)"
+                    }
                     self.ViewMoveSucess.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewMoveSucess)
                                   

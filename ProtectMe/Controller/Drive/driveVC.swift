@@ -267,14 +267,19 @@ class driveVC: baseVC {
 
     }
   @IBAction func btnPlusFolderAction(_ sender: Any){
+        self.txtName.text = ""
+        self.txtName.Round = true
+        self.txtName.borderColor = .black
+        self.txtName.borderWidth = 1.0
         self.ViewCreateFolder.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewCreateFolder)
     }
-      func fileAction(Index:IndexPath){
+    func fileAction(Index:IndexPath){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
         vc.FolderId = self.arrarchivedList[Index.row].id!
         vc.data = self.data
         vc.FileId = self.FileId
+        
         print(data.id)
         print(self.FileId)
         vc.navigationTitle = self.arrarchivedList[Index.row].folder_name!

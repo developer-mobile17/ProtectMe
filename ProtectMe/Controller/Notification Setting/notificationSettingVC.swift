@@ -105,9 +105,9 @@ class notificationSettingVC: UIViewController {
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
                                        }
                       self.WSGetAllData(Parameter: [:])
                       if let outcome = dataResponce["data"] as? NSDictionary{
@@ -160,7 +160,7 @@ class notificationSettingVC: UIViewController {
       }
     func setData(){
         print(USER.shared.location_service)
-        isNotificationLinkedAccOn = USER.shared.notification.StrTobool!
+        isNotificationLinkedAccOn = USER.shared.new_linked_account_notification.StrTobool!
         isEmailNotificationsOn = USER.shared.email_notification.StrTobool!
         isSenderAccActivityOn = USER.shared.sender_account_activity_notification.StrTobool!
         print(USER.shared.notification)

@@ -28,10 +28,12 @@ class multiSelectionVC: UIViewController {
         super.viewWillAppear(animated)
    self.WSArchiveList(Parameter: ["type":"recent","filter":"0","semi_filter":"0"])    }
     @IBAction func btnMoveAction(_ sender: UIButton) {
-        let commaSapratedStrIDS = (arrarchivedList.map{String($0.id!)}).joined(separator: ",")
-        let trimmedString = commaSapratedStrIDS.trimmingCharacters(in: .whitespaces).dropFirst()
-        print(commaSapratedStrIDS)
-        print(trimmedString)
+        let att = arrarchivedList.filter({$0.isChecked == true})
+
+
+        let commaSapratedStrIDS = (att.map{String($0.id!)}).joined(separator: ",")
+        let trimmedString = commaSapratedStrIDS.trimmingCharacters(in: .whitespaces)
+        
         self.WSMoveFileHere(Parameter: ["file_id":String(trimmedString),"folder_id":self.FolderId])
 
         

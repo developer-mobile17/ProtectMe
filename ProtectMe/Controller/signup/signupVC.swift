@@ -25,6 +25,7 @@ extension signupVC:SignupVCdelegate{
 class signupVC: UIViewController {
   let appleSignIn = HSAppleSignIn()
     var SocialData:socialModel = socialModel()
+    var registersendDetail:[String:Any] = [String : Any]()
 
     @IBOutlet weak var viewAppleButton: UIControl!
     var isFromLogin:Bool = false
@@ -232,12 +233,24 @@ override func viewWillAppear(_ animated: Bool) {
                     else if(StatusCode == 412)
                     {
                         if let errorMessage:String = dataResponce["message"] as? String{
+                            if(errorMessage == "The email field is required."){
+                                let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
+                                vc.socialID = self.SocialData.social_Id!
+                                vc.socialData = self.SocialData
+                                vc.name = self.SocialData.name!
+                                self.navigationController?.pushViewController(vc, animated: true)
+                            }
+                            else{
                                 showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
                         }
                     }
                 else if(StatusCode == 401)
                 {
                     if let errorMessage:String = dataResponce["message"] as? String{
+                        
+                        
+                        
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                             USER.shared.isLogout = true
                             USER.shared.save()
@@ -261,6 +274,58 @@ override func viewWillAppear(_ animated: Bool) {
             //
         }
     }
+    func WSSocialLoginCheck(Parameter:[String:String]) -> Void {
+               ServiceManager.shared.callAPIPost(WithType: .social_login, isAuth: false, WithParams: Parameter, Success:  { (DataResponce, Status, Message) in
+                   if(Status == true){
+                       let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                       let StatusCode = DataResponce?["status"] as? Int
+
+                       if (StatusCode == 200 ){
+               
+                          if let outcome = dataResponce["data"] as? NSDictionary {
+                          USER.shared.setData(dict:outcome)
+                          appDelegate.setHome()
+                         
+                           }
+                       }
+                        else if(StatusCode == 307)
+                        {
+                            if let errorMessage:String = dataResponce["message"] as? String{
+                            if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                                showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                    if let url = URL(string: LIveURL),
+                                    UIApplication.shared.canOpenURL(url){
+                                        UIApplication.shared.openURL(url)
+                                    }
+                                }
+                                }
+                                //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                }
+                        }
+                        else if(StatusCode == 412)
+                        {
+                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
+                            vc.socialID = self.SocialData.social_Id!
+                            vc.socialData = self.SocialData
+                            vc.name = self.SocialData.name!
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                       else{
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                       }
+                   }
+                   else{
+                       if let errorMessage:String = Message{
+                       showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                   }
+                   }
+                   
+               }) { (dataResponce, status, errorMessage) in
+                   
+               }
+           }
       func WSSocialLogin(Parameter:[String:String]) -> Void {
                  ServiceManager.shared.callAPIPost(WithType: .social_login, isAuth: false, WithParams: Parameter, Success:  { (DataResponce, Status, Message) in
                      if(Status == true){
@@ -291,8 +356,18 @@ override func viewWillAppear(_ animated: Bool) {
                                 }
                               
                              else if (StatusCode == 412){
-                                if let errorMessage:String = DataResponce?["message"] as? String{
-                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                if let errorMessage:String = dataResponce["message"] as? String{
+                                    if(errorMessage == "The email field is required."){
+                                        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
+                                        vc.socialID = self.SocialData.social_Id!
+                                        vc.name = ""
+                                        vc.socialData = self.SocialData
+                                        self.navigationController?.pushViewController(vc, animated: true)
+                                    }
+                                    else{
+                                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                                    }
+                                        
                                 }
                              }
                              else{
@@ -546,26 +621,45 @@ extension signupVC : ASAuthorizationControllerDelegate
                 }
                 if credentials.fullName!.familyName != nil {
                     print(credentials.fullName!.familyName!)
-                    self.SocialData.social_Id = credentials.fullName!.familyName!
+                    self.SocialData.name = credentials.fullName!.familyName!
                 }
                 
                 var registerDetail:[String:Any] = [String : Any]()
-                registerDetail["name"] = self.SocialData.name
-                registerDetail["email"] = self.SocialData.email
-                registerDetail["type"] = "apple"
-                registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
-                registerDetail["eDeviceType"] = "iOS"
-                registerDetail["id"] = self.SocialData.social_Id
-                registerDetail["checkExist"] = "1"
+                registerDetail["name"]          = self.SocialData.name
+                registerDetail["email"]         = self.SocialData.email
+                registerDetail["type"]          = "apple"
+                registerDetail["vPushToken"]    = appDelegate.FCMdeviceToken
+                registerDetail["eDeviceType"]   = "iOS"
+                registerDetail["id"]            = self.SocialData.social_Id
+                registerDetail["checkExist"]    = "1"
+                registerDetail["longitude"]     = self.longitude.description
+                registerDetail["latitude"]      = self.latitude.description
                 
-                registerDetail["longitude"] = self.longitude.description
-                registerDetail["latitude"] = self.latitude.description
-                   
+                self.registersendDetail["name"]          = self.SocialData.name
+                self.registersendDetail["email"]         = self.SocialData.email
+                self.registersendDetail["type"]          = "apple"
+                self.registersendDetail["vPushToken"]    = appDelegate.FCMdeviceToken
+                self.registersendDetail["eDeviceType"]   = "iOS"
+                self.registersendDetail["id"]            = self.SocialData.social_Id
+                self.registersendDetail["checkExist"]    = "1"
+                self.registersendDetail["longitude"]     = self.longitude.description
+                self.registersendDetail["latitude"]      = self.latitude.description
+                
+                self.SocialData.name        = self.SocialData.name
+                self.SocialData.email       = self.SocialData.email
+                self.SocialData.type        = "apple"
+                self.SocialData.vPushToken   = appDelegate.FCMdeviceToken
+                self.SocialData.eDeviceType   = "iOS"
+                self.SocialData.id          = self.SocialData.social_Id
+                self.SocialData.checkExist   = "1"
+                self.SocialData.longitude   = self.longitude.description
+                self.SocialData.latitude    = self.latitude.description
+                
                 if(self.SocialData.email != "" || self.SocialData.name != ""){
                     self.WSSocialLogin(Parameter: registerDetail as! [String : String])
                 }
                 else{
-                    //self.WSSocialLoginCheck(Parameter: registerDetail as! [String : String])
+                    self.WSSocialLoginCheck(Parameter: registerDetail as! [String : String])
                    
                 }
                 
@@ -678,8 +772,8 @@ extension signupVC : GIDSignInDelegate {
             registerDetail["longitude"] = self.longitude.description
             registerDetail["latitude"] = self.latitude.description
 
-            USER.shared.setData(dict: registerDetail as NSDictionary)
-            USER.shared.save()
+//            USER.shared.setData(dict: registerDetail as NSDictionary)
+//            USER.shared.save()
             self.WSSocialLogin(Parameter: registerDetail as! [String : String])
             
             GIDSignIn.sharedInstance()?.signOut()
