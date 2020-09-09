@@ -217,9 +217,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    
-    @IBAction func btnVideoDetails(_ sender: UIButton) {
+    @IBAction func btnVideoDetails(_ sender: Any) {
         self.btnHandlerBlackBg(self)
         self.ViewVideoDetails.frame = UIScreen.main.bounds
         self.navigationController?.view.addSubview(self.ViewVideoDetails)

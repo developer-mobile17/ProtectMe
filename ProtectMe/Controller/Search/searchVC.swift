@@ -70,6 +70,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
     }
     var selectedType = "recent"
     var selectedFilter = USER.shared.selectedFilter
+    var selectedView = USER.shared.selectedView
+
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
     var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
@@ -92,8 +94,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
         super.viewDidLoad()
       //  self.hideKeyboardWhenTappedAround()
         self.btnChangeTableView(self.btnGreed)
-
-        self.scheduledTimerWithTimeInterval()
+        self.hideKeyboardWhenTappedAround()
+        //self.scheduledTimerWithTimeInterval()
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
 
         arrOption = [btnRecent,btnFolders,btnShared]
@@ -141,7 +143,13 @@ class searchVC: baseVC ,UITextFieldDelegate{
         if(self.isFolderSelected == true){
         }
         else{
+            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
+            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                if(index == 0){
             self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
+                }
+            }
+            
         }
     }
     @IBAction func btnSearchAction(_ sender: UIButton) {
@@ -306,10 +314,11 @@ class searchVC: baseVC ,UITextFieldDelegate{
         self.lblDetailName2.text = data.image_name?.uppercased()
 
         self.lblDetailSize.text = data.file_size?.uppercased()
-        let asset = AVURLAsset(url: URL(string: data.image_path!)!)
-        let durationInSeconds = asset.duration.seconds
+        
 
         if(data.type?.uppercased() == "VIDEO"){
+            let asset = AVURLAsset(url: URL(string: data.image_path!)!)
+            let durationInSeconds = asset.duration.seconds
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
             self.VideoDuration.isHidden = false
             let s = formatSecondsToString(durationInSeconds)
@@ -472,16 +481,23 @@ class searchVC: baseVC ,UITextFieldDelegate{
 
        }
     @IBAction func btnShareVideoURL(_ sender: UIButton) {
+        DispatchQueue.main.async {
+                  self.btnhideDetails(self)
+                  self.btnHandlerBlackBg(self)
+              }
+              UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
+
+              self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
         //Set the default sharing message.
-        let message = "Please check this video link"
-        //Set the link to share.
-        if let link = NSURL(string: self.arrarchivedList[self.selectedIndex!.row].thumb_image!)
-        {
-            let objectsToShare = [message,link] as [Any]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-            activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
-            self.present(activityVC, animated: true, completion: nil)
-        }
+//        let message = "Please check this video link"
+//        //Set the link to share.
+//        if let link = NSURL(string: self.arrarchivedList[self.selectedIndex!.row].thumb_image!)
+//        {
+//            let objectsToShare = [message,link] as [Any]
+//            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+//            activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
+//            self.present(activityVC, animated: true, completion: nil)
+//        }
     }
     func writeToFile(urlString: String) {
 
@@ -519,10 +535,10 @@ class searchVC: baseVC ,UITextFieldDelegate{
         self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         if(self.arrarchivedList[selectedIndex!.row].user_id == USER.shared.id){
-                   self.Viewrename.isHidden = false
-               }
-               else{
-                      self.Viewrename.isHidden = true
+            self.Viewrename.isHidden = false
+        }
+        else{
+            self.Viewrename.isHidden = true
         }
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
@@ -532,7 +548,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         self.ViewCreateFolder.removeFromSuperview()
     }
     @IBAction func btnBackClick(_ sender: Any) {
-              self.popTo()
+        self.popTo()
     }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
@@ -546,7 +562,6 @@ class searchVC: baseVC ,UITextFieldDelegate{
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
         OBJchangepasswordVC.delegate = self
-            
         OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
         let firstPart = self.arrarchivedList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
         print(firstPart) // print Hello
@@ -559,7 +574,14 @@ class searchVC: baseVC ,UITextFieldDelegate{
         self.btnHandlerBlackBg(self)
     }
     override func viewWillAppear(_ animated: Bool) {
+        self.selectedView = USER.shared.selectedView
         self.btnHandlerBlackBg(self)
+        if(self.selectedView == "grid"){
+            self.btnChangeTableView(self.btnGreed)
+        }
+        else{
+            self.btnChangeTableView(self.btnlist)
+        }
        // self.btnSelectOptions(self.btnRecent)
 
         //let monthname = Date().getMonthFullname()
@@ -579,6 +601,9 @@ class searchVC: baseVC ,UITextFieldDelegate{
     }
     @IBAction func btnChangeTableView(_ sender: UIButton) {
         if(sender == self.btnlist){
+            USER.shared.selectedView = "table"
+            USER.shared.save()
+            self.selectedView = "table"
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
             UIView.animate(withDuration: 0.1,
@@ -595,6 +620,9 @@ class searchVC: baseVC ,UITextFieldDelegate{
             })
         }
         else{
+            self.selectedView = "grid"
+            USER.shared.selectedView = "grid"
+            USER.shared.save()
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
             UIView.animate(withDuration: 0.1,
@@ -1038,8 +1066,8 @@ extension searchVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionVi
            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
        }
        @objc func reloadcell(){
-           self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
-           self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
+//           self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
+//           self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
        }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -1052,16 +1080,11 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         let collectionCellSize = collectionView.frame.size.width - padding
         return CGSize(width: collectionCellSize/2, height: collectionCellSize/2)
  }
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
-    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            if(section == 0){
-                return appDelegate.ArrLocalVideoUploading.count
-            }
-            else{
+            
                 return self.arrarchivedList.count
-            }
+            
 
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
@@ -1075,19 +1098,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
                   self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
-            if(indexPath.section == 0){
-                let videoURL =  appDelegate.ArrLocalVideoUploading[indexPath.row].url!
-                let player = AVPlayer(url: videoURL)
-                       let vc = AVPlayerViewController()
-                       vc.player = player
-
-                       present(vc, animated: true) {
-                           vc.player?.play()
-                       }
-
-            }
-            else{
-            if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
+                       if(self.arrarchivedList[indexPath.row].type?.lowercased() == "image")
             {
                 
             }
@@ -1103,25 +1114,13 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 
             }
 
-            }
+            
             
         }
     }
    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if(indexPath.section == 0){
-            let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "uploadCell", for: indexPath) as! collCell
-                cell.videoThumb.image = nil
-            cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
-            cell.lblName.text = ""
-            cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
-//            appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
-            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
-            cell.btnPlayvideo.tag = indexPath.row
-            cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayofflineVideo(_:)),for: .touchUpInside)
-            return cell
-        }
-        else{
+        
         
         if(self.isFolderSelected == true){
         let cell:FolderCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FolderCell", for: indexPath) as! FolderCell
@@ -1158,23 +1157,18 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             }
             return cell
             }
-        }
+        
 
     }
     
 }
 extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
      // MARK: - UITableview delegate methods
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if(section == 0){
-                return appDelegate.ArrLocalVideoUploading.count
-        }
-        else{
+        
             return self.arrarchivedList.count
-        }
+        
 //            return self.arrarchivedList.count
         
     }
@@ -1182,19 +1176,7 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
 //        return
 //    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.section == 0){
-                     let videoURL =  appDelegate.ArrLocalVideoUploading[indexPath.row].url!
-                     let player = AVPlayer(url: videoURL)
-                            let vc = AVPlayerViewController()
-                            vc.player = player
-
-                            present(vc, animated: true) {
-                                vc.player?.play()
-                            }
-
-        }
-        else{
-            if(self.isFolderSelected == true){
+                    if(self.isFolderSelected == true){
                 let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
                       vc.FolderId = self.arrarchivedList[indexPath.row].id!
                       vc.data = self.arrarchivedList[indexPath.row]
@@ -1217,19 +1199,10 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
                     }
                 }
             }
-        }
+        
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if(indexPath.section == 0){
-            let cell:uploadTableViewCell = tableView.dequeueReusableCell(withIdentifier: "uploadTableViewCell", for: indexPath) as! uploadTableViewCell
-            cell.videoThumb.image = nil
-            cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
-            cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
-            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
-            return cell
-        }
-        else{
-            if(self.isFolderSelected == true){
+                    if(self.isFolderSelected == true){
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
               //  cell.videoThumb.contentMode = .scaleAspectFit
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
@@ -1276,7 +1249,7 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
                 }
                 return cell
             }
-        }
+        
     }
     
    

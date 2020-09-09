@@ -64,6 +64,7 @@ enum APITYPE {
     case nested_folder_list
     case copy
     case move
+    case multiplemove
     case successfully_upload_video
     case reset_archived_counter
     case rename_folder
@@ -155,6 +156,8 @@ enum APITYPE {
             return "delete_folder"
         case .resent_verification_mail:
             return "resent_verification_mail"
+        case .multiplemove:
+            return "move"
         }
     }
 }

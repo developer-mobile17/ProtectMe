@@ -53,7 +53,7 @@ class multiSelectionVC: UIViewController {
     }
     // MARK: - WEB Service
     func WSMoveFileHere(Parameter:[String:String]) -> Void {
-        ServiceManager.shared.callAPIPost(WithType: .move, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+        ServiceManager.shared.callAPIPost(WithType: .multiplemove, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int

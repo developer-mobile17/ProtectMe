@@ -486,7 +486,7 @@
                                 <rect key="frame" x="151" y="56" width="112" height="123.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jkd-Nr-MbQ">
-                                        <rect key="frame" x="-9" y="20" width="148.5" height="65"/>
+                                        <rect key="frame" x="23" y="20" width="84" height="65"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="65" id="vAz-LZ-gI4"/>
                                         </constraints>
@@ -3880,7 +3880,7 @@
                                             <rect key="frame" x="30" y="12" width="354" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="LJM-dw-YWw">
-                                                    <rect key="frame" x="112" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="144" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="DB6-81-fhW"/>
                                                     </constraints>
@@ -4007,7 +4007,7 @@
                                             <rect key="frame" x="30" y="454" width="354" height="44"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create an Account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nm8-a6-jET">
-                                                    <rect key="frame" x="109" y="10.5" width="136.5" height="23"/>
+                                                    <rect key="frame" x="102" y="11.5" width="150.5" height="21"/>
                                                     <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="18"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -4413,7 +4413,7 @@
                                             <rect key="frame" x="144" y="12" width="126" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="jUQ-cF-5Nf">
-                                                    <rect key="frame" x="-2" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="30" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="cK2-Lv-hCB"/>
                                                     </constraints>
@@ -4753,7 +4753,7 @@
                                             <rect key="frame" x="142" y="12" width="130" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="mQx-Mf-L5D">
-                                                    <rect key="frame" x="0.0" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="32" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="U0B-ZZ-hkG"/>
                                                     </constraints>
@@ -8368,7 +8368,6 @@
                                             </constraints>
                                             <connections>
                                                 <action selector="btnCopyAction:" destination="pNj-p3-oRE" eventType="touchUpInside" id="8t9-KQ-dk8"/>
-                                                <action selector="btnCopyAction:" destination="d4K-9q-eS5" eventType="touchUpInside" id="AWJ-pG-nDB"/>
                                             </connections>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dnY-a2-HNT" customClass="UIControl">
@@ -8401,7 +8400,7 @@
                                                 <constraint firstItem="6mI-Uo-UKF" firstAttribute="leading" secondItem="pmb-Sc-vCk" secondAttribute="trailing" constant="5" id="r37-ZD-od4"/>
                                             </constraints>
                                             <connections>
-                                                <action selector="btnVideoDetails:" destination="d4K-9q-eS5" eventType="touchUpInside" id="AwE-4S-crD"/>
+                                                <action selector="btnVideoDetails:" destination="pNj-p3-oRE" eventType="touchUpInside" id="Ptj-Fn-brf"/>
                                             </connections>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cJY-dt-StC" customClass="UIControl">
@@ -8434,7 +8433,6 @@
                                                 <constraint firstAttribute="width" constant="240" id="zb7-Gl-Rrx"/>
                                             </constraints>
                                             <connections>
-                                                <action selector="btnDeleteArchiveClick:" destination="d4K-9q-eS5" eventType="touchUpInside" id="BB3-qY-HGb"/>
                                                 <action selector="btnDeleteArchiveClick:" destination="pNj-p3-oRE" eventType="touchUpInside" id="rdu-Nv-Um3"/>
                                             </connections>
                                         </view>
@@ -10260,7 +10258,7 @@
                                             <rect key="frame" x="142" y="12" width="130" height="123.5"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="urI-tL-cTS">
-                                                    <rect key="frame" x="0.0" y="20" width="148.5" height="65"/>
+                                                    <rect key="frame" x="32" y="20" width="84" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="65" id="JIo-E7-Te8"/>
                                                     </constraints>
@@ -10465,7 +10463,7 @@
         <image name="ic_thumb_view" width="23" height="23"/>
         <image name="ic_videorecordStart" width="88" height="88"/>
         <image name="image" width="750" height="1140"/>
-        <image name="logo" width="148.5" height="167"/>
+        <image name="logo" width="84" height="94"/>
         <image name="mastercard" width="60" height="36"/>
         <image name="paypal" width="512" height="512"/>
         <image name="visa" width="63" height="19.5"/>

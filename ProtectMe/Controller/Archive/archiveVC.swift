@@ -472,17 +472,30 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                   self.present(vc, animated: true, completion: nil)
         }
         else{
-            
-            
-            let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
-               let player = AVPlayer(url: videoURL!)
+            guard let url = URL(string:self.arrarchivedList[sender.tag].image_path!) else {
+                return
+            }
+            // Create an AVPlayer, passing it the HTTP Live Streaming URL.
+            let player = AVPlayer(url: url)
 
-               let vc = AVPlayerViewController()
-               vc.player = player
+            // Create a new AVPlayerViewController and pass it a reference to the player.
+            let controller = AVPlayerViewController()
+            controller.player = player
 
-               present(vc, animated: true) {
-                   vc.player?.play()
-               }
+            // Modally present the player and call the player's play() method when complete.
+            present(controller, animated: true) {
+                player.play()
+            }
+            
+//            let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
+//               let player = AVPlayer(url: videoURL!)
+//
+//               let vc = AVPlayerViewController()
+//               vc.player = player
+//
+//               present(vc, animated: true) {
+//                   vc.player?.play()
+//               }
         }
         }
     }
@@ -684,7 +697,9 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.navigationController?.view.addSubview(self.ViewOptionMenu)
     }
     @IBAction func btnFolderOptionMenuClick(_ sender: UIButton) {
-           self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+        
+        self.ViewOptionMenu.removeFromSuperview()
+        self.selectedIndex = IndexPath(row: sender.tag, section: 0)
            self.setFolderDetails(data:self.arrarchivedList[sender.tag])
            self.ViewFolderOptionMenu.frame = UIScreen.main.bounds
            self.navigationController?.view.addSubview(self.ViewFolderOptionMenu)
@@ -716,7 +731,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         let OBJchangepasswordVC = self.storyboard?.instantiateViewController(withIdentifier: "renameArchiveVC") as!  renameArchiveVC
         OBJchangepasswordVC.titleString = "File Name"
         OBJchangepasswordVC.FieldType = "video"
-            OBJchangepasswordVC.selectedView = self.selectedView
+        OBJchangepasswordVC.selectedView = self.selectedView
         OBJchangepasswordVC.fileID = self.arrarchivedList[selectedIndex!.row].id!
         let firstPart = self.arrarchivedList[selectedIndex!.row].image_name!.strstr(needle: ".", beforeNeedle: true)
         OBJchangepasswordVC.txtValue = firstPart ??  self.arrarchivedList[selectedIndex!.row].image_name!
@@ -738,6 +753,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.btnHandlerBlackBg(self)
     }
     func setInitialView(){
+        self.selectedView = USER.shared.selectedView
         if(selectedView == "grid"){
             self.btnChangeTableView(self.btnGreed)
         }
@@ -853,10 +869,12 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         if(USER.shared.selectedSubFilter){
             let img = UIImage(named: "ic_down" )
             self.btnSemiFilter.setImage( img , for:  .normal)
+            self.semiFilter = 1
         }
         else{
             let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
             self.btnSemiFilter.setImage( img , for:  .normal)
+            self.semiFilter = 0
             //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
         }
        
@@ -1606,7 +1624,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
                 cell.btnMap.isHidden = true
-                cell.btnOption.isHidden = true
+                cell.btnOption.isHidden = false
                 cell.btnOption.tag = indexPath.row
                 cell.btnOption.addTarget(self, action: #selector(self.btnFolderOptionMenuClick(_:)),for: .touchUpInside)
                 cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name

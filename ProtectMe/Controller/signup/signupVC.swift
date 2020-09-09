@@ -35,7 +35,7 @@ class signupVC: UIViewController {
     @IBOutlet weak var ViewPopup:UIControl!
     @IBOutlet weak var fbloginButton:UIControl!
     @IBOutlet weak var googleloginButton:UIControl!
-
+    var emailStr = String()
     //@IBOutlet weak var tblView:UITableView!
 
     @IBOutlet weak var txtName:AIBaseTextField!{
@@ -187,11 +187,56 @@ override func viewWillAppear(_ animated: Bool) {
             self.WSSocialLogin(Parameter: registerDetail as! [String : String])
         }
         else{
+            self.emailStr = self.txtemail.text!
         self.WSSignup(Parameter: ["name":self.txtName.text!,"email":self.txtemail.text!,"password":self.txtpassword.text!,"latitude":self.latitude,"longitude":self.longitude,"eDeviceType":"","vPushToken":""])
         }
    
         }
-    
+    func WSResendEmailRequest(Parameter:[String:String]) -> Void {
+        ServiceManager.shared.callAPIPost(WithType: .resent_verification_mail, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                if let errorMessage:String = dataResponce["message"] as? String{
+
+                    showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Go to Login"]) { (i) in
+                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
+                            self.navigationController?.pushViewController(vc, animated: true)                            // Fallback on earlier versions
+                       
+                    }
+                    }
+
+//                    if let errorMessage:String = dataResponce["message"] as? String{
+//                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+//                    }
+                }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = Message{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                           
+                                appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                           
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     // MARK: - WEB Service
     func WSSignup(Parameter:[String:Any]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .register_user, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
@@ -199,9 +244,21 @@ override func viewWillAppear(_ animated: Bool) {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let message = DataResponce?["message"] as? String{
-                        showAlertWithTitleFromVC(vc: self, andMessage: message)
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Resend","Cancel"]) { (i) in
+                            if(i == 0){
+                                self.WSResendEmailRequest(Parameter: ["email":self.emailStr])
+                            }
+                            else{
+                    let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
+                    self.navigationController?.pushViewController(vc, animated: true)
+
+                            }
+                        }
                     }
+//                    if let message = DataResponce?["message"] as? String{
+//                        showAlertWithTitleFromVC(vc: self, andMessage: message)
+//                    }
                     self.dismissKeyboard()
                     self.txtName.text = ""
                     self.txtemail.text = ""
@@ -233,16 +290,9 @@ override func viewWillAppear(_ animated: Bool) {
                     else if(StatusCode == 412)
                     {
                         if let errorMessage:String = dataResponce["message"] as? String{
-                            if(errorMessage == "The email field is required."){
-                                let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
-                                vc.socialID = self.SocialData.social_Id!
-                                vc.socialData = self.SocialData
-                                vc.name = self.SocialData.name!
-                                self.navigationController?.pushViewController(vc, animated: true)
-                            }
-                            else{
+                            
                                 showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                            }
+                            
                         }
                     }
                 else if(StatusCode == 401)
