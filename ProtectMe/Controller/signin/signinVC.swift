@@ -85,7 +85,7 @@ class signinVC: UIViewController {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.PasswordMin6DigitMissing)
             return
         }
-        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"iOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":self.latitude.description,"longitude":self.longitude.description])
+        WSLogin(Parameter: ["email":txtemail.text!,"password":txtpassword.text!,"eDeviceType":"iOS","vPushToken":appDelegate.FCMdeviceToken,"latitude":APPDELEGATE.latitude,"longitude":APPDELEGATE.logitude])
     }
     @IBAction func btnForgotClick(_ sender: Any) {
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "forgotVC") as! forgotVC
@@ -163,8 +163,9 @@ class signinVC: UIViewController {
                                 registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
                                 registerDetail["eDeviceType"] = "iOS"
                                 registerDetail["checkExist"] = "1"
-                                registerDetail["longitude"] = self.longitude.description
-                                registerDetail["latitude"] = self.latitude.description
+                                registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+                                registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
+
                                 registerDetail["id"] = self.createString(value: results!.value(forKey: "id") as AnyObject)
                                 registerDetail["social_id"] = self.createString(value: results!.value(forKey: "id") as AnyObject)
                                                                 
@@ -563,8 +564,10 @@ extension signinVC : ASAuthorizationControllerDelegate
                 registerDetail["id"] = self.SocialData.social_Id
                 registerDetail["checkExist"] = "1"
                 
-                registerDetail["longitude"] = self.longitude.description
-                registerDetail["latitude"] = self.latitude.description
+                registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+                registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
+
+                
                 
                 self.SocialData.name        = self.SocialData.name
                 self.SocialData.email       = self.SocialData.email
@@ -701,8 +704,9 @@ extension signinVC : GIDSignInDelegate {
             registerDetail["eDeviceType"] = "iOS"
             registerDetail["checkExist"] = "1"
             registerDetail["id"] = userId
-            registerDetail["longitude"] = self.longitude.description
-            registerDetail["latitude"] = self.latitude.description
+            registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+            registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
+
             
             self.SocialData.type = registerDetail["type"] as? String
             self.SocialData.email = registerDetail["email"] as? String

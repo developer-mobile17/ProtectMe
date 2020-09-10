@@ -181,8 +181,8 @@ override func viewWillAppear(_ animated: Bool) {
             registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
             registerDetail["eDeviceType"] = "iOS"
             registerDetail["checkExist"] = "1"
-            registerDetail["longitude"] = appDelegate.longitude.description
-            registerDetail["latitude"] = appDelegate.latitude.description
+            registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+            registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
             registerDetail["id"] = socialData.social_Id
             self.WSSocialLogin(Parameter: registerDetail as! [String : String])
         }
@@ -514,8 +514,8 @@ override func viewWillAppear(_ animated: Bool) {
                                 registerDetail["vPushToken"] = appDelegate.FCMdeviceToken
                                 registerDetail["eDeviceType"] = "iOS"
                                 registerDetail["checkExist"] = "1"
-                                registerDetail["longitude"] = self.longitude.description
-                                registerDetail["latitude"] = self.latitude.description
+                                registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+                                registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
                                 registerDetail["id"] = self.createString(value: results!.value(forKey: "id") as AnyObject)
                                 registerDetail["social_id"] = self.createString(value: results!.value(forKey: "id") as AnyObject)
                                                                 
@@ -682,8 +682,8 @@ extension signupVC : ASAuthorizationControllerDelegate
                 registerDetail["eDeviceType"]   = "iOS"
                 registerDetail["id"]            = self.SocialData.social_Id
                 registerDetail["checkExist"]    = "1"
-                registerDetail["longitude"]     = self.longitude.description
-                registerDetail["latitude"]      = self.latitude.description
+                registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+                registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
                 
                 self.registersendDetail["name"]          = self.SocialData.name
                 self.registersendDetail["email"]         = self.SocialData.email
@@ -692,8 +692,8 @@ extension signupVC : ASAuthorizationControllerDelegate
                 self.registersendDetail["eDeviceType"]   = "iOS"
                 self.registersendDetail["id"]            = self.SocialData.social_Id
                 self.registersendDetail["checkExist"]    = "1"
-                self.registersendDetail["longitude"]     = self.longitude.description
-                self.registersendDetail["latitude"]      = self.latitude.description
+                self.registersendDetail["longitude"]     = APPDELEGATE.logitude
+                self.registersendDetail["latitude"]      = APPDELEGATE.latitude
                 
                 self.SocialData.name        = self.SocialData.name
                 self.SocialData.email       = self.SocialData.email
@@ -702,8 +702,8 @@ extension signupVC : ASAuthorizationControllerDelegate
                 self.SocialData.eDeviceType   = "iOS"
                 self.SocialData.id          = self.SocialData.social_Id
                 self.SocialData.checkExist   = "1"
-                self.SocialData.longitude   = self.longitude.description
-                self.SocialData.latitude    = self.latitude.description
+                self.SocialData.longitude   = APPDELEGATE.logitude
+                self.SocialData.latitude    = APPDELEGATE.latitude
                 
                 if(self.SocialData.email != "" || self.SocialData.name != ""){
                     self.WSSocialLogin(Parameter: registerDetail as! [String : String])
@@ -819,8 +819,9 @@ extension signupVC : GIDSignInDelegate {
             registerDetail["eDeviceType"] = "iOS"
             registerDetail["checkExist"] = "1"
             registerDetail["id"] = userId
-            registerDetail["longitude"] = self.longitude.description
-            registerDetail["latitude"] = self.latitude.description
+            registerDetail["longitude"] = "\(APPDELEGATE.logitude)"
+            registerDetail["latitude"] = "\(APPDELEGATE.latitude)"
+
 
 //            USER.shared.setData(dict: registerDetail as NSDictionary)
 //            USER.shared.save()

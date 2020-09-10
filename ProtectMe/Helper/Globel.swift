@@ -119,7 +119,7 @@ struct AlertMessage {
     static let  ConfirmPasswordMissing: String = "Please enter confirm password."
     static let  PasswordMin6DigitMissing: String = "Password must be contain 6 digits."
     static let  CreatePasswordMin6DigitMissing: String = "Create Password must be contain 6 digits."
-    static let  PasswordNotMatch: String = "Creare password and password must be same."
+    static let  PasswordNotMatch: String = "Password doesn't match!"
     
     //Add Address
     static let  HouseNoMissing: String =  "Please enter house/ flat/ block no."

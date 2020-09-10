@@ -258,7 +258,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             let imageData = img.mediumQualityJPEGNSData
                             if let image = UIImage(data: imageData as Data) {
                                // Use image...
-                                self.WSUploadImageFromBase(Parameters: ["long":self.longitude.description,"lat":self.latitude.description,"type":"image"], img: image)
+                                self.WSUploadImageFromBase(Parameters: ["long":APPDELEGATE.logitude,"lat":APPDELEGATE.latitude,"type":"image"], img: image)
 
                             }
 
@@ -283,7 +283,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
                             if let nextURLAsset = vid as? AVURLAsset {
                                 let sourceURL = nextURLAsset.url
                                
-                                self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
+                                self.WSUploadVideo(Parameter: ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"type":"video"], urll: sourceURL.absoluteURL)
                             }
                              // self.imageView.image = image
                          //   self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: vid)
@@ -311,7 +311,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-        self.WSUploadImageFromBase(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+            self.WSUploadImageFromBase(Parameters: ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"type":"image"], img: pickedImage)
         }
         imgPickerController.dismiss(animated: true,completion: {
                       guard let image = info[.editedImage] as? UIImage else { return }

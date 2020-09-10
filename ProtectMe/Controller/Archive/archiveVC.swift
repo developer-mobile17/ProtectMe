@@ -9,6 +9,7 @@
 import UIKit
 import SDWebImage
 import AVFoundation
+
 import AVKit
 import MapKit
 import Alamofire
@@ -28,7 +29,7 @@ extension archiveVC:MKMapViewDelegate{
     }
 }
 
-class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let controller = UIImagePickerController()
 
 
@@ -113,23 +114,10 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     var arrselectedType = ["recent","folders","folders"]
     var arrarchivedList:[archivedListModel] = [archivedListModel]()
     var arrFolderList:[FolderListMOdel] = [FolderListMOdel]()
-    var semiFilter = USER.shared.selectedSubFilter ? 1 : 0
-    var sectionIsExpanded: Bool = USER.shared.selectedSubFilter {
-        didSet {
-//            UIView.animate(withDuration: 0.25) {
-//                if self.sectionIsExpanded {
-//                    self.btnSemiFilter.imageView?.transform = CGAffineTransform.identity
-//                    self.semiFilter = "0"
-//
-//                } else {
-//                    self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
-//                    self.semiFilter = "1"
-//
-//                }
-//            }
-        }
+    var semiFilter = USER.shared.selectedSubFilter
+    var sectionIsExpanded = true
         
-    }
+    
     var checkBoxAction: Bool = false {
         didSet {
             UIView.animate(withDuration: 0.25) {
@@ -151,7 +139,8 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         controller.delegate = self
 
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
-        //NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "refresh"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(downloadList(notification:)), name: NSNotification.Name(rawValue: "download"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(downloadCan(notification:)), name: NSNotification.Name(rawValue: "downloadcan"), object: nil)
 
 
         arrOption = [btnRecent,btnFolders,btnShared]
@@ -194,7 +183,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
         if(self.isFolderSelected == true){
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-                       , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                       , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancel"]) { (index) in
                            if(index == 0){
                                self.WSDeleteFolder(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!])
                            }
@@ -202,7 +191,7 @@ class archiveVC: UIViewController,UIImagePickerControllerDelegate, UINavigationC
         }
         else{
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancel"]) { (index) in
                 if(index == 0){
                     self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
                 }
@@ -460,6 +449,20 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         }
     }
     
+    func getVideo(){
+
+        let videoURL = URL(string: "http://fitnation.theclientdemos.com:9000/media/uploads/videoplayback_3_JtVCHi1")
+        // Create an AVAsset
+        let videoAsset = AVAsset(url: videoURL!)
+        // Create an AVPlayerItem with asset
+        let videoPlayerItem = AVPlayerItem(asset: videoAsset)
+        // Initialize player with the AVPlayerItem instance.
+        let player = AVPlayer(playerItem: videoPlayerItem)
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.frame = self.view.bounds
+        self.view.layer.addSublayer(playerLayer)
+        player.play()
+    }
     @IBAction func btnplayvideoClieck(_ sender: UIButton) {
         if(self.isFolderSelected == true){
         }
@@ -476,10 +479,29 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 return
             }
             // Create an AVPlayer, passing it the HTTP Live Streaming URL.
-            let player = AVPlayer(url: url)
-
+//            if(url.isFileURL == false){
+//                showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: "Can't play this video", buttons: ["Opent in Safari","Cancel"]) { (i) in
+//                    if i == 0{
+//                        guard let url1 = URL(string:self.arrarchivedList[sender.tag].image_path!) else { return }
+//                        UIApplication.shared.open(url1)
+//                    }
+//                }
+//                //showAlert(title: "sel", message: "dasda")
+//            }
+            let q = NSURL(string: self.arrarchivedList[sender.tag].image_path!)
+            let url1 = URL(string:self.arrarchivedList[sender.tag].image_path!)
+            let videoAsset = AVAsset(url: url1!)
+            // Create an AVPlayerItem with asset
+            let videoPlayerItem = AVPlayerItem(asset: videoAsset)
+            // Initialize player with the AVPlayerItem instance.
+            let player = AVPlayer(playerItem: videoPlayerItem)
+            let playerLayer = AVPlayerLayer(player: player)
+            
+            //let player = AVPlayer(url: url)
             // Create a new AVPlayerViewController and pass it a reference to the player.
             let controller = AVPlayerViewController()
+            
+            
             controller.player = player
 
             // Modally present the player and call the player's play() method when complete.
@@ -617,8 +639,13 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
            print("could not save data")
        }
     }
-    @IBAction func btnDownloadFolder(_ sender: UIButton) {
-        
+    
+    @IBAction func btnDownloadFolder(_ sender: Any) {
+        //self.DownloadAndSave(urlString: "http://www.africau.edu/images/default/sample.pdf")
+        let folderid = self.arrarchivedList[self.selectedIndex!.row].id
+        let folderName = self.arrarchivedList[self.selectedIndex!.row].folder_name!
+
+        self.getfilelist(folderid: folderid!, foldername: folderName)
     }
     @IBAction func btnDownloadVideo(_ sender: UIButton) {
         if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
@@ -753,6 +780,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.btnHandlerBlackBg(self)
     }
     func setInitialView(){
+        self.semiFilter = USER.shared.selectedSubFilter
         self.selectedView = USER.shared.selectedView
         if(selectedView == "grid"){
             self.btnChangeTableView(self.btnGreed)
@@ -761,13 +789,19 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
             self.btnChangeTableView(self.btnlist)
         }
         //semiFilter
-        if(USER.shared.selectedSubFilter){
+        
+        if(USER.shared.selectedSubFilter == "1"){
             let img = UIImage(named: "ic_down" )
+            self.semiFilter = "1"
+            self.sectionIsExpanded = true
+            
             self.btnSemiFilter.setImage( img , for:  .normal)
         }
         else{
             let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
             self.btnSemiFilter.setImage( img , for:  .normal)
+            self.semiFilter = "0"
+            self.sectionIsExpanded = false
             //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
         }
         switch (USER.shared.selectedFilter.toInt()){
@@ -863,20 +897,27 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.ViewdeleteConfirmation.removeFromSuperview()
     }
     @IBAction func btnSemiFilterAction(_ sender: UIButton) {
-        USER.shared.selectedSubFilter = !USER.shared.selectedSubFilter
-        USER.shared.save()
-
-        if(USER.shared.selectedSubFilter){
+        //USER.shared.selectedSubFilter = !USER.shared.selectedSubFilter
+        //USER.shared.save()
+        sectionIsExpanded = !sectionIsExpanded
+        if(sectionIsExpanded){
             let img = UIImage(named: "ic_down" )
             self.btnSemiFilter.setImage( img , for:  .normal)
-            self.semiFilter = 1
+            self.semiFilter = "1"
+            USER.shared.selectedSubFilter = "1"
+            USER.shared.save()
+            
         }
         else{
             let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
             self.btnSemiFilter.setImage( img , for:  .normal)
-            self.semiFilter = 0
+            self.semiFilter = "0"
+            USER.shared.selectedSubFilter = "0"
+            USER.shared.save()
+            
             //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
         }
+        
        
         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
     }
@@ -1029,7 +1070,9 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                         USER.shared.save()
                     }
                     self.btnhideDetails(self)
-                    self.WSFolderList(Parameter: [:])
+                    self.btnSelectOptions(self.btnFolders)
+
+//                    self.WSFolderList(Parameter: [:])
                 }
                     else if(StatusCode == 307)
                     {
@@ -1086,8 +1129,8 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 if (StatusCode == 200){
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                         self.btnHandlerBlackBg(self)
-                                           self.btnhideDetails(self)
-                                           self.btnSelectOptions(self.btnFolders)
+                        self.btnhideDetails(self)
+                        self.btnSelectOptions(self.btnFolders)
 //                        self.arrFolderList.removeAll()
 //                        for a : Int in (0..<(outcome.count))
 //                        {
@@ -1390,6 +1433,15 @@ extension archiveVC:sendbacktoName{
 }
 
 extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+    @objc func downloadCan(notification: NSNotification) {
+        self.btnHandlerBlackBg(self)
+    }
+    @objc func downloadList(notification: NSNotification) {
+        self.btnHandlerBlackBg(self)
+        self.view.makeToast("Successfully downloaded", duration: 1.5, position: .bottom)
+
+        
+    }
     @objc func loadList(notification: NSNotification) {
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
        }
@@ -1860,7 +1912,7 @@ extension archiveVC {
             print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
                  // arrOfChunks.append(FUrl)
                 let curruntChunk = FUrl
-                 let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.Baseunique_id]
+                    let Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":self.Baseunique_id]
                 ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
                     (process)in
                     print("my:",process)
@@ -2088,7 +2140,7 @@ extension archiveVC {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
           
                 picker.dismiss(animated: true) {
-                      self.WSUploadImageArchive(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: pickedImage)
+                      self.WSUploadImageArchive(Parameters: ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"type":"image"], img: pickedImage)
                 }
             }
             imgPickerController.dismiss(animated: true,completion: {
@@ -2107,5 +2159,56 @@ extension archiveVC {
 
 }
 extension archiveVC{
+    func DownloadAndSave(urlString : String)
+    {
+        
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        if let documentDirectoryPath = documentDirectoryPath {
+            // create the custom folder path
+            let imagesDirectoryPath = documentDirectoryPath.appending("/ProtectMe")
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: imagesDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: imagesDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating images folder in documents dir: \(error)")
+                }
+            }
+        }
+        
+        APPDELEGATE.SHOW_CUSTOM_LOADER()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            // ...
+            let path = urlString
+            let fileName = URL(fileURLWithPath: path).deletingPathExtension().lastPathComponent
+            let  fileExtension = URL(fileURLWithPath: path).pathExtension
+            Swift.print(fileName,".",fileExtension)
+            
+            let fileNameWithExtension = "\(fileName).\(fileExtension)"
+            
+            let tmpDirURL = FileManager.default.temporaryDirectory
+            
+            let url = URL(string: urlString)
+            let pdfData = try? Data.init(contentsOf: url!)
+            let resourceDocPath = (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)).last! as URL
+            let pdfNameFromUrl = fileNameWithExtension
+            let actualPath = resourceDocPath.appendingPathComponent("ProtectMe/\(pdfNameFromUrl)")
+            print(resourceDocPath,actualPath)
+            do {
+                try pdfData?.write(to: actualPath, options: .atomic)
+                self.view.makeToast("Successfully downloaded", duration: 1.5, position: .bottom)
 
+//                Toast(text: "Successfully downloaded").show()
+                APPDELEGATE.HIDE_CUSTOM_LOADER()
+                print("successfully saved!")
+            } catch {
+                APPDELEGATE.HIDE_CUSTOM_LOADER()
+                print(" could not be saved")
+            }
+        }
+        
+    }
 }

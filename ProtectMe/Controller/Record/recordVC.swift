@@ -449,7 +449,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                         print(FUrl)
                         let group = DispatchGroup()
                         let tempID = ""
-                        var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+                        var Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":tempID]
                         group.enter()
                         ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: filepath, thumbImage: UIImage(), passThumb: false, WithParams: Parameter, Progress: {
                             (process)in
@@ -576,7 +576,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 //                      }
  
                     let group = DispatchGroup()
-            var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+            var Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude.description,"unique_id":tempID]
              //   for a in chunks{
 //                      if let videoURL = setupNamedPipe(withData: a)
 //                    {
@@ -726,7 +726,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
-             let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+             let Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":self.unique_id]
             ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
                 (process)in
                 print("my:",process)
@@ -1059,7 +1059,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
   // MARK: - video management
     func callservice(arrOfChunks:[URL]){
         var tempID = ""
-        var Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":tempID]
+        var Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":tempID]
 
         let GroupSync2 = DispatchGroup()
 
@@ -1116,7 +1116,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     }
     func passVideoFortrim(videoUrl:URL){
         var arrOfChunks = [URL]()
-        let Parameter = ["lat":self.latitude.description,"long":self.longitude.description,"unique_id":self.unique_id]
+        let Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":self.unique_id]
 
         let asset = AVAsset(url: videoUrl)
         let duration = asset.duration

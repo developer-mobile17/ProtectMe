@@ -38,7 +38,7 @@ class USER: NSObject  ,NSCoding {
         var archived_counter                       = ""
         var selectedView                        = "grid"
         var selectedFilter                      = "0"
-        var selectedSubFilter               = true
+        var selectedSubFilter               = "1"
 
     
     
@@ -89,7 +89,7 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "selectedFilter") as? String{
             self.selectedFilter = value
         }
-        if let value = aDecoder.decodeObject(forKey: "selectedSubFilter") as? Bool{
+        if let value = aDecoder.decodeObject(forKey: "selectedSubFilter") as? String{
             self.selectedSubFilter = value
         }
 
@@ -275,7 +275,7 @@ class USER: NSObject  ,NSCoding {
     func clear() -> Void
     {
         self.selectedFilter                             = ""
-        self.selectedSubFilter                             = true
+        self.selectedSubFilter                             = "1"
         self.selectedView                                = ""
         self.videoUrl                                       = ""
         self.city                                       = ""

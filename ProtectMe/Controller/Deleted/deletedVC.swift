@@ -107,7 +107,7 @@ class deletedVC: baseVC {
     @IBAction func btnDeleteArchiveClick(_ sender: UIControl) {
         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
             
-                   , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+                   , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancel"]) { (index) in
                        if(index == 0){
                            self.WSDeleteFile(Parameter: ["id":self.arrarchivedList[self.selectedIndex!.row].id!,"type":"0"])
                        }
@@ -118,7 +118,7 @@ class deletedVC: baseVC {
     @IBAction func btnClearAllButton(_ sender: UIButton) {
         if(arrarchivedList.count>0){
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to clear?", buttons: ["Yes","Cancle"]) { (index) in
+            , andMessage: "Are you sure you want to clear?", buttons: ["Yes","Cancel"]) { (index) in
                 if(index == 0){
                     self.WSCleatDeletedfiles(Parameter: [:])
                 }

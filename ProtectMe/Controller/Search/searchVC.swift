@@ -144,7 +144,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         }
         else{
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancle"]) { (index) in
+            , andMessage: "Are you sure you want to delete?", buttons: ["Yes","Cancel"]) { (index) in
                 if(index == 0){
             self.WSDeleteArchive(Parameter: ["type":"1","id":self.arrarchivedList[self.selectedIndex!.row].id!])
                 }

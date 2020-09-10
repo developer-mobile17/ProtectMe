@@ -34,7 +34,7 @@
 		044B6DDD24E6E63500709A1A /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 044B6DDC24E6E63500709A1A /* Intents.intentdefinition */; };
 		04510A1F24B4BFF10046864A /* uploadProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04510A1E24B4BFF10046864A /* uploadProgress.swift */; };
 		0452D82F2507C97300FB8CB1 /* setProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0452D82E2507C97300FB8CB1 /* setProfileVC.swift */; };
-		045549B22501FD0D00CF0AE8 /* MyFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045549B12501FD0D00CF0AE8 /* MyFileManager.swift */; };
+		045549B22501FD0D00CF0AE8 /* downloadfolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045549B12501FD0D00CF0AE8 /* downloadfolder.swift */; };
 		045CDC3224EFB46100C179A5 /* searchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045CDC3124EFB46100C179A5 /* searchVC.swift */; };
 		045DD32524F4DF0A00A2171F /* multiselectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045DD32324F4DF0A00A2171F /* multiselectionTableViewCell.swift */; };
 		045DD32624F4DF0A00A2171F /* multiselectionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 045DD32424F4DF0A00A2171F /* multiselectionTableViewCell.xib */; };
@@ -134,7 +134,7 @@
 		044B6DDC24E6E63500709A1A /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		04510A1E24B4BFF10046864A /* uploadProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadProgress.swift; sourceTree = "<group>"; };
 		0452D82E2507C97300FB8CB1 /* setProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setProfileVC.swift; sourceTree = "<group>"; };
-		045549B12501FD0D00CF0AE8 /* MyFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyFileManager.swift; sourceTree = "<group>"; };
+		045549B12501FD0D00CF0AE8 /* downloadfolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = downloadfolder.swift; sourceTree = "<group>"; };
 		045CDC3124EFB46100C179A5 /* searchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchVC.swift; sourceTree = "<group>"; };
 		045DD32324F4DF0A00A2171F /* multiselectionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = multiselectionTableViewCell.swift; path = "ProtectMe/Controller/Multi Selection/multiselectionTableViewCell.swift"; sourceTree = SOURCE_ROOT; };
 		045DD32424F4DF0A00A2171F /* multiselectionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = multiselectionTableViewCell.xib; path = "ProtectMe/Controller/Multi Selection/multiselectionTableViewCell.xib"; sourceTree = SOURCE_ROOT; };
@@ -438,7 +438,7 @@
 		0476BA87248F60E8005977D4 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				045549B12501FD0D00CF0AE8 /* MyFileManager.swift */,
+				045549B12501FD0D00CF0AE8 /* downloadfolder.swift */,
 				0410246424A729ED00F3A71F /* AppleSignIn */,
 				0476BA88248F60E8005977D4 /* TextField */,
 				0476BA95248F60E8005977D4 /* Globel.swift */,
@@ -801,7 +801,7 @@
 				0476BAB9248F60E8005977D4 /* NSDictionaryExtension.swift in Sources */,
 				0410246E24A7346400F3A71F /* archivedListModel.swift in Sources */,
 				04E18B35248F8CB5003AF836 /* UITableViewVibrantCell.swift in Sources */,
-				045549B22501FD0D00CF0AE8 /* MyFileManager.swift in Sources */,
+				045549B22501FD0D00CF0AE8 /* downloadfolder.swift in Sources */,
 				0476BABF248F60E8005977D4 /* Reachability.swift in Sources */,
 				0410246B24A729ED00F3A71F /* Keychain.swift in Sources */,
 				04E95C9924F3C37A00224215 /* deletedVC.swift in Sources */,

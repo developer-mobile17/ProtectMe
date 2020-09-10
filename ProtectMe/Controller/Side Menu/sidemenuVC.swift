@@ -44,13 +44,13 @@ class sidemenuVC: baseVC {
     }
     func setUserLiveLocation(){
         locationManager.startUpdatingLocation()
-                  locationManager.showVerboseMessage = false
-                  locationManager.autoUpdate = true
+        locationManager.showVerboseMessage = false
+        locationManager.autoUpdate = true
                 //   locationManager.startUpdatingLocation()
                   locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-                      self.latitude = longitude
-                      self.longitude = latitude
-                    self.getAddressFromLatLon(pdblLatitude: latitude.description, withLongitude: longitude.description)
+                      self.latitude = latitude
+                      self.longitude = longitude
+                  //  self.getAddressFromLatLon(pdblLatitude: "\(latitude)", withLongitude: longitude.description)
                     self.locationManager.autoUpdate = false
                    self.locationManager.stopUpdatingLocation()
                   }
@@ -72,9 +72,9 @@ class sidemenuVC: baseVC {
             }
     override func viewWillAppear(_ animated: Bool) {
         lblName.text = USER.shared.name
-//        if  USER.shared.city != ""{
-//            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
-//        }
+        if  USER.shared.city != ""{
+            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+        }
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
                 case .notDetermined, .restricted, .denied:
@@ -85,7 +85,7 @@ class sidemenuVC: baseVC {
                     //self.setUserLiveLocation()
 
                 DispatchQueue.main.async {
-                    self.setUserLiveLocation()
+                   // self.setUserLiveLocation()
                 }
                 @unknown default:
                 break
@@ -145,21 +145,19 @@ class sidemenuVC: baseVC {
 //                            if pm.thoroughfare != nil {
 //                                addressString = addressString + pm.thoroughfare! + ", "
 //                            }
+                            
                             if pm.locality != nil {
                                 addressString = addressString + pm.locality! + ", "
                             }
                             if pm.country != nil {
                                 addressString = addressString + pm.country!
                             }
-                            
                             self.lblStateCountry.text = addressString
-//                            USER.shared.city = "\(pm.locality!)"
-//                            USER.shared.country = "\(pm.country!)"
-//                            USER.shared.save()
                             self.countrya = "\(pm.country ?? "")"
                             self.citya = "\(pm.locality ?? "")"
-                            
-                            
+                            USER.shared.country = self.countrya
+                            USER.shared.city = self.citya
+                            USER.shared.save()
                         }
                     }
                 }

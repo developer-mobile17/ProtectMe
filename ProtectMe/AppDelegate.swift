@@ -15,6 +15,10 @@ import UserNotifications
 import FirebaseInstanceID
 import FirebaseMessaging
 import AVKit
+import CoreLocation
+
+
+
 
 
 let APPDELEGATE = UIApplication.shared.delegate as! AppDelegate
@@ -24,9 +28,15 @@ var loggedInUserData = USER()
 @UIApplicationMain
     class AppDelegate: UIResponder, UIApplicationDelegate {
     var FCMdeviceToken:String = ""
-    var latitude:Double = 0.0
-    var longitude:Double = 0.0
+    
     let locationManager = LocationManager.sharedInstance
+    var locManager = CLLocationManager()
+    var currentLocation: CLLocation!
+    var currentlatitude =  Double()
+    var currentlogitude =  Double()
+    var currentLC = CLLocationCoordinate2D()
+    var latitude = String()
+    var logitude = String()
 
     var ArrLocalVideoUploading:[localVideoModel] = [localVideoModel]()
     var objLocalVid:localVideoModel = localVideoModel()
@@ -35,6 +45,14 @@ var loggedInUserData = USER()
     var window: UIWindow?
     let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        locManager = CLLocationManager()
+        locManager.delegate = self
+        locManager.requestAlwaysAuthorization()
+        locManager.desiredAccuracy = kCLLocationAccuracyBest
+        locManager.requestWhenInUseAuthorization()
+        locManager.startUpdatingLocation()
+        
+        
         application.registerForRemoteNotifications()
         UIApplication.shared.applicationIconBadgeNumber = 0
         
@@ -74,7 +92,7 @@ var loggedInUserData = USER()
         }
         else
         {
-            self.getLocation()
+            
             self.setHome()
             
         }
@@ -285,28 +303,138 @@ var loggedInUserData = USER()
 
 extension AppDelegate {
     //MARK: - Get Location
-    func getLocation(){
-           locationManager.showVerboseMessage = false
-           locationManager.autoUpdate = true
-         //   locationManager.startUpdatingLocation()
-        DispatchQueue.main.async {
-            self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-                  if let city = dict?["locality"] as? String{
-                      USER.shared.city = city
-                  }
-                  if let country = dict?["country"] as? String{
-                      USER.shared.country = country
-                  }
-                  USER.shared.save()
-                  }
-
+        func getAddressFromLatLon(pdblLatitude: String, withLongitude pdblLongitude: String) {
+            var center: CLLocationCoordinate2D = CLLocationCoordinate2D()
+            let lat: Double = Double("\(pdblLatitude)")!
+            let lon: Double = Double("\(pdblLongitude)")!
+            
+            let ceo: CLGeocoder = CLGeocoder()
+            center.latitude = lat
+            center.longitude = lon
+            
+            let loc: CLLocation = CLLocation(latitude: center.latitude, longitude: center.longitude)
+            
+            ceo.reverseGeocodeLocation(loc, completionHandler:
+                { (placemarks, error) in
+                    if (error != nil)
+                    {
+                        print("reverse geodcode fail: \(error!.localizedDescription)")
+                    }
+                    print(placemarks)
+                    
+                    if placemarks != nil
+                    {
+                        if placemarks!.count > 0
+                        {
+                            
+                            let pm = placemarks! as [CLPlacemark]
+                            
+                            if pm.count > 0 {
+                                let pm = placemarks![0]
+                                var addressString: String = ""
+                                
+    //                            if pm.subLocality != nil {
+    //                                addressString = addressString + pm.subLocality! + ", "
+    //                            }
+    //                            if pm.thoroughfare != nil {
+    //                                addressString = addressString + pm.thoroughfare! + ", "
+    //                            }
+                                
+                                if pm.locality != nil {
+                                    addressString = addressString + pm.locality! + ", "
+                                }
+                                if pm.country != nil {
+                                    addressString = addressString + pm.country!
+                                }
+//                                self.lblStateCountry.text = addressString
+//                                self.countrya = "\(pm.country ?? "")"
+//                                self.citya = "\(pm.locality ?? "")"
+                                USER.shared.country = "\(pm.country ?? "")"
+                                USER.shared.city = "\(pm.locality ?? "")"
+                                USER.shared.save()
+                            }
+                        }
+                    }
+                    else
+                        
+                    {
+                        
+                      //  let urlString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(pdblLatitude),\(pdblLongitude)&sensor=true_or_false&key=AIzaSyB_esPyf3orZGf4e6DbUczwVFApgue6w1o"
+                        
+                        
+                        
+    //                    Alamofire.request(urlString, method: .post, parameters: nil, encoding: URLEncoding.default,headers:nil).responseJSON { response in
+    //                        //            debugPrint(response)
+    //                        if let json = response.result.value {
+    //                            let dict:NSDictionary = (json as? NSDictionary)!
+    //                            print(dict)
+    //                            print(response)
+    //
+    //
+    //                            let GetResults = dict.value(forKey: "results") as! NSArray
+    //                            print(GetResults)
+    //
+    //                            if GetResults.count == 0
+    //                            {
+    //
+    //                            }
+    //                            else
+    //                            {
+    //                                let NewCheck = GetResults.value(forKey: "address_components") as! NSArray
+    //                                print(NewCheck)
+    //                                //let New = GetResults.value(forKey: "formatted_address") as! NSArray
+    //
+    //                                if NewCheck.count > 0
+    //                                {
+    //                                    let New = NewCheck.object(at: 0) as! NSArray
+    //
+    //
+    //                                    for Object1 in New
+    //                                    {
+    //                                        print(Object1)
+    //
+    //                                        let p_z = Object1 as! NSDictionary
+    //                                        let types = p_z.value(forKey: "types") as! NSArray
+    //
+    //                                        if types.count > 0
+    //                                        {
+    //                                            var value = String()
+    //                                            value = types.object(at: 0) as! String
+    //
+    //                                            if value == "postal_code"
+    //                                            {
+    //                                                self.txtZipCode.text = "\(p_z.value(forKey: "long_name") as! String)"
+    //                                            }
+    //
+    //                                            if value == "administrative_area_level_2" || value == "political"
+    //                                            {
+    //                                                self.txtCity.text = "\(p_z.value(forKey: "long_name") as! String)"
+    //                                            }
+    //
+    //                                            if value == "country" || value == "political"
+    //                                            {
+    //                                                self.isCountrySelected = "\(p_z.value(forKey: "long_name") as! String)"
+    //                                            }
+    //
+    //                                        }
+    //                                    }
+    //
+    //                                }
+    //
+    //                            }
+    //
+    //                        }
+    //
+    //                    }
+                        
+                    }
+                    
+                    
+                    
+                    
+            })
+            
         }
-           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
-            self.locationManager.autoUpdate = false
-           }
-    }
     //MARK: - Show/Hide Loading Indicator
     func SHOW_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.startLoader()
@@ -314,19 +442,6 @@ extension AppDelegate {
     func HIDE_CUSTOM_LOADER() {
         LoadingDailog.sharedInstance.stopLoader()
     }
-//    func getLocation(){
-//           locationManager.showVerboseMessage = false
-//           locationManager.autoUpdate = true
-//         //   locationManager.startUpdatingLocation()
-//        DispatchQueue.main.async {
-//
-//            self.locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-//               self.latitude = latitude
-//               self.longitude = longitude
-//            self.locationManager.autoUpdate = false
-//           }
-//        }
-//    }
     
 }
 //extension AppDelegate : UNUserNotificationCenterDelegate,MessagingDelegate {
@@ -569,4 +684,27 @@ extension AppDelegate {
             print("Firebase registration token: \(fcmToken)")
         //self.DeviceToken = fcmToken
     }
+}
+extension AppDelegate:CLLocationManagerDelegate
+{
+    
+    //MARK:- LOCATION METHODS
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            self.locManager.startUpdatingLocation()
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        let location = locations.last! as CLLocation
+        latitude = String(location.coordinate.latitude)
+        logitude = String(location.coordinate.longitude)
+        currentlatitude = Double(latitude)!
+        currentlogitude = Double(logitude)!
+        self.getAddressFromLatLon(pdblLatitude: latitude, withLongitude: logitude)
+        self.currentLC = CLLocationCoordinate2DMake(self.currentlatitude,self.currentlogitude)
+        
+    }
+    
 }

@@ -65,6 +65,7 @@ class setProfileVC: UIViewController {
         registerDetail["id"]            = self.socialData.id
         registerDetail["checkExist"]    = self.socialData.checkExist
         registerDetail["longitude"]     = self.socialData.longitude
+        
         registerDetail["latitude"]      = self.socialData.latitude
         self.WSSocialLogin(Parameter: registerDetail )
 //        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "resetPasswordVC") as! resetPasswordVC

@@ -423,6 +423,7 @@ class LinkedAccountVC: baseVC {
                         {
                             let objlisnkedListModel : lisnkedListModel = lisnkedListModel()
                             objlisnkedListModel.name = outcome[a]["name"] as? String ?? ""
+                            objlisnkedListModel.is_unlinked = outcome[a]["is_unlinked"] as? String ?? "0"
                             objlisnkedListModel.id = outcome[a]["id"] as? String ?? ""
                             objlisnkedListModel.user_id = outcome[a]["user_id"] as? String ?? ""
                             objlisnkedListModel.account_type = outcome[a]["account_type"] as? String ?? ""
@@ -515,9 +516,15 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
         cell.btnAccepOption.addTarget(self, action: #selector(self.btnAcceptClick(_:)),for: .touchUpInside)
         cell.btnRejectOption.tag = indexPath.row
         cell.btnRejectOption.addTarget(self, action: #selector(self.btnRejectClick(_:)),for: .touchUpInside)
-
+        if(arrLinkedAccList[indexPath.row].is_unlinked == "1"){
+            cell.lblpending.text = "Pending Unlink"
+        }
+        else{
+            cell.lblpending.text = "Pending"
+        }
         if(self.arrLinkedAccList[indexPath.row].user_id == USER.shared.id){
          
+            
             if (arrLinkedAccList[indexPath.row].status == "2"){
                 print("pending list : who sended request")
                     cell.lblpending.isHidden = false
@@ -530,6 +537,7 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                                   cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
             }
             else{
+
                 print("Normal list : who sended request")
                 cell.lblpending.isHidden = true
                     cell.imgLink.isHidden = false
