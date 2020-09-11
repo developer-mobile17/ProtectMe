@@ -14,8 +14,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1247"
-            endingLineNumber = "1247"
+            startingLineNumber = "1249"
+            endingLineNumber = "1249"
             landmarkName = "WSDeleteArchive(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -158,8 +158,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1211"
-            endingLineNumber = "1211"
+            startingLineNumber = "1213"
+            endingLineNumber = "1213"
             landmarkName = "WSDeleteFolder(Parameter:)"
             landmarkType = "7">
             <Locations>
@@ -350,8 +350,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "515"
-            endingLineNumber = "515"
+            startingLineNumber = "517"
+            endingLineNumber = "517"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -542,8 +542,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2088"
-            endingLineNumber = "2088"
+            startingLineNumber = "2090"
+            endingLineNumber = "2090"
             landmarkName = "WSUploadImageArchive(Parameters:img:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -574,8 +574,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1887"
-            endingLineNumber = "1887"
+            startingLineNumber = "1889"
+            endingLineNumber = "1889"
             landmarkName = "WSVideoUploadSuces(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -638,8 +638,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1102"
-            endingLineNumber = "1102"
+            startingLineNumber = "1104"
+            endingLineNumber = "1104"
             landmarkName = "WSCreateFolder(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -878,8 +878,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "793"
-            endingLineNumber = "793"
+            startingLineNumber = "795"
+            endingLineNumber = "795"
             landmarkName = "setInitialView()"
             landmarkType = "7">
          </BreakpointContent>
@@ -894,8 +894,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "492"
-            endingLineNumber = "492"
+            startingLineNumber = "494"
+            endingLineNumber = "494"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -926,8 +926,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1439"
-            endingLineNumber = "1439"
+            startingLineNumber = "1441"
+            endingLineNumber = "1441"
             landmarkName = "downloadList(notification:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -198,7 +198,9 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 //                break
 //            }
 //        }
-        self.navigationController?.popToRootViewController(animated: true)
+        self.navigationController?.popViewController(animated: true)
+
+//        self.navigationController?.popToRootViewController(animated: true)
     }
      @IBAction func btnAction(_ sender: Any){
         if(self.actionCompleted == true){

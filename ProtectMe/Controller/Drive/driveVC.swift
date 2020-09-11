@@ -26,7 +26,7 @@ class driveVC: baseVC {
             txtName.borderColor = .black
             txtName.borderWidth = 1.0
             txtName.leftViewPadding = 12
-        txtName.validationType = .alphaNumeric_WithSpace
+        //txtName.validationType = .alphaNumeric_WithSpace
         txtName.config.textFieldKeyboardType = .name
 
         }

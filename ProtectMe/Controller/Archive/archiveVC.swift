@@ -488,6 +488,8 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
 //                }
 //                //showAlert(title: "sel", message: "dasda")
 //            }
+            print("playing video :",self.arrarchivedList[sender.tag].image_path)
+            
             let q = NSURL(string: self.arrarchivedList[sender.tag].image_path!)
             let url1 = URL(string:self.arrarchivedList[sender.tag].image_path!)
             let videoAsset = AVAsset(url: url1!)
@@ -1439,8 +1441,6 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
     @objc func downloadList(notification: NSNotification) {
         self.btnHandlerBlackBg(self)
         self.view.makeToast("Successfully downloaded", duration: 1.5, position: .bottom)
-
-        
     }
     @objc func loadList(notification: NSNotification) {
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)

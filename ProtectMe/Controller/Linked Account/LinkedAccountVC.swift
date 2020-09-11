@@ -523,30 +523,27 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
             cell.lblpending.text = "Pending"
         }
         if(self.arrLinkedAccList[indexPath.row].user_id == USER.shared.id){
-         
-            
             if (arrLinkedAccList[indexPath.row].status == "2"){
                 print("pending list : who sended request")
                     cell.lblpending.isHidden = false
-                                  cell.imgLink.isHidden = true
-                                  cell.lodr.startAnimating()
-                                  cell.btnOption.isHidden = false
-                                  cell.btnAccepOption.isHidden = true
-                                  cell.btnRejectOption.isHidden = true
-                                  cell.imgThreeDot.isHidden = false
-                                  cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
+                    cell.imgLink.isHidden = true
+                    cell.lodr.startAnimating()
+                    cell.btnOption.isHidden = false
+                    cell.btnAccepOption.isHidden = true
+                    cell.btnRejectOption.isHidden = true
+                    cell.imgThreeDot.isHidden = false
+                    cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
             }
             else{
-
-                print("Normal list : who sended request")
-                cell.lblpending.isHidden = true
+                    print("Normal list : who sended request")
+                    cell.lblpending.isHidden = true
                     cell.imgLink.isHidden = false
                     cell.lodr.stopAnimating()
                     cell.btnOption.isHidden = false
                     cell.btnAccepOption.isHidden = true
                     cell.btnRejectOption.isHidden = true
                     cell.imgThreeDot.isHidden = false
-                cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
+                    cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
             }
 //
 //            cell.lblpending.isHidden = false

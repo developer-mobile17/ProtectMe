@@ -77,14 +77,14 @@ class renameArchiveVC: UIViewController {
         }
         else if(FieldType == "name"){
             txtName.validationType = .none
-            txtName.config.textFieldKeyboardType = .name
+            txtName.config.textFieldKeyboardType = .none
             txtName.leftIcon = #imageLiteral(resourceName: "ic_name")
             alertStr = "please enter name."
         }
         else if(FieldType == "folder"){
         let img = #imageLiteral(resourceName: "ic_foldericon")
                 alertStr = "please enter foldername."
-                txtName.config.textFieldKeyboardType = .name
+                txtName.config.textFieldKeyboardType = .none
                 txtName.validationType = .none
                 //txtName.leftIcon = #imageLiteral(resourceName: "ic_Adetails")
                 txtName.leftIcon  = img
@@ -94,7 +94,7 @@ class renameArchiveVC: UIViewController {
         else{
             let img = #imageLiteral(resourceName: "ic_Adetails")
             alertStr = "please enter filename."
-            txtName.config.textFieldKeyboardType = .name
+            txtName.config.textFieldKeyboardType = .none
             txtName.validationType = .none
             //txtName.leftIcon = #imageLiteral(resourceName: "ic_Adetails")
             txtName.leftIcon  = img
