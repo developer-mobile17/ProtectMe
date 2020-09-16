@@ -318,7 +318,7 @@ class signinVC: UIViewController {
                             let vc = storyBoards.Main.instantiateViewController(withIdentifier: "setProfileVC") as! setProfileVC
                             vc.socialID = self.SocialData.social_Id!
                             vc.socialData = self.SocialData
-                            vc.name = self.SocialData.name!
+                           // vc.name = self.SocialData.name!
                             self.navigationController?.pushViewController(vc, animated: true)
                         }
                        else{
