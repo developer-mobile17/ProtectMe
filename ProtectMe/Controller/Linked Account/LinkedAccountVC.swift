@@ -13,6 +13,7 @@ class LinkedAccountVC: baseVC {
     @IBOutlet weak var ViewOptionMenu:UIControl!
     @IBOutlet weak var ViewAcceptRequest:UIControl!
     @IBOutlet weak var ViewEmailConfirmation:UIControl!
+    @IBOutlet weak var ViewEdit:UIControl!
 
     @IBOutlet weak var ViewResendrequest:UIControl!
     @IBOutlet weak var btnSender:UIButton!
@@ -83,12 +84,15 @@ class LinkedAccountVC: baseVC {
         if(self.arrLinkedAccList[sender.tag].user_id == USER.shared.id){
            if (arrLinkedAccList[sender.tag].status == "2"){
                 self.ViewResendrequest.isHidden = false
+            self.ViewEdit.isHidden = false
             }
            else{
                 self.ViewResendrequest.isHidden = true
+            self.ViewEdit.isHidden = true
             }
         }
         else{
+            self.ViewEdit.isHidden = true
             self.ViewResendrequest.isHidden = true
         }
         self.ViewOptionMenu.frame = UIScreen.main.bounds

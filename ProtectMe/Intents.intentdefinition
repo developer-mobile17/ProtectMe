@@ -7,7 +7,7 @@
 	<key>INIntentDefinitionModelVersion</key>
 	<string>1.1</string>
 	<key>INIntentDefinitionNamespace</key>
-	<string>VA4lSP</string>
+	<string>4tVyon</string>
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>19C57</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
@@ -21,8 +21,10 @@
 			<string>generic</string>
 			<key>INIntentConfigurable</key>
 			<true/>
+			<key>INIntentDescription</key>
+			<string>Method implimetation</string>
 			<key>INIntentDescriptionID</key>
-			<string>e0lyD1</string>
+			<string>itebjf</string>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
 				<key></key>
@@ -34,7 +36,7 @@
 				</dict>
 			</dict>
 			<key>INIntentName</key>
-			<string>Intent</string>
+			<string>DoSomething</string>
 			<key>INIntentParameterCombinations</key>
 			<dict>
 				<key></key>
@@ -62,9 +64,9 @@
 				</array>
 			</dict>
 			<key>INIntentTitle</key>
-			<string>Intent</string>
+			<string>Open ProtectMe and start recording</string>
 			<key>INIntentTitleID</key>
-			<string>0B8xhH</string>
+			<string>bHz761</string>
 			<key>INIntentType</key>
 			<string>Custom</string>
 			<key>INIntentVerb</key>

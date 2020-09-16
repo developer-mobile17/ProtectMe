@@ -28,6 +28,7 @@ class USER: NSObject  ,NSCoding {
         var city                                = ""
         var latitude                            = ""
         var longitude                           = ""
+        var voice_actionbyCommand                        = "0"
         var voice_action                        = ""
         var linked_account_counters             = ""
         var support_email                       = "support@goprotectme.com"
@@ -169,6 +170,10 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "voice_action") as? String{
             self.voice_action = value
         }
+        if let value = aDecoder.decodeObject(forKey: "voice_actionbyCommand") as? String{
+            self.voice_actionbyCommand = value
+        }
+        //
         if let value = aDecoder.decodeObject(forKey: "linked_account_counters") as? String{
             self.linked_account_counters = value
         }
@@ -217,6 +222,7 @@ class USER: NSObject  ,NSCoding {
         aCoder.encode(self.type, forKey: "type")
         aCoder.encode(self.vAuthToken, forKey: "vAuthToken")
         aCoder.encode(self.voice_action, forKey: "voice_action")
+        aCoder.encode(self.voice_actionbyCommand, forKey: "voice_actionbyCommand")
         aCoder.encode(self.linked_account_counters, forKey: "linked_account_counters")
         aCoder.encode(self.archived_counter, forKey: "archived_counter")
 
@@ -255,6 +261,7 @@ class USER: NSObject  ,NSCoding {
         self.type                                              = user.type
         self.vAuthToken                                        = user.vAuthToken
         self.voice_action                                      = user.voice_action
+        self.voice_actionbyCommand                             = user.voice_actionbyCommand
         self.linked_account_counters                           = user.linked_account_counters
         self.archived_counter                                   = user.archived_counter
 
@@ -304,6 +311,7 @@ class USER: NSObject  ,NSCoding {
         self.isLogout                                   = false
         self.isDeleteActionShow                         = true
         self.LinkedAccSenederSelected                   = false
+        self.voice_actionbyCommand                      = "0"
         
         USER.shared.save()
     }

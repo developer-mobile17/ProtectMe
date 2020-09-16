@@ -16,6 +16,7 @@ import FirebaseInstanceID
 import FirebaseMessaging
 import AVKit
 import CoreLocation
+import IntentsUI
 
 
 
@@ -52,7 +53,11 @@ var loggedInUserData = USER()
         locManager.requestWhenInUseAuthorization()
         locManager.startUpdatingLocation()
         
-        
+        INPreferences.requestSiriAuthorization({ status in
+            if status == .authorized {
+                print("Ok - authorized")
+            }
+        })
         application.registerForRemoteNotifications()
         UIApplication.shared.applicationIconBadgeNumber = 0
         
@@ -131,10 +136,71 @@ var loggedInUserData = USER()
         }
         // more deeplink parser here
      }
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivity]?) -> Void) -> Bool
+    {
+        if #available(iOS 12.0, *) {
+            if let _ = userActivity.interaction?.intent as? DoSomethingIntent {
+                USER.shared.voice_actionbyCommand = "1"
+                USER.shared.save()
+                self.setHome()
+//                if let windowScene = scene as? UIWindowScene {
+//                    self.window = UIWindow(windowScene: windowScene)
+//                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//                    let initialViewController = storyboard.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+//                    self.window!.rootViewController = initialViewController
+//                    self.window!.makeKeyAndVisible()
+//                    initialViewController.showMessage()
+//                }
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+    
+//        if #available(iOS 12.0, *) {
+//                if userActivity.activityType ==  "Active_ProtectMe" {
+//                    USER.shared.voice_actionbyCommand = "1"
+//                    USER.shared.save()
+//                    self.setHome()
+//                 return true
+//
+//                }
+//
+//        }
+            return true
+    }
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+        if #available(iOS 12.0, *) {
+//                if userActivity.activityType ==  "Active_ProtectMe" {
+//                    USER.shared.voice_actionbyCommand = "1"
+//                    USER.shared.save()
+//                    self.setHome()
+//                 return true
+//
+//                }
+            if userActivity.activityType != ""{
+                USER.shared.voice_actionbyCommand = "1"
+                USER.shared.save()
+                self.setHome()
+             return true
+
+            }
+        }
+        return false
+    }
+    //func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler1: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
     func application(_ application: UIApplication, continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-           handleDeepLinkUrl(userActivity.webpageURL)
-           print("appdelegate deeplinking :",userActivity.webpageURL)
+       if #available(iOS 12.0, *) {
+        if let activity = userActivity.interaction?.intent as? DoSomethingIntent{
+            USER.shared.voice_actionbyCommand = "1"
+                        USER.shared.save()
+                        self.setHome()
+                        return true
+        }
+        }
+        handleDeepLinkUrl(userActivity.webpageURL)
+       // }
            return true
        }
 
@@ -154,7 +220,6 @@ var loggedInUserData = USER()
            else
            {
                handleDeepLinkUrl(url)
-
            }
            
          
@@ -202,17 +267,27 @@ var loggedInUserData = USER()
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-         UIApplication.shared.endBackgroundTask(backgroundTask)
+            UIApplication.shared.endBackgroundTask(backgroundTask)
          backgroundTask = UIBackgroundTaskIdentifier.invalid
         
     }
-//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler1: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 //        if #available(iOS 12.0, *) {
-//            if userActivity.interaction?.intent is {intens} {
-//                // App launched via that particular shortcut.
-//            }
-     //   }
-    //}
+//                if userActivity.activityType ==  "open protecme" {
+//                    USER.shared.voice_actionbyCommand = "1"
+//                    USER.shared.save()
+//                    self.setHome()
+//                }
+//
+//        }
+//    }
+//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+//        if userActivity.activityType == "Open Scanner" {
+//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//            self.setHome()
+//        }
+//        return true
+//    }
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -292,11 +367,6 @@ var loggedInUserData = USER()
         //homnav
         self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")
         self.window?.makeKeyAndVisible()
-//        let vc = storyBoards.Main.instantiateViewController(withIdentifier: "signinVC") as! signinVC
-//
-//           //let vc = storyBoards.Tabbar.instantiateViewController(withIdentifier: "recordVC") as! recordVC
-//                      self.window?.rootViewController = vc
-//                      self.window?.makeKeyAndVisible()
        }
 
 }
@@ -708,3 +778,29 @@ extension AppDelegate:CLLocationManagerDelegate
     }
     
 }
+//class IntentHandler: INExtension {
+//override func handler(for intent: INIntent) -> Any {
+//    print("IntentHandler.handle")
+//    if #available(iOS 11.0, *) {
+//        switch intent {
+//        case is INAddTasksIntent: return AddIntentHandler()
+//        default: break
+//        }
+//    } else {
+//        // Fallback on earlier versions
+//    }
+//    return self
+//}
+//}
+//@available(iOS 11.0, *)
+//class AddIntentHandler: NSObject, INAddTasksIntentHandling {
+//    @available(iOS 11.0, *)
+//    func handle(intent: INAddTasksIntent, completion: @escaping (INAddTasksIntentResponse) -> Void) {
+//    print("AddIntentHandler.handle")
+//        if #available(iOS 11.0, *) {
+//            return completion(INAddTasksIntentResponse(code: .success, userActivity: nil))
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//}
+//}

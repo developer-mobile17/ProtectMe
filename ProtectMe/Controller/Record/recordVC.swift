@@ -14,6 +14,8 @@ import AVKit
 import CoreLocation
 import Foundation
 import MobileCoreServices
+import IntentsUI
+
 
 //import CameraEngine
 
@@ -38,6 +40,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     
     var outputURL: URL!
     @IBOutlet weak var btnChangeCam: UIButton!
+    @IBOutlet weak var btnrecordcam: UIButton!
 
     @IBOutlet weak var durationTxt: UILabel!
     var isVideoRecordingOn:Bool = false
@@ -48,7 +51,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
 
     var timer = Timer()
     var isTimerRunning = false //This will be used to make sure only one timer is created at a time.
-
+   
     func capturePhoto() {
         // create settings for your photo capture
         let settings = AVCapturePhotoSettings()
@@ -71,7 +74,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         if USER.shared.id == ""{
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
         }
+            
         else{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                         //voice_actionbyCommand
+                  if (USER.shared.voice_actionbyCommand.boolValue == true){
+                      print(USER.shared.voice_actionbyCommand)
+                      USER.shared.voice_actionbyCommand = "0"
+                      USER.shared.save()
+                         // showAlertWithTitleFromVC(vc: self, andMessage: "open app")
+                      self.recordVideo(self.btnrecordcam)
+                  }
+            }
             if(USER.shared.videoUrl != ""){
                 if(USER.shared.videoUrl.contains(".mp4")){
                 let videoURL = URL(string: USER.shared.videoUrl)
@@ -105,16 +119,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             if self.setupSession() {
                 self.setupPreview()
                 self.startSession()
-              }
+                
         }
         //askForCameraPermissions()
         self.timeView.isHidden = true
 
 //        cameraManager.shouldFlipFrontCameraImage = true
+       
+        }
+        }
 
 
-    }
-    
+        
        
  func setupPreview() {
         // Configure previewLayer
