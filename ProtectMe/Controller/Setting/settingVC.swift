@@ -90,7 +90,8 @@ class settingVC: baseVC {
     @IBOutlet weak var lblInfo:UILabel!
     @IBOutlet weak var btnlocation:UIButton!
     @IBOutlet weak var btnvoice:UIButton!
-    
+    @IBOutlet weak var viewbotm:UIView!
+
     
 
     @IBOutlet weak var btnswtlocation:UIButton!
@@ -116,7 +117,7 @@ class settingVC: baseVC {
     @IBOutlet weak var btnEditEmail:UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-        addSiriButton(to: self.btnvoice)
+        addSiriButton(to: self.viewbotm)
         // Do any additional setup after loading the view.
     }
     func setData(){
