@@ -70,7 +70,7 @@ class LinkedAccountVC: baseVC {
         }
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
-        self.btnSelected = sender
+        //self.btnSelected = sender
         if(self.arrLinkedAccList[sender.tag].user_id == USER.shared.id){
              self.lblEmail.text = self.arrLinkedAccList[sender.tag].email
              self.lblName.text = self.arrLinkedAccList[sender.tag].name
@@ -84,11 +84,11 @@ class LinkedAccountVC: baseVC {
         if(self.arrLinkedAccList[sender.tag].user_id == USER.shared.id){
            if (arrLinkedAccList[sender.tag].status == "2"){
                 self.ViewResendrequest.isHidden = false
-            self.ViewEdit.isHidden = false
+                self.ViewEdit.isHidden = false
             }
            else{
                 self.ViewResendrequest.isHidden = true
-            self.ViewEdit.isHidden = true
+                self.ViewEdit.isHidden = true
             }
         }
         else{
@@ -427,7 +427,8 @@ class LinkedAccountVC: baseVC {
                         {
                             let objlisnkedListModel : lisnkedListModel = lisnkedListModel()
                             objlisnkedListModel.name = outcome[a]["name"] as? String ?? ""
-                            objlisnkedListModel.is_unlinked = outcome[a]["is_unlinked"] as? String ?? "0"
+                            objlisnkedListModel.is_unlinked = outcome[a]["is_unlinked"] as! NSString
+                            print("objlisnkedListModel.is_unlinked",objlisnkedListModel.is_unlinked)
                             objlisnkedListModel.id = outcome[a]["id"] as? String ?? ""
                             objlisnkedListModel.user_id = outcome[a]["user_id"] as? String ?? ""
                             objlisnkedListModel.account_type = outcome[a]["account_type"] as? String ?? ""
@@ -539,8 +540,14 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                     cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
             }
             else{
-                    print("Normal list : who sended request")
+                if(arrLinkedAccList[indexPath.row].is_unlinked == "1"){
+                    cell.lblpending.isHidden = false
+                }
+                else{
                     cell.lblpending.isHidden = true
+                }
+                    print("Normal list : who sended request")
+                    //cell.lblpending.isHidden = true
                     cell.imgLink.isHidden = false
                     cell.lodr.stopAnimating()
                     cell.btnOption.isHidden = false
@@ -574,6 +581,12 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                 cell.lblTitle.text = arrLinkedAccList[indexPath.row].inserted_by_email
             }
             else{
+                if(arrLinkedAccList[indexPath.row].is_unlinked == "1"){
+                    cell.lblpending.isHidden = false
+                }
+                else{
+                    cell.lblpending.isHidden = true
+                }
                 print("Normal list : who recived the request")
                 cell.lblpending.isHidden = true
                 cell.imgLink.isHidden = false

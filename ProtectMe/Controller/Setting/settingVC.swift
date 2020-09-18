@@ -88,6 +88,8 @@ class settingVC: baseVC {
     @IBOutlet weak var ViewPopup:UIControl!
     @IBOutlet weak var lblTitle:UILabel!
     @IBOutlet weak var lblInfo:UILabel!
+    @IBOutlet weak var lblVoiceActivation:UILabel!
+
     @IBOutlet weak var btnlocation:UIButton!
     @IBOutlet weak var btnvoice:UIButton!
     @IBOutlet weak var viewbotm:UIView!
@@ -511,13 +513,16 @@ class settingVC: baseVC {
 extension settingVC {
     func addSiriButton(to view: UIView) {
        if #available(iOS 12.0, *) {
-           let button = INUIAddVoiceShortcutButton(style: .whiteOutline)
-               button.shortcut = INShortcut(intent: intent )
-               button.delegate = self
-               button.translatesAutoresizingMaskIntoConstraints = false
-               view.addSubview(button)
-               view.centerXAnchor.constraint(equalTo: button.centerXAnchor ).isActive = true
-               view.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+           let siriButton = INUIAddVoiceShortcutButton(style: .whiteOutline)
+               siriButton.shortcut = INShortcut(intent: intent )
+               siriButton.delegate = self
+               siriButton.translatesAutoresizingMaskIntoConstraints = false
+            //siriButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+               view.addSubview(siriButton)
+        view.leftAnchor.constraint(equalTo: siriButton.leftAnchor ).isActive = true
+
+               //view.centerXAnchor.constraint(equalTo: siriButton.centerXAnchor ).isActive = true
+               view.centerYAnchor.constraint(equalTo: siriButton.centerYAnchor).isActive = true
            }
        
        }

@@ -112,15 +112,14 @@ struct AlertMessage {
     static let  DifferentMobileMissing : String           = "Please enter different mobile no."
 
     static let  CommentMissing : String           = "Please enter comment."
-    static let  CreatePasswordMissing: String = "Please enter create password."
+    static let  CreatePasswordMissing: String = "Please enter password."
     static let  PasswordMissing: String = "Please enter password."
     static let  OldpasswordMissing: String = "Please enter old password."
     static let  NewpasswordMissing: String = "Please enter new password."
     static let  ConfirmPasswordMissing: String = "Please enter confirm password."
-    static let  PasswordMin6DigitMissing: String = "Password must be contain 6 digits."
-    static let  CreatePasswordMin6DigitMissing: String = "Create Password must be contain 6 digits."
+    static let  PasswordMin6DigitMissing: String = "Passwords must contain atleast 6 characters"
+    static let  CreatePasswordMin6DigitMissing: String = "Passwords must contain atleast 6 characters"
     static let  PasswordNotMatch: String = "Password doesn't match!"
-    
     //Add Address
     static let  HouseNoMissing: String =  "Please enter house/ flat/ block no."
     static let  LandmarkMissing: String =  "Please enter landmark."
@@ -133,11 +132,6 @@ struct AlertMessage {
     static let  CardHolderNumberMissing : String = "Please enter card number."
     static let  CardMonthYearMissing : String = "Please enter card month/year."
     static let  CardCVVMissing : String = "Please enter cvv number."
-
-
-
-
-
     //form 1
     static let  AvailableDateMissing : String   = "Please select available date."
     static let  ContactMissing : String         = "Please enter contact."

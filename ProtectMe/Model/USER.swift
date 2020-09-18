@@ -34,7 +34,7 @@ class USER: NSObject  ,NSCoding {
         var support_email                       = "support@goprotectme.com"
         var LinkedAccSenederSelected            = false
         var isLogout                           = false
-        var isDeleteActionShow:Bool             = true
+        var isDeleteActionShow             = "0"
         var videoUrl = ""
         var archived_counter                       = ""
         var selectedView                        = "grid"
@@ -101,7 +101,7 @@ class USER: NSObject  ,NSCoding {
          if let value = aDecoder.decodeObject(forKey: "isLogout") as? Bool{
             self.isLogout = value
         }
-        if let value = aDecoder.decodeObject(forKey: "isDeleteActionShow") as? Bool{
+        if let value = aDecoder.decodeObject(forKey: "isDeleteActionShow") as? String{
             self.isDeleteActionShow = value
         }
         if let value = aDecoder.decodeObject(forKey: "LinkedAccSenederSelected") as? Bool{
@@ -309,7 +309,7 @@ class USER: NSObject  ,NSCoding {
         self.linked_account_counters                    = ""
         self.archived_counter                           = ""
         self.isLogout                                   = false
-        self.isDeleteActionShow                         = true
+        self.isDeleteActionShow                         = "0"
         self.LinkedAccSenederSelected                   = false
         self.voice_actionbyCommand                      = "0"
         

@@ -596,7 +596,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         else{
             
         }
-
+        textField.resignFirstResponder()
         return true
     }
     @IBAction func btnChangeTableView(_ sender: UIButton) {

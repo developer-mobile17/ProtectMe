@@ -707,7 +707,6 @@ class ServiceManager: NSObject{
             {
                 
                 if Connectivity.isConnectedToInternet() {
-                    SHOW_CUSTOM_LOADER()
                     let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
 
                     Alamofire.download(fileUrl, to: destination).response { response in
@@ -735,7 +734,6 @@ class ServiceManager: NSObject{
                                         successBlock(nil, false,localURL.absoluteString)
 
                                         }
-                                    HIDE_CUSTOM_LOADER()
 
                                     }
 

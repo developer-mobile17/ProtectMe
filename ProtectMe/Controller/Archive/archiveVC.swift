@@ -650,19 +650,30 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         self.getfilelist(folderid: folderid!, foldername: folderName)
     }
     @IBAction func btnDownloadVideo(_ sender: UIButton) {
+        DispatchQueue.main.async {
+            self.ViewOptionMenu.removeFromSuperview()
+            self.ViewFolderOptionMenu.removeFromSuperview()
+            self.view.makeToast("Downloaded Started", duration: 1.0, position: .bottom)
+
         if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
             if let urlString = self.arrarchivedList[self.selectedIndex!.row].image_path{
 
                 ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"image"], Progress: { (progress) in
+                    self.ViewOptionMenu.removeFromSuperview()
+                    self.ViewFolderOptionMenu.removeFromSuperview()
+
+
                     print(progress)
                 }, Success: { (DataResponce, Status, Message) in
                     print("downloaded")
                     print("URL", Message)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.view.makeToast("Downloaded Completed", duration: 1.0, position: .bottom)
+                    }
                     DispatchQueue.main.async(execute: {
-
                     self.btnHandlerBlackBg(self)
-                    self.ViewDownloadCompleted.frame = UIScreen.main.bounds
-                    self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
+//                    self.ViewDownloadCompleted.frame = UIScreen.main.bounds
+                    //self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
                     })
                 }) { (DataResponce, Status, Message) in
                     print("faild download")
@@ -678,14 +689,21 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
 
             ServiceManager.shared.callDownloadFile(WithType: .add_linked_account, fileUrl: urlString, WithParams: ["type":"video"], Progress: { (progress) in
                 print(progress)
+                self.ViewOptionMenu.removeFromSuperview()
+                self.ViewFolderOptionMenu.removeFromSuperview()
+                //self.view.makeToast("Downloaded Started", duration: 1.0, position: .bottom)
+
             }, Success: { (DataResponce, Status, Message) in
                 print("downloaded")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.view.makeToast("Downloaded Completed", duration: 1.0, position: .bottom)
+                }
                 print("URL", Message)
                 DispatchQueue.main.async(execute: {
 
                 self.btnHandlerBlackBg(self)
-                self.ViewDownloadCompleted.frame = UIScreen.main.bounds
-                self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
+                //self.ViewDownloadCompleted.frame = UIScreen.main.bounds
+                //self.navigationController?.view.addSubview(self.ViewDownloadCompleted)
                                   
                 })
             }) { (DataResponce, Status, Message) in
@@ -695,6 +713,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
 //            let url = self.arrarchivedList[self.selectedIndex!.row].image_path
 //            self.downloadVideoLinkAndCreateAsset(url!)
 
+        }
         }
     }
     
@@ -889,11 +908,11 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     @IBAction func btnOkayAgreeClickAction(_ sender: UIButton) {
         if(!checkBoxAction){
-            USER.shared.isDeleteActionShow = false
+            USER.shared.isDeleteActionShow = "0"
             USER.shared.save()
         }
         else{
-            USER.shared.isDeleteActionShow = true
+            USER.shared.isDeleteActionShow = "1"
             USER.shared.save()
         }
         self.ViewdeleteConfirmation.removeFromSuperview()
@@ -1240,7 +1259,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if(!USER.shared.isDeleteActionShow){
+                    if(USER.shared.isDeleteActionShow == "0"){
                         self.showAlertFolrDeleted()
                     }
                     self.btnHandlerBlackBg(self)
@@ -1257,7 +1276,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                         showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
                           USER.shared.isLogout = true
                           USER.shared.save()
-                                appDelegate.setLoginVC()
+                            appDelegate.setLoginVC()
                                 // Fallback on earlier versions
                             
                         }
@@ -1771,7 +1790,7 @@ extension archiveVC {
 {
        //          Display Photo Library
     imgPickerController.sourceType = UIImagePickerController.SourceType.photoLibrary
-                imgPickerController.mediaTypes = [kUTTypeImage as String]
+    imgPickerController.mediaTypes = [kUTTypeImage as String]
                 //controller.delegate = self
     present(imgPickerController, animated: true, completion: {
         self.imgPickerController.navigationBar.topItem?.rightBarButtonItem?.isEnabled = true
@@ -1806,6 +1825,24 @@ extension archiveVC {
          }
     func VideoFromAlbum()
     {
+             //imgPickerController.delegate = self
+        imgPickerController.modalPresentationStyle = .popover
+        imgPickerController.sourceType = .photoLibrary
+        imgPickerController.mediaTypes = [kUTTypeMovie as String, kUTTypeVideo as String, kUTTypeMPEG2Video as String]
+        imgPickerController.allowsEditing = true
+             //imgPickerController.mediaTypes = [kUTTypeMovie as String, kUTTypeVideo as String]
+        self.present(imgPickerController, animated: true, completion: nil)
+        
+        
+//        imgPickerController.sourceType = UIImagePickerController.SourceType.savedPhotosAlbum
+//        imgPickerController.mediaTypes = [kUTTypeVideo as String,kUTTypeAppleProtectedMPEG4Video]
+//        imgPickerController.delegate = self
+//        present(imgPickerController, animated: true, completion: {
+//            self.imgPickerController.navigationBar.topItem?.rightBarButtonItem?.isEnabled = true
+//        })
+        
+        
+        
         let cr = CameraRoll()
        
              cr.present(in: self, mode: .Video) { (assets) in
@@ -2128,17 +2165,69 @@ extension archiveVC {
                   })
         }
           //
-        func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-
-            // change title here to something other than default "Photo"
-            viewController.navigationController?.navigationBar.topItem?.title = "Photos"
-            self.imgPickerController.navigationBar.topItem?.title = "Photos"
+//        func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+//
+//            // change title here to something other than default "Photo"
+//            viewController.navigationController?.navigationBar.topItem?.title = "Photos"
+//            self.imgPickerController.navigationBar.topItem?.title = "Photos"
+//
+//        }
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        let controller = navigationController.topViewController
+        controller!.navigationItem.title = "Choose Video"
+            viewController.navigationItem.title = "Media Picker"
+        viewController.navigationItem.title = "video" // Change title
+        imgPickerController.navigationBar.tintColor = .white
+        imgPickerController.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor : UIColor.white
+        ]
+    }
+    func videoUrlForUpload(nextURLAsset:URL){
             
-        }
-    
+                let sourceURL = nextURLAsset
+                let asset = AVAsset(url: sourceURL)
+                self.videoURL = sourceURL as NSURL
+             self.videoRecorded = sourceURL
+                let duration = asset.duration
+                let durationTime = CMTimeGetSeconds(duration)
+               
+            DispatchQueue.background(background: {
+        self.getThumbnailImageFromVideoUrl(url: self.videoURL as! URL) { (AthumbImage) in
+                                                      //self.thumbImageForVide = AthumImage
+        let objLocalVid:localVideoModel = localVideoModel()
+        objLocalVid.url = self.videoRecorded
+        objLocalVid.thumbImage = AthumbImage
+         objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
+        appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+        self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
+                }
+                
+            }, completion:{
+                                       // self.delegate?.getListData()
+                                         // when background job finished, do something in main thread
+                                     })
+
+               // self.WSUploadVideo(Parameter: ["lat":self.latitude.description,"long":self.longitude.description,"type":"video"], urll: sourceURL.absoluteURL)
+            
+    }
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            
+            let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String
+            let videoString = kUTTypeVideo as? String
+            let movieString = kUTTypeMovie as? String
+
+            if (mediaType == videoString) || (mediaType == movieString) {
+                imgPickerController.dismiss(animated: true,completion: {
+                    guard let URLVIdeo = info[.mediaURL] as? NSURL else { return }
+                self.videoURL = URLVIdeo
+                    self.videoUrlForUpload(nextURLAsset: self.videoURL! as URL)
+                })
+                
+            }
+            else{
+                
+            
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-          
                 picker.dismiss(animated: true) {
                       self.WSUploadImageArchive(Parameters: ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"type":"image"], img: pickedImage)
                 }
@@ -2147,11 +2236,10 @@ extension archiveVC {
                           guard let image = info[.editedImage] as? UIImage else { return }
                           self.selectedImage = image
                           })
-            imgPickerController.dismiss(animated: true,completion: {
-                guard let URLVIdeo = info[.mediaURL] as? NSURL else { return }
-            self.videoURL = URLVIdeo
-                print(self.videoURL ?? "")
-            })
+            
+                }
+            //print(self.videoURL ?? "")
+            
           
                      
         }

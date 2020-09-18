@@ -21,6 +21,6 @@ class lisnkedListModel: NSObject {
     var inserted_by_email     :String = ""
     var inserted_by_name     :String = ""
     var action_button_show     :String = ""
-    var is_unlinked :String = ""
+    var is_unlinked :NSString = ""
     
 }
