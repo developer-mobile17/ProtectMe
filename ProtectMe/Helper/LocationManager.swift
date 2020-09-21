@@ -95,7 +95,6 @@ class LocationManager: NSObject,CLLocationManagerDelegate {
     
     fileprivate override init(){
         super.init()
-        
         if(!autoUpdate){
             autoUpdate = !CLLocationManager.significantLocationChangeMonitoringAvailable()
         }

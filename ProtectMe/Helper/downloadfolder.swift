@@ -126,8 +126,7 @@ class downloadfolder: UIViewController {
                                 objarchivedList.status       = FileArr[a]["status"] as? String ?? ""
                                 objarchivedList.type         = FileArr[a]["type"] as? String ?? ""
                                 objarchivedList.updated      = FileArr[a]["updated"] as? String ?? ""
-                                objarchivedList.uploaded_by     = FileArr[a]["uploaded_by"] as? String ?? ""
-
+                                objarchivedList.uploaded_by  = FileArr[a]["uploaded_by"] as? String ?? ""
                                 objarchivedList.user_id      = FileArr[a]["user_id"] as? String ?? ""
                                 objarchivedList.name         = FileArr[a]["name"] as? String ?? ""
                                 objarchivedList.thumb_image  = FileArr[a]["thumb_image"] as? String ?? ""

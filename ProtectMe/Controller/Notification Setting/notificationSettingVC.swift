@@ -81,7 +81,8 @@ class notificationSettingVC: UIViewController {
         }
         else{
             self.lblType.text = "Sender Account Activity"
-            self.lblInfoDescription.text = "Receive a notification when a user shaes a video or image with you."
+            //self.lblInfoDescription.text = "Receive a notification when a user shaes a video or image with you."
+            self.lblInfoDescription.text = "Receive a notification when a linked sender records and uploads a video"
         }
         self.ViewPopup.frame = UIScreen.main.bounds
         //self.view.addSubview(self.ViewPopup)

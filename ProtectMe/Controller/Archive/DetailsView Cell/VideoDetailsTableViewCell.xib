@@ -81,7 +81,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfx-Qe-79n">
-                                <rect key="frame" x="12" y="0.0" width="197.5" height="45"/>
+                                <rect key="frame" x="12" y="0.0" width="248" height="45"/>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -95,8 +95,8 @@
                             <constraint firstItem="hv6-go-yMa" firstAttribute="top" secondItem="NEj-zO-gBj" secondAttribute="top" id="MAg-qu-Tco"/>
                             <constraint firstItem="kAa-tT-tdY" firstAttribute="trailing" secondItem="GFE-4g-V9p" secondAttribute="trailing" constant="-7.5" id="MfI-h6-XyO"/>
                             <constraint firstItem="hfx-Qe-79n" firstAttribute="top" secondItem="hv6-go-yMa" secondAttribute="top" id="N0Z-bc-fe8"/>
+                            <constraint firstItem="bcn-Ui-bzE" firstAttribute="leading" secondItem="hfx-Qe-79n" secondAttribute="trailing" id="OEq-nk-VUo"/>
                             <constraint firstItem="tB6-bp-MjD" firstAttribute="leading" secondItem="hv6-go-yMa" secondAttribute="trailing" constant="8" id="S0u-1Z-TgS"/>
-                            <constraint firstItem="hfx-Qe-79n" firstAttribute="trailing" secondItem="KgA-cX-WRV" secondAttribute="trailing" id="SHf-4a-msX"/>
                             <constraint firstAttribute="bottom" secondItem="hv6-go-yMa" secondAttribute="bottom" id="T5F-ah-Lsg"/>
                             <constraint firstItem="bcn-Ui-bzE" firstAttribute="centerY" secondItem="hv6-go-yMa" secondAttribute="centerY" id="UK9-6i-4RN"/>
                             <constraint firstItem="kAa-tT-tdY" firstAttribute="leading" secondItem="GFE-4g-V9p" secondAttribute="leading" constant="7.5" id="WH5-BT-wqe"/>

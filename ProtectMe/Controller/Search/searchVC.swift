@@ -155,6 +155,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
     @IBAction func btnSearchAction(_ sender: UIButton) {
         guard let text = txtSearch.text, !text.isEmpty else {
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.NameMissing)
+            self.tblVideoList.reloadData()
+            self.collVideogrid.reloadData()
             return
         }
         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":text])
@@ -594,7 +596,9 @@ class searchVC: baseVC ,UITextFieldDelegate{
             self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"search":textField.text!])
         }
         else{
-            
+            self.tblVideoList.reloadData()
+            self.collVideogrid.reloadData()
+            showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.NameMissing)
         }
         textField.resignFirstResponder()
         return true
@@ -947,8 +951,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
                             
                             objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
                             if(self.arrarchivedList.count > 0){
-                                self.collVideogrid.setEmptyMessage("No Data Found!")
-                                self.tblVideoList.setEmptyMessage("No Data Found!")
+//                                self.collVideogrid.setEmptyMessage("No Data Found!")
+  //                              self.tblVideoList.setEmptyMessage("No Data Found!")
                             }
 
                             self.arrarchivedList.append(objarchivedList)
@@ -1082,10 +1086,18 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
  }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //return self.arrarchivedList.count
+        if(self.arrarchivedList.count == 0){
+            if(self.txtSearch.text != ""){
+                collectionView.setEmptyMessage("No Data Found!")
+            }
             
-                return self.arrarchivedList.count
-            
-
+        }
+        else{
+            collectionView.setEmptyMessage("")
+            collectionView.restore()
+        }
+        return self.arrarchivedList.count
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if(self.isFolderSelected == true){
@@ -1166,8 +1178,16 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
      // MARK: - UITableview delegate methods
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-            return self.arrarchivedList.count
+        if(self.arrarchivedList.count == 0){
+            if(self.txtSearch.text != ""){
+                self.tblVideoList.setEmptyMessage("No Data Found!")
+            }
+        }
+        else{
+            self.tblVideoList.setEmptyMessage("")
+            tableView.restore()
+        }
+        return self.arrarchivedList.count
         
 //            return self.arrarchivedList.count
         

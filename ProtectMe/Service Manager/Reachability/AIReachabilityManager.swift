@@ -85,8 +85,9 @@ class AIReachabilityManager: NSObject {
                 let lblInternetMessage = UILabel(frame:CGRect(x: 0, y: 0, width: baseView.frame.size.width, height: baseView.frame.size.height))
                 
                 lblInternetMessage.text = "NO INTERNET CONNECTION"
+                lblInternetMessage.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.thin)
                 if #available(iOS 12.0, *) {
-                    lblInternetMessage.font = UIFont.monospacedSystemFont(ofSize: CGFloat(18).proportionalFontSize(), weight: .regular)
+                    //lblInternetMessage.font = UIFont.monospacedSystemFont(ofSize: CGFloat(18).proportionalFontSize(), weight: .regular)
                 } else {
                     // Fallback on earlier versions
                 }

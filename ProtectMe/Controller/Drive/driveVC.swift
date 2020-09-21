@@ -183,6 +183,7 @@ class driveVC: baseVC {
         txtName.borderColor = .black
         txtName.borderWidth = 1.0
         txtName.Round = true
+        txtName.validationType = .none
         
         //self.btnAction.setTitle(buttonName, for: .normal)
         WSFolderList(Parameter: [:])

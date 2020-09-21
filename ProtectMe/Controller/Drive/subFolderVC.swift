@@ -571,10 +571,10 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                     self.actionCompleted = true
                     self.btnHandlerBlackBg(self)
                     if(self.data.type == "image"){
-                        self.lblPopUpText.text = "Image has been added to the \(self.navigationTitle)"
+                        self.lblPopUpText.text = "Image has been added to \(self.navigationTitle)"
                     }
                     else{
-                        self.lblPopUpText.text = "Video has been added to the \(self.navigationTitle)"
+                        self.lblPopUpText.text = "Video has been added to \(self.navigationTitle)"
                     }
                     self.ViewMoveSucess.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewMoveSucess)

@@ -465,6 +465,13 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     @IBAction func btnplayvideoClieck(_ sender: UIButton) {
         if(self.isFolderSelected == true){
+            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "subFolderVC") as! subFolderVC
+                  vc.FolderId = self.arrarchivedList[sender.tag].id!
+                  vc.data = self.arrarchivedList[sender.tag]
+            vc.FileId = self.arrarchivedList[sender.tag].folder_id!
+                  vc.navigationTitle = self.arrarchivedList[sender.tag].folder_name!
+                  vc.buttonName = ""
+                  self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
 
@@ -920,24 +927,22 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
     @IBAction func btnSemiFilterAction(_ sender: UIButton) {
         //USER.shared.selectedSubFilter = !USER.shared.selectedSubFilter
         //USER.shared.save()
-        sectionIsExpanded = !sectionIsExpanded
-        if(sectionIsExpanded){
-            let img = UIImage(named: "ic_down" )
-            self.btnSemiFilter.setImage( img , for:  .normal)
-            self.semiFilter = "1"
-            USER.shared.selectedSubFilter = "1"
-            USER.shared.save()
-            
-        }
-        else{
-            let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
-            self.btnSemiFilter.setImage( img , for:  .normal)
-            self.semiFilter = "0"
-            USER.shared.selectedSubFilter = "0"
-            USER.shared.save()
-            
-            //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
-        }
+       sectionIsExpanded = !sectionIsExpanded
+       if(sectionIsExpanded){
+           let img = UIImage(named: "ic_down" )
+           self.btnSemiFilter.setImage( img , for:  .normal)
+           self.semiFilter = "1"
+//           USER.shared.selectedSubFilter = "1"
+//           USER.shared.save()
+       }
+       else{
+           let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
+           self.btnSemiFilter.setImage( img , for:  .normal)
+           self.semiFilter = "0"
+//           USER.shared.selectedSubFilter = "0"
+//           USER.shared.save()
+           //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+              }
         
        
         self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":self.selectedFilter,"semi_filter":self.semiFilter.description])
@@ -1312,6 +1317,22 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                     USER.shared.linked_account_counters = String(linked_account_counters)
                     USER.shared.save()
                     }
+                    //self.sectionIsExpanded = !sectionIsExpanded
+                    if(self.sectionIsExpanded){
+                        let img = UIImage(named: "ic_down" )
+                        self.btnSemiFilter.setImage( img , for:  .normal)
+                        self.semiFilter = "1"
+                        USER.shared.selectedSubFilter = "1"
+                        USER.shared.save()
+                    }
+                    else{
+                        let img = UIImage(named:"ic_down")?.rotate(radians: Float(CGFloat.pi))
+                        self.btnSemiFilter.setImage( img , for:  .normal)
+                        self.semiFilter = "0"
+                        USER.shared.selectedSubFilter = "0"
+                        USER.shared.save()
+                        //self.btnSemiFilter.imageView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi )
+                           }
                         if let outcome = dataResponce["data"] as? [NSDictionary]{
                         
                         self.arrarchivedList.removeAll()
@@ -1606,6 +1627,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             }
             
             cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
+            cell.lblName.textColor = UIColor.AppSky()
             if(arrarchivedList[indexPath.row].type == "image"){
                 cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                 cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
@@ -1694,6 +1716,8 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.videoThumb.contentMode = .scaleAspectFit
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
+                cell.btnPlayView.tag = indexPath.row
+                cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)
                 cell.btnMap.isHidden = true
                 cell.btnOption.isHidden = false
                 cell.btnOption.tag = indexPath.row

@@ -26,8 +26,7 @@ class imgviewwerVC: UIViewController {
     }
     @IBAction func closeView(sender:UIButton){
         //self.dismissTo()
-         self.dismiss(animated: true, completion: {
-            })
+         self.dismiss(animated: true, completion:nil)
     }
 
     /*

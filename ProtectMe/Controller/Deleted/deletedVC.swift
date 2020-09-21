@@ -408,10 +408,10 @@ class deletedVC: baseVC {
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
                     self.WSDeletedFiles(Parameter: [:])
                     if let errorMessage:String = dataResponce["message"] as? String{
                         showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)

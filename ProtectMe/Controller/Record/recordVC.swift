@@ -55,14 +55,20 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     func capturePhoto() {
         // create settings for your photo capture
         let settings = AVCapturePhotoSettings()
-        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
-        let previewFormat = [
-            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
-            kCVPixelBufferWidthKey as String: UIScreen.main.bounds.size.width,
-            kCVPixelBufferHeightKey as String: UIScreen.main.bounds.size.height
-            ] as [String : Any]
-        settings.previewPhotoFormat = previewFormat
-        cameraOutput.capturePhoto(with: settings, delegate: self)
+        //let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
+        if #available(iOS 12.0, *) {
+            let previewPixelType = settings.availableRawEmbeddedThumbnailPhotoCodecTypes.first!
+            let previewFormat = [
+                kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+                kCVPixelBufferWidthKey as String: UIScreen.main.bounds.size.width,
+                kCVPixelBufferHeightKey as String: UIScreen.main.bounds.size.height
+                ] as [String : Any]
+            settings.previewPhotoFormat = previewFormat
+            cameraOutput.capturePhoto(with: settings, delegate: self)
+        } else {
+            // Fallback on earlier versions
+        }
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -103,11 +109,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             
             else{
                 let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                vc.imgforview = USER.shared.videoUrl
-                self.present(vc, animated: true, completion: {
+                    vc.imgforview = USER.shared.videoUrl
                     USER.shared.videoUrl = ""
                     USER.shared.save()
-                })
+                    self.present(vc, animated: true, completion:nil)
             }
         }
     }
