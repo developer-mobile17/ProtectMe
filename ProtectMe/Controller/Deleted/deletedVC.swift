@@ -151,7 +151,7 @@ class deletedVC: baseVC {
         else{
             self.lblDetailSharedBy.text = "-"
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = ""
         let country = ""

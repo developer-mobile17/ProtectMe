@@ -30,8 +30,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "965"
-            endingLineNumber = "965"
+            startingLineNumber = "968"
+            endingLineNumber = "968"
             landmarkName = "subFolderVC"
             landmarkType = "3">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "968"
-            endingLineNumber = "968"
+            startingLineNumber = "971"
+            endingLineNumber = "971"
             landmarkName = "getselectedvire(view:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "970"
-            endingLineNumber = "970"
+            startingLineNumber = "973"
+            endingLineNumber = "973"
             landmarkName = "getselectedvire(view:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "973"
-            endingLineNumber = "973"
+            startingLineNumber = "976"
+            endingLineNumber = "976"
             landmarkName = "getselectedvire(view:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -162,38 +162,6 @@
             endingLineNumber = "1237"
             landmarkName = "WSDeleteFolder(Parameter:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9E72F296-8503-45A1-AF20-A5A01032186D - 83e779919d795650"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;__C.NSDictionary&gt;, Swift.Bool, Swift.Optional&lt;Swift.String&gt;) -&gt; () in ProtectMe.archiveVC.WSDeleteFolder(Parameter: Swift.Dictionary&lt;Swift.String, Swift.String&gt;) -&gt; ()"
-                  moduleName = "ProtectMe"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1239"
-                  endingLineNumber = "1239"
-                  offsetFromSymbolStart = "2275">
-               </Location>
-               <Location
-                  uuid = "9E72F296-8503-45A1-AF20-A5A01032186D - 5298886551fb36d7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Int) -&gt; () in closure #1 (Swift.Optional&lt;__C.NSDictionary&gt;, Swift.Bool, Swift.Optional&lt;Swift.String&gt;) -&gt; () in ProtectMe.archiveVC.WSDeleteFolder(Parameter: Swift.Dictionary&lt;Swift.String, Swift.String&gt;) -&gt; ()"
-                  moduleName = "ProtectMe"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1240"
-                  endingLineNumber = "1240"
-                  offsetFromSymbolStart = "33">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1026,6 +994,38 @@
             endingLineNumber = "2242"
             landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D8AFAC0F-1DC3-44D7-9AF7-46E67B137E2E - 8cf76d6da39055fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ProtectMe.archiveVC.imagePickerController(_: __C.UIImagePickerController, didFinishPickingMediaWithInfo: Swift.Dictionary&lt;__C.UIImagePickerControllerInfoKey, Any&gt;) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2242"
+                  endingLineNumber = "2242"
+                  offsetFromSymbolStart = "1165">
+               </Location>
+               <Location
+                  uuid = "D8AFAC0F-1DC3-44D7-9AF7-46E67B137E2E - 2883cc48650dd1d4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in ProtectMe.archiveVC.imagePickerController(_: __C.UIImagePickerController, didFinishPickingMediaWithInfo: Swift.Dictionary&lt;__C.UIImagePickerControllerInfoKey, Any&gt;) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2243"
+                  endingLineNumber = "2243"
+                  offsetFromSymbolStart = "117">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1105,6 +1105,22 @@
             startingLineNumber = "27"
             endingLineNumber = "27"
             landmarkName = "closeView(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A0A7B30-5925-4905-B85E-4411623AE3A4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1366"
+            endingLineNumber = "1366"
+            landmarkName = "WSArchiveList(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

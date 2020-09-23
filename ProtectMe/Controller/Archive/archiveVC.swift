@@ -22,8 +22,6 @@ import Toast_Swift
 
 
 extension archiveVC:MKMapViewDelegate{
-    
-    
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
@@ -94,18 +92,18 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
     
     
     var videoRecorded: URL? = nil
-     var unique_idforFile = ""
+    var unique_idforFile = ""
 //     weak var delegate: NotifyToCallListService?
-     var Baseunique_id = ""
-     var isLocationEnable = USER.shared.location_service.StrTobool
+    var Baseunique_id = ""
+    var isLocationEnable = USER.shared.location_service.StrTobool
 
-     let imgPickerController = UIImagePickerController()
-     var selectedImage:UIImage?
-     let titleName = "Photos"
-     var videoURL : NSURL?
-     var latitude:Double = 0.0
-     var longitude:Double = 0.0
-       let locationManager = LocationManager.sharedInstance
+    let imgPickerController = UIImagePickerController()
+    var selectedImage:UIImage?
+    let titleName = "Photos"
+    var videoURL : NSURL?
+    var latitude:Double = 0.0
+    var longitude:Double = 0.0
+    let locationManager = LocationManager.sharedInstance
     let accetm = AssetManager.sharedInstance
     var selectedButton:UIButton?
     var selectedType = "recent"
@@ -337,7 +335,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         else{
             self.lblDetailSharedBy.text = "-"
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
         print()
@@ -372,7 +370,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         else{
             self.lblDetailSharedBy.text = data.uploaded_by
         }
-        self.lblDetailStorageUsed.text = data.storage_used
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         
         self.lblDateCreatedandLocation.text = "DATE CREATED"
@@ -409,7 +407,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         else{
             self.lblDetailSharedBy.text = data.uploaded_by
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()

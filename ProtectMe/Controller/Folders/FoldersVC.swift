@@ -135,7 +135,8 @@ class FoldersVC: baseVC {
         else{
             self.lblDetailSharedBy.text = "-"
         }
-        self.lblDetailStorageUsed.text = "-"
+        
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = ""
         let country = ""
@@ -406,6 +407,7 @@ class FoldersVC: baseVC {
                         for a : Int in (0..<(outcome.count))
                         {
                             let objarchivedList : FolderListMOdel = FolderListMOdel()
+                            objarchivedList.storage_used      = outcome[a]["storage_used"] as? String ?? ""
                             objarchivedList.created      = outcome[a]["created"] as? String ?? ""
                             objarchivedList.folder_name  = outcome[a]["folder_name"] as? String ?? ""
                             objarchivedList.id           = outcome[a]["id"] as? String ?? ""
@@ -580,6 +582,8 @@ class FolderListMOdel:NSObject{
     var name          :String?
     var created       :String?
     var updated       :String?
+    var storage_used       :String?
+    
     
    
 }

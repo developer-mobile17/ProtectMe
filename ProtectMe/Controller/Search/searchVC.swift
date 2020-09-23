@@ -292,7 +292,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         else{
             self.lblDetailSharedBy.text = "-"
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = ""
         let country = ""
@@ -336,7 +336,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
         else{
             self.lblDetailSharedBy.text = data.uploaded_by
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
@@ -803,6 +803,8 @@ class searchVC: baseVC ,UITextFieldDelegate{
                         for a : Int in (0..<(outcome.count))
                         {
                             let objarchivedList : FolderListMOdel = FolderListMOdel()
+                            objarchivedList.storage_used      = outcome[a]["storage_used"] as? String ?? ""
+
                             objarchivedList.created      = outcome[a]["created"] as? String ?? ""
                             objarchivedList.folder_name  = outcome[a]["folder_name"] as? String ?? ""
                             objarchivedList.id           = outcome[a]["id"] as? String ?? ""
@@ -948,7 +950,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
                             objarchivedList.uploaded_by     = outcome[a]["uploaded_by"] as? String ?? ""
                             objarchivedList.user_id      = outcome[a]["user_id"] as? String ?? ""
                             objarchivedList.name      = outcome[a]["name"] as? String ?? ""
-                            
+                            objarchivedList.storage_used      = outcome[a]["storage_used"] as? String ?? ""
                             objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
                             if(self.arrarchivedList.count > 0){
 //                                self.collVideogrid.setEmptyMessage("No Data Found!")

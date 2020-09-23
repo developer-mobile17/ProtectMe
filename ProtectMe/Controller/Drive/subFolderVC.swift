@@ -243,7 +243,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
         else{
             self.lblDetailSharedBy.text = data.uploaded_by
         }
-        self.lblDetailStorageUsed.text = "-"
+        self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
@@ -839,6 +839,8 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                             for a : Int in (0..<(folderArr.count))
                             {
                                 let objarchivedList : FolderListMOdel = FolderListMOdel()
+                                objarchivedList.storage_used      = folderArr[a]["storage_used"] as? String ?? ""
+
                                 objarchivedList.created      = folderArr[a]["created"] as? String ?? ""
                                 objarchivedList.folder_name  = folderArr[a]["folder_name"] as? String ?? ""
                                 objarchivedList.id           = folderArr[a]["id"] as? String ?? ""
@@ -872,6 +874,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                                 objarchivedList.type         = FileArr[a]["type"] as? String ?? ""
                                 objarchivedList.updated      = FileArr[a]["updated"] as? String ?? ""
                                 objarchivedList.uploaded_by     = FileArr[a]["uploaded_by"] as? String ?? ""
+                                objarchivedList.storage_used      = FileArr[a]["storage_used"] as? String ?? ""
 
                                 objarchivedList.user_id      = FileArr[a]["user_id"] as? String ?? ""
                                 objarchivedList.name         = FileArr[a]["name"] as? String ?? ""
