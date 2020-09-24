@@ -126,13 +126,21 @@ var loggedInUserData = USER()
 //        print(url.host)
 //        print(url.fragment)
 //        print(url.lastPathComponent)
+        if url.absoluteString.range(of: "protectme/ws/v1/user/verify/") != nil {
+            
+            print("true")
+            self.setHome()
+        }
+        else{
         if let f = url.fragment{
             let a = f.description
+            
             let b = a.replacingOccurrences(of: "Intent;scheme=fitrank;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
             print(b)
             USER.shared.videoUrl = b
             USER.shared.save()
             self.playVideo()
+        }
         }
         // more deeplink parser here
      }

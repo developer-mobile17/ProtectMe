@@ -153,9 +153,14 @@ class deletedVC: baseVC {
         }
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
+        let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
+        
+        //self.lblDateCreatedandLocation.text = "DATE CREATED"
+        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())!
+
         let city = ""
         let country = ""
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+//        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
 
         print()
         

@@ -28,23 +28,21 @@ class USER: NSObject  ,NSCoding {
         var city                                = ""
         var latitude                            = ""
         var longitude                           = ""
-        var voice_actionbyCommand                        = "0"
+        var voice_actionbyCommand               = "0"
         var voice_action                        = ""
         var linked_account_counters             = ""
         var support_email                       = "support@goprotectme.com"
         var LinkedAccSenederSelected            = false
-        var isLogout                           = false
-        var isDeleteActionShow             = "0"
-        var videoUrl = ""
-        var archived_counter                       = ""
+        var isLogout                            = false
+        var isDeleteActionShow                  = "0"
+        var videoUrl                            = ""
+        var archived_counter                    = ""
         var selectedView                        = "grid"
         var selectedFilter                      = "0"
-        var selectedSubFilter               = "1"
+        var selectedSubFilter                   = "1"
+        var storage_perc:NSNumber                        = 0
+        var storage_main                        = ""
 
-    
-    
-    
-    
     // twitter
     var Tusername = ""
     var Tname = ""
@@ -157,7 +155,6 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "sender_account_activity_notification") as? String{
             self.sender_account_activity_notification = value
         }
-        
         if let value = aDecoder.decodeObject(forKey: "status") as? String{
             self.status = value
         }
@@ -183,6 +180,12 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "archived_counter") as? String{
             self.archived_counter = value
         }
+        if let value = aDecoder.decodeObject(forKey: "storage_main") as? String{
+            self.storage_main = value
+        }
+        if let value = aDecoder.decodeObject(forKey: "storage_perc") as? NSNumber{
+            self.storage_perc = value
+        }
 
     }
     func loadUser() -> USER
@@ -192,6 +195,8 @@ class USER: NSObject  ,NSCoding {
         return kUSerObject
     }
     func encode(with aCoder: NSCoder)    {
+        aCoder.encode(self.isLogout, forKey: "storage_main")
+        aCoder.encode(self.videoUrl, forKey: "storage_perc")
         aCoder.encode(self.isLogout, forKey: "isLogout")
         aCoder.encode(self.videoUrl, forKey: "videoUrl")
         aCoder.encode(self.selectedView, forKey: "selectedView")
@@ -233,11 +238,12 @@ class USER: NSObject  ,NSCoding {
     
     
     private func loadContent(fromUser user:USER) -> Void    {
-
+        self.storage_main                                     = user.storage_main
+        self.storage_perc                                     = user.storage_perc
         self.videoUrl                                         = user.videoUrl
         self.selectedView                                     = user.selectedView
-        self.selectedSubFilter                                     = user.selectedSubFilter
-        self.selectedFilter                                     = user.selectedFilter
+        self.selectedSubFilter                                = user.selectedSubFilter
+        self.selectedFilter                                   = user.selectedFilter
         self.isLogout                                         = user.isLogout
         self.email_notification                               = user.email_notification
         self.support_email                                    = user.support_email
@@ -247,29 +253,24 @@ class USER: NSObject  ,NSCoding {
         self.latitude                                         = user.latitude
         self.longitude                                        = user.longitude
         self.LinkedAccSenederSelected                         = user.LinkedAccSenederSelected
-        self.email                                             = user.email
-        self.id                                                = user.id
-        self.location_service                                  = user.location_service
-        self.name                                              = user.name
-        self.new_linked_account_notification                   = user.new_linked_account_notification
-        self.notification                                      = user.notification
-        self.online                                            = user.online
-        self.profile_image                                     = user.profile_image
-        self.profile_image_zoom                                = user.profile_image_zoom
-        self.sender_account_activity_notification              = user.sender_account_activity_notification
-        self.status                                            = user.status
-        self.type                                              = user.type
-        self.vAuthToken                                        = user.vAuthToken
-        self.voice_action                                      = user.voice_action
-        self.voice_actionbyCommand                             = user.voice_actionbyCommand
-        self.linked_account_counters                           = user.linked_account_counters
-        self.archived_counter                                   = user.archived_counter
-
-        self.isDeleteActionShow                                = user.isDeleteActionShow
-        
-        
-       
-     
+        self.email                                            = user.email
+        self.id                                               = user.id
+        self.location_service                                 = user.location_service
+        self.name                                             = user.name
+        self.new_linked_account_notification                  = user.new_linked_account_notification
+        self.notification                                     = user.notification
+        self.online                                           = user.online
+        self.profile_image                                    = user.profile_image
+        self.profile_image_zoom                               = user.profile_image_zoom
+        self.sender_account_activity_notification             = user.sender_account_activity_notification
+        self.status                                           = user.status
+        self.type                                             = user.type
+        self.vAuthToken                                       = user.vAuthToken
+        self.voice_action                                     = user.voice_action
+        self.voice_actionbyCommand                            = user.voice_actionbyCommand
+        self.linked_account_counters                          = user.linked_account_counters
+        self.archived_counter                                 = user.archived_counter
+        self.isDeleteActionShow                               = user.isDeleteActionShow
     }
     
     
@@ -281,10 +282,12 @@ class USER: NSObject  ,NSCoding {
     
     func clear() -> Void
     {
+        self.storage_main                               = ""
+        self.storage_perc                               = 0
         self.selectedFilter                             = ""
-        self.selectedSubFilter                             = "1"
-        self.selectedView                                = ""
-        self.videoUrl                                       = ""
+        self.selectedSubFilter                          = "1"
+        self.selectedView                               = ""
+        self.videoUrl                                   = ""
         self.city                                       = ""
         self.state                                      = ""
         self.country                                    = ""
@@ -312,6 +315,7 @@ class USER: NSObject  ,NSCoding {
         self.isDeleteActionShow                         = "0"
         self.LinkedAccSenederSelected                   = false
         self.voice_actionbyCommand                      = "0"
+        
         
         USER.shared.save()
     }
@@ -346,10 +350,15 @@ class USER: NSObject  ,NSCoding {
     
     
     func setData(dict:NSDictionary) -> Void {
+        if let value = dict.value(forKey:  "storage_main") as? String{
+            USER.shared.storage_main = value
+        }
+        if let value = dict.value(forKey:  "storage_perc") as? NSNumber{
+            USER.shared.storage_perc = value
+        }
         if let value = dict.value(forKey:  "support_email") as? String{
             USER.shared.support_email = value
         }
-
         if let value = dict.value(forKey:  "city") as? String{
             USER.shared.city = value
         }
@@ -369,56 +378,54 @@ class USER: NSObject  ,NSCoding {
             USER.shared.longitude = value
         }
         
-            if let value = dict.value(forKey:  "email") as? String{
-                  USER.shared.email = value
-            }
-        
-              if let value = dict.value(forKey:  "id") as? String{
-                  USER.shared.id = value
-              }
-              if let value = dict.value(forKey:  "location_service") as? String{
-                  USER.shared.location_service = value
-              }
-              if let value = dict.value(forKey:  "name") as? String{
-                  USER.shared.name = value
-              }
-              if let value = dict.value(forKey:  "new_linked_account_notification") as? String{
-                  USER.shared.new_linked_account_notification = value
-              }
+        if let value = dict.value(forKey:  "email") as? String{
+            USER.shared.email = value
+        }
+        if let value = dict.value(forKey:  "id") as? String{
+            USER.shared.id = value
+        }
+        if let value = dict.value(forKey:  "location_service") as? String{
+            USER.shared.location_service = value
+        }
+        if let value = dict.value(forKey:  "name") as? String{
+            USER.shared.name = value
+        }
+        if let value = dict.value(forKey:  "new_linked_account_notification") as? String{
+            USER.shared.new_linked_account_notification = value
+        }
         if let value = dict.value(forKey:  "linked_account_counters") as? String{
             USER.shared.linked_account_counters = value
         }
         if let value = dict.value(forKey:  "archived_counter") as? String{
             USER.shared.archived_counter = value
         }
-              if let value = dict.value(forKey:  "notification") as? String{
-                  USER.shared.notification = value
-              }
-              if let value = dict.value(forKey:  "online") as? String{
-                  USER.shared.online = value
-              }
-              if let value = dict.value(forKey:  "profile_image") as? String{
-                  USER.shared.profile_image = value
-              }
-              if let value = dict.value(forKey:  "profile_image_zoom") as? String{
-                    USER.shared.profile_image_zoom = value
-              }
-              if let value = dict.value(forKey:  "sender_account_activity_notification") as? String{
-                  USER.shared.sender_account_activity_notification = value
-              }
-              
-              if let value = dict.value(forKey:  "status") as? String{
-                  USER.shared.status = value
-              }
-              if let value = dict.value(forKey:  "type") as? String{
-               USER.shared.type = value
-              }
-              if let value = dict.value(forKey:  "vAuthToken") as? String{
-                  USER.shared.vAuthToken = value
-              }
-              if let value = dict.value(forKey:  "voice_action") as? String{
-                  USER.shared.voice_action = value
-              }
+        if let value = dict.value(forKey:  "notification") as? String{
+            USER.shared.notification = value
+        }
+        if let value = dict.value(forKey:  "online") as? String{
+            USER.shared.online = value
+        }
+        if let value = dict.value(forKey:  "profile_image") as? String{
+            USER.shared.profile_image = value
+        }
+        if let value = dict.value(forKey:  "profile_image_zoom") as? String{
+              USER.shared.profile_image_zoom = value
+        }
+        if let value = dict.value(forKey:  "sender_account_activity_notification") as? String{
+            USER.shared.sender_account_activity_notification = value
+        }
+        if let value = dict.value(forKey:  "status") as? String{
+            USER.shared.status = value
+        }
+        if let value = dict.value(forKey:  "type") as? String{
+         USER.shared.type = value
+        }
+        if let value = dict.value(forKey:  "vAuthToken") as? String{
+            USER.shared.vAuthToken = value
+        }
+        if let value = dict.value(forKey:  "voice_action") as? String{
+            USER.shared.voice_action = value
+        }
 /*
         if let value = dict.value(forKey: "id") as? String {
             USER.shared.id = value

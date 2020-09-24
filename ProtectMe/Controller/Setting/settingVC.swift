@@ -145,6 +145,7 @@ class settingVC: baseVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setData()
+        self.WSGetUserProfile(Parameter: [:])
     //    self.SwitchLocation.addTarget(self, action: #selector(self.LocationValueChanged(sender:)), for: .valueChanged)
       //  self.SwitchVoice.addTarget(self, action: #selector(self.VoiceValueChanged(sender:)), for: .valueChanged)
          // btnEditName.setImage(image: #imageLiteral(resourceName: "ic_edit"), inFrame: CGRect(x: 8, y: 8, width: 18, height: 18), forState: UIControl.State.normal)
@@ -295,12 +296,75 @@ class settingVC: baseVC {
     }
     @IBAction func btnContactUsClick(_ sender: Any) {
         self.launchEmail()
-
-//        let ObjcommonWebViewVC = self.storyboard?.instantiateViewController(withIdentifier: "commonWebViewVC") as!  commonWebViewVC
-//        ObjcommonWebViewVC.titleString = "Contact Us"
-//        self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
     }
     // MARK: - WEB Service
+    func WSGetUserProfile(Parameter:[String:Any]) -> Void {
+        ServiceManager.shared.callGetAPI(WithType: .get_user_data, isAuth: true, passString: "", WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+
+            if(Status == true){
+                let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                let StatusCode = DataResponce?["status"] as? Int
+                if (StatusCode == 200){
+                    if let archived_counter = dataResponce["archived_counter"] as? Int{
+                        USER.shared.archived_counter = String(archived_counter)
+                        USER.shared.save()
+                    }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
+                    if let outcome = dataResponce["data"] as? NSDictionary {
+                        USER.shared.setData(dict:outcome)
+                    }
+                    self.lblStorage.text = "\(USER.shared.storage_perc) % of 2 GB" 
+                }
+                    else if(StatusCode == 307)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                if let url = URL(string: LIveURL),
+                                UIApplication.shared.canOpenURL(url){
+                                    UIApplication.shared.openURL(url)
+                                }
+                            }
+                            }
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                    }
+                    else if(StatusCode == 412)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                else if(StatusCode == 401)
+                {
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                USER.shared.isLogout = true
+                                USER.shared.save()
+                            appDelegate.setLoginVC()
+                                // Fallback on earlier versions
+                           
+                        }
+                    }
+                }
+                else{
+                    if let errorMessage:String = dataResponce["message"] as? String{
+                        showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                    }
+                }
+            }
+            else{
+                if let errorMessage:String = Message{
+                    showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                }
+            }
+        }) { (DataResponce, Status, Message) in
+            //
+        }
+    }
     func WSchangelocation(Parameter:[String:Any]) -> Void {
         ServiceManager.shared.callAPIPost(WithType: .change_location_service, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){

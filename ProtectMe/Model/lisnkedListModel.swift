@@ -22,5 +22,7 @@ class lisnkedListModel: NSObject {
     var inserted_by_name     :String = ""
     var action_button_show     :String = ""
     var is_unlinked :NSString = ""
+    var unlinked_by_user_id     :String = ""
+    
     
 }

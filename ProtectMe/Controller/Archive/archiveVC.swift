@@ -337,6 +337,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         }
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
+        
         self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
         print()
         
@@ -372,9 +373,10 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         }
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
+        let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
         
         self.lblDateCreatedandLocation.text = "DATE CREATED"
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())!
 
         
     }
@@ -1751,11 +1753,12 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                     cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                     cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                     cell.imgType.image = #imageLiteral(resourceName: "ic_playimg")
-                    //cell.videoThumb.contentMode = .scaleAspectFit
+                    cell.videoThumb.contentMode = .scaleAspectFill
                     
                 }
                 else{
                     cell.imgType.image = #imageLiteral(resourceName: "ic_playvid")
+                    cell.videoThumb.contentMode = .scaleAspectFill
                     //cell.videoThumb.contentMode = .scaleAspectFill
                     cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                     cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)

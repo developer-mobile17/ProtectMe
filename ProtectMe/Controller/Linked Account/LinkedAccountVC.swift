@@ -439,6 +439,7 @@ class LinkedAccountVC: baseVC {
                             objlisnkedListModel.status = outcome[a]["status"] as? String ?? ""
                             objlisnkedListModel.inserted_by_email = outcome[a]["inserted_by_email"] as? String ?? ""
                             objlisnkedListModel.inserted_by_name = outcome[a]["inserted_by_name"] as? String ?? ""
+                            objlisnkedListModel.unlinked_by_user_id = outcome[a]["unlinked_by_user_id"] as? String ?? ""
                             
                             objlisnkedListModel.action_button_show = outcome[a]["action_button_show"] as? String ?? ""
                             if(objlisnkedListModel.status != "0"){
@@ -540,12 +541,7 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                     cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
             }
             else{
-                if(arrLinkedAccList[indexPath.row].is_unlinked == "1"){
-                    cell.lblpending.isHidden = false
-                }
-                else{
-                    cell.lblpending.isHidden = true
-                }
+                
                     print("Normal list : who sended request")
                     //cell.lblpending.isHidden = true
                     cell.imgLink.isHidden = false
@@ -555,16 +551,17 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                     cell.btnRejectOption.isHidden = true
                     cell.imgThreeDot.isHidden = false
                     cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
+                if(arrLinkedAccList[indexPath.row].is_unlinked == "1" && arrLinkedAccList[indexPath.row].unlinked_by_user_id == USER.shared.id){
+                    cell.lblpending.isHidden = false
+                    cell.imgLink.isHidden = true
+                    cell.lodr.startAnimating()
+                }
+                else{
+                    cell.imgLink.isHidden = false
+                    cell.lodr.stopAnimating()
+                    cell.lblpending.isHidden = true
+                }
             }
-//
-//            cell.lblpending.isHidden = false
-//            cell.imgLink.isHidden = true
-//            cell.lodr.startAnimating()
-//            cell.btnOption.isHidden = false
-//            cell.btnAccepOption.isHidden = true
-//            cell.btnRejectOption.isHidden = true
-//            cell.imgThreeDot.isHidden = true
-//            cell.lblTitle.text = arrLinkedAccList[indexPath.row].email
         }
         else{
             cell.lblTitle.text = self.arrLinkedAccList[indexPath.row].inserted_by_email
@@ -581,12 +578,7 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                 cell.lblTitle.text = arrLinkedAccList[indexPath.row].inserted_by_email
             }
             else{
-                if(arrLinkedAccList[indexPath.row].is_unlinked == "1"){
-                    cell.lblpending.isHidden = false
-                }
-                else{
-                    cell.lblpending.isHidden = true
-                }
+                
                 print("Normal list : who recived the request")
                 cell.lblpending.isHidden = true
                 cell.imgLink.isHidden = false
@@ -596,6 +588,16 @@ extension LinkedAccountVC:UITableViewDelegate,UITableViewDataSource{
                 cell.btnRejectOption.isHidden = true
                 cell.imgThreeDot.isHidden = false
                 cell.lblTitle.text = arrLinkedAccList[indexPath.row].inserted_by_email
+                if(arrLinkedAccList[indexPath.row].is_unlinked == "1" && arrLinkedAccList[indexPath.row].unlinked_by_user_id == USER.shared.id){
+                    cell.lblpending.isHidden = false
+                    cell.imgLink.isHidden = true
+                    cell.lodr.startAnimating()
+                }
+                else{
+                    cell.imgLink.isHidden = false
+                    cell.lodr.stopAnimating()
+                    cell.lblpending.isHidden = true
+                }
             }
         }
         return cell

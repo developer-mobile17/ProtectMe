@@ -229,7 +229,8 @@ extension multiSelectionVC:UITableViewDelegate,UITableViewDataSource{
         cell.btncheckbox.addTarget(self, action: #selector(self.btnCheckBoxAction(_:)), for: .touchUpInside)
         cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
         cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-                         
+        cell.videoThumb.contentMode = .scaleAspectFill
+
         if(self.arrarchivedList[indexPath.row].isChecked == true)
         {
             cell.btncheckbox.setImage(#imageLiteral(resourceName: "ic_checkbox"), for: .normal)

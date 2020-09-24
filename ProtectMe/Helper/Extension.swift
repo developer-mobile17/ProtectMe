@@ -1576,7 +1576,7 @@ extension Date {
     func getyyyMMdd() -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.dateFormat = "yyyy-MM-dd h:mm:ss a"
         return formatter.string(from: self)
     }
     func getMonthFullname() -> String {

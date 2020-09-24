@@ -340,7 +340,13 @@ class searchVC: baseVC ,UITextFieldDelegate{
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
+        let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
+        
+        //self.lblDateCreatedandLocation.text = "DATE CREATED"
+        //self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())! newdate?.getyyyMMdd()
+        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())! + " - " + city! + ", " + country!
+
+        //self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
 
         print()
         

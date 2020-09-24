@@ -157,10 +157,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         if #available(iOS 10.2, *) {
             let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [ .builtInWideAngleCamera, .builtInMicrophone, .builtInDualCamera, .builtInTelephotoCamera ], mediaType: AVMediaType.video, position: .unspecified).devices
             for device in devices {
-                         if device.position == position {
-                             return device
-                         }
-                     }
+                if device.position == position {
+                    return device
+                }
+            }
         } else {
             // Fallback on earlier versions
         }
