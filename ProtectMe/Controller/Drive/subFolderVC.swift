@@ -253,7 +253,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
         
         //self.lblDateCreatedandLocation.text = "DATE CREATED"
         //self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())! newdate?.getyyyMMdd()
-        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())! + " - " + city! + ", " + country!
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
 
 
         print()

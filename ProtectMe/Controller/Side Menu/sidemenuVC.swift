@@ -73,7 +73,7 @@ class sidemenuVC: baseVC {
     override func viewWillAppear(_ animated: Bool) {
         lblName.text = USER.shared.name
         if  USER.shared.city != ""{
-            self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
+            self.lblStateCountry.text = "\(USER.shared.city), \(USER.shared.country)"
         }
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {

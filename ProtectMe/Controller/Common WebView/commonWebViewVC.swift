@@ -46,7 +46,7 @@ class commonWebViewVC: UIViewController {
             //self.WSPrivacyPolicy(Parameter: [:])
 
         }
-        else if(titleString == "Terms and Condition"){
+        else if(titleString == "Terms and Conditions"){
              let request = URLRequest(url: URL.init(string: ServiceManager.shared.baseURL + "content/term")!)
             self.webView.load(request)
         }

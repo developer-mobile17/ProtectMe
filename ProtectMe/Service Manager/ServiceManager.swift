@@ -69,6 +69,7 @@ enum APITYPE {
     case reset_archived_counter
     case rename_folder
     case resent_verification_mail
+    case deactivate_acc
 
     func getEndPoint() -> String {
         
@@ -158,6 +159,8 @@ enum APITYPE {
             return "resent_verification_mail"
         case .multiplemove:
             return "move"
+        case .deactivate_acc:
+            return "deactivate_acc"
         }
     }
 }

@@ -156,7 +156,7 @@ class deletedVC: baseVC {
         let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
         
         //self.lblDateCreatedandLocation.text = "DATE CREATED"
-        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())!
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
 
         let city = ""
         let country = ""

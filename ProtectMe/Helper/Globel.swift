@@ -92,6 +92,8 @@ struct AlertMessage {
   //login/register
     static let  DeleteAddressMessage: String = "Are You sure, you want to delete address?"
     static let  logoutMessage: String =  "Are you sure you want to logout?"
+    static let  deactiveMessage: String =  "Are you sure you want to deactive account?"
+
     static let  NameMissing: String =  "Please enter name."
     static let  FileNameMissing: String =  "Please enter file name."
 

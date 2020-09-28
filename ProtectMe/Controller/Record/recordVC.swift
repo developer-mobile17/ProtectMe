@@ -84,7 +84,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         else{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                          //voice_actionbyCommand
-                  if (USER.shared.voice_actionbyCommand.boolValue == true){
+                if (USER.shared.voice_actionbyCommand.boolValue == true && USER.shared.voice_action.boolValue == true){
                       print(USER.shared.voice_actionbyCommand)
                       USER.shared.voice_actionbyCommand = "0"
                       USER.shared.save()

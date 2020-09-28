@@ -137,7 +137,7 @@ class driveVC: baseVC {
         let date = data.created?.uppercased()
         let city = ""
         let country = ""
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
 
         print()
         

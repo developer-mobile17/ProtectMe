@@ -135,10 +135,19 @@ var loggedInUserData = USER()
         if let f = url.fragment{
             let a = f.description
             
-            let b = a.replacingOccurrences(of: "Intent;scheme=fitrank;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
+            let b = a.replacingOccurrences(of: "Intent;scheme=protectme;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
             print(b)
+//             if url.absoluteString.range(of: "https://zestbrains4u.site/protectme/themes/uploads/") != nil {
+//                let imgUrl = url.absoluteString.replacingOccurrences(of: "Intent;scheme=fitrank;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
+//                USER.shared.videoUrl = imgUrl
+//                USER.shared.save()
+//
+//            }
+//             else{
             USER.shared.videoUrl = b
             USER.shared.save()
+            //}
+
             self.playVideo()
         }
         }
@@ -370,11 +379,13 @@ var loggedInUserData = USER()
            }
     func playVideo(){
         self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")
-               self.window?.makeKeyAndVisible()
+        self.window?.makeKeyAndVisible()
 
     }
     func setHome(){
         //homnav
+        USER.shared.videoUrl = ""
+        USER.shared.save()
         self.window?.rootViewController = storyBoard.instantiateViewController(withIdentifier: "homnav")
         self.window?.makeKeyAndVisible()
        }

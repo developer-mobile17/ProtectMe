@@ -20,16 +20,17 @@ class imgviewwerVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+            let imgUrl = imgforview.replacingOccurrences(of: "Intent;scheme=protectme;package=com.dev.ProtectMe;end://protectme/home/share/", with: "")
+                        
         self.img.sd_imageIndicator = SDWebImageActivityIndicator.gray
-        self.img.sd_setImage(with: URL(string: imgforview), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
+        self.img.sd_setImage(with: URL(string: imgUrl), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                 
     }
     @IBAction func closeView(sender:UIButton){
         //self.dismissTo()
          self.dismiss(animated: true, completion:nil)
     }
-
-    /*
+        /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

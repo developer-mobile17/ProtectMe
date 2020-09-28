@@ -286,7 +286,7 @@ class settingVC: baseVC {
     @IBAction func btnTermasandConditionClick(_ sender: Any) {
         
         let ObjcommonWebViewVC = self.storyboard?.instantiateViewController(withIdentifier: "commonWebViewVC") as!  commonWebViewVC
-        ObjcommonWebViewVC.titleString = "Terms and Condition"
+        ObjcommonWebViewVC.titleString = "Terms and Conditions"
         self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
     }
     @IBAction func btnPrivacyPolicyClick(_ sender: Any) {
@@ -294,6 +294,17 @@ class settingVC: baseVC {
         ObjcommonWebViewVC.titleString = "Privacy Policy"
         self.navigationController?.pushViewController(ObjcommonWebViewVC, animated: true)
     }
+    
+    @IBAction func btnDeactiveAccClick(_ sender: Any) {
+        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage:AlertMessage.deactiveMessage, buttons: ["No","Yes"]) { (i) in
+            if(i == 1){
+                self.WSDeactiveAccount(Parameter: [:])
+            }
+                       
+        }
+        
+    }
+
     @IBAction func btnContactUsClick(_ sender: Any) {
         self.launchEmail()
     }
@@ -316,7 +327,7 @@ class settingVC: baseVC {
                     if let outcome = dataResponce["data"] as? NSDictionary {
                         USER.shared.setData(dict:outcome)
                     }
-                    self.lblStorage.text = "\(USER.shared.storage_perc) % of 2 GB" 
+                    self.lblStorage.text = "\(USER.shared.storage_main) of 2 GB" 
                 }
                     else if(StatusCode == 307)
                     {
@@ -497,6 +508,64 @@ class settingVC: baseVC {
             //
         }
     }
+    func WSDeactiveAccount(Parameter:[String:Any]) -> Void {
+          ServiceManager.shared.callAPIPost(WithType: .deactivate_acc, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
+              if(Status == true){
+                  let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                  let StatusCode = DataResponce?["status"] as? Int
+                  if (StatusCode == 200){
+                    USER.shared.clear()
+                    USER.shared.isLogout = true
+                    USER.shared.save()
+                    appDelegate.setLoginVC()
+                    
+                   
+                  }
+                    else if(StatusCode == 307)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                        if let LIveURL:String = dataResponce["iOS_live_application_url"] as? String{
+                            showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME, andMessage: errorMessage, buttons: ["Open Store"]) { (i) in
+                                if let url = URL(string: LIveURL),
+                                UIApplication.shared.canOpenURL(url){
+                                    UIApplication.shared.openURL(url)
+                                }
+                            }
+                            }
+                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            }
+                    }
+                    else if(StatusCode == 412)
+                    {
+                        if let errorMessage:String = dataResponce["message"] as? String{
+                                showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                        }
+                    }
+                  else if(StatusCode == 401)
+                  {
+                      if let errorMessage:String = dataResponce["message"] as? String{
+                          showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                  appDelegate.setLoginVC()
+                                  // Fallback on earlier versions
+                             
+                          }
+                      }
+                  }
+                  else{
+                      if let errorMessage:String = dataResponce["message"] as? String{
+                          showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                      }
+                  }
+              }
+              else{
+                  if let errorMessage:String = Message{
+                      showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                  }
+              }
+          }) { (DataResponce, Status, Message) in
+              //
+          }
+      }
     func WSchangeVoice(Parameter:[String:Any]) -> Void {
           ServiceManager.shared.callAPIPost(WithType: .change_voice_action, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
               if(Status == true){

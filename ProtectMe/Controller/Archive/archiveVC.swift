@@ -338,7 +338,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())!
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
         print()
         
     }
@@ -374,11 +374,9 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
-        
+        print(self.UTCToLocalAM(date: data.created!))
         self.lblDateCreatedandLocation.text = "DATE CREATED"
-        self.lblDetailDateCreatedandLocation.text = (newdate?.getyyyMMdd())!
-
-        
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
     }
     func setDetails(data:archivedListModel) -> Void {
         APPDELEGATE.SHOW_CUSTOM_LOADER()
@@ -390,7 +388,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.NumberofFiles.isHidden = true
         if(data.type?.uppercased() == "VIDEO"){
             let asset = AVURLAsset(url: URL(string: data.image_path!)!)
-                   let durationInSeconds = asset.duration.seconds
+            let durationInSeconds = asset.duration.seconds
                   
             self.lblDetailType.text = (data.type?.uppercased())! + " (MP4)"
             self.VideoDuration.isHidden = false
@@ -414,7 +412,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
         self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
-        self.lblDetailDateCreatedandLocation.text = (date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.getyyyMMdd())! + " - " + city! + ", " + country!
+        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
 APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     func fileAction(action:String){
@@ -660,7 +658,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
         DispatchQueue.main.async {
             self.ViewOptionMenu.removeFromSuperview()
             self.ViewFolderOptionMenu.removeFromSuperview()
-            self.view.makeToast("Downloaded Started", duration: 1.0, position: .bottom)
+            self.view.makeToast("Download Started", duration: 1.0, position: .bottom)
 
         if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
             if let urlString = self.arrarchivedList[self.selectedIndex!.row].image_path{
@@ -675,7 +673,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
                     print("downloaded")
                     print("URL", Message)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self.view.makeToast("Downloaded Completed", duration: 1.0, position: .bottom)
+                        self.view.makeToast("Download Completed", duration: 1.0, position: .bottom)
                     }
                     DispatchQueue.main.async(execute: {
                     self.btnHandlerBlackBg(self)
@@ -703,7 +701,7 @@ APPDELEGATE.HIDE_CUSTOM_LOADER()
             }, Success: { (DataResponce, Status, Message) in
                 print("downloaded")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.view.makeToast("Downloaded Completed", duration: 1.0, position: .bottom)
+                    self.view.makeToast("Download Completed", duration: 1.0, position: .bottom)
                 }
                 print("URL", Message)
                 DispatchQueue.main.async(execute: {
@@ -1480,7 +1478,7 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
     }
     @objc func downloadList(notification: NSNotification) {
         self.btnHandlerBlackBg(self)
-        self.view.makeToast("Successfully downloaded", duration: 1.5, position: .bottom)
+        self.view.makeToast("Download Completed", duration: 1.5, position: .bottom)
     }
     @objc func loadList(notification: NSNotification) {
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
@@ -2312,7 +2310,7 @@ extension archiveVC{
             print(resourceDocPath,actualPath)
             do {
                 try pdfData?.write(to: actualPath, options: .atomic)
-                self.view.makeToast("Successfully downloaded", duration: 1.5, position: .bottom)
+                self.view.makeToast("Download Completed", duration: 1.5, position: .bottom)
 
 //                Toast(text: "Successfully downloaded").show()
                 APPDELEGATE.HIDE_CUSTOM_LOADER()

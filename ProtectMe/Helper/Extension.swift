@@ -158,6 +158,17 @@ extension CGFloat{
 }
 
 extension UIViewController {
+    func UTCToLocalAM(date:String) -> String {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+            
+            let dt = dateFormatter.date(from: date)
+            dateFormatter.timeZone = TimeZone.current
+            dateFormatter.dateFormat = "yyyy-MM-dd hh:mm a"
+            
+            return dateFormatter.string(from: dt!)
+        }
     
 //    func setTabBarVisiblee(visible: Bool, animated: Bool) {
 //
@@ -296,6 +307,7 @@ extension TimeZone {
     }
 }
 extension Date {
+    
     func toLocalTime() -> Date? {
         let tz = NSTimeZone.default as NSTimeZone
         let seconds = tz.secondsFromGMT(for: self as Date)
@@ -779,6 +791,7 @@ extension UIColor {
     
 }
 extension String {
+ 
     func capitalizingFirstLetter() -> String {
         return prefix(1).capitalized + dropFirst()
     }
