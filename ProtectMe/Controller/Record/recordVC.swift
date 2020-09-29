@@ -22,6 +22,7 @@ import IntentsUI
 
 class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     
+    @IBOutlet weak var constheight: NSLayoutConstraint!
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
     let myGroup = DispatchGroup()
@@ -75,6 +76,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         super.viewWillAppear(animated)
         
         DispatchQueue.main.async {
+            self.constheight.constant = 0
             self.setUserLocation()
         }
         if USER.shared.id == ""{
@@ -90,36 +92,36 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                       USER.shared.save()
                          // showAlertWithTitleFromVC(vc: self, andMessage: "open app")
                       self.recordVideo(self.btnrecordcam)
-                  }
-            }
-            if(USER.shared.videoUrl != ""){
-                if(USER.shared.videoUrl.contains(".mp4")){
-                let videoURL = URL(string: USER.shared.videoUrl)
-                let player = AVPlayer(url: videoURL!)
-
-                let vc = AVPlayerViewController()
-                vc.player = player
-
-                present(vc, animated: true) {
-                    USER.shared.videoUrl = ""
-                    USER.shared.save()
-                    vc.player?.play()
+                }
+                else{
+                        if(USER.shared.videoUrl != ""){
+                            if(USER.shared.videoUrl.contains(".mp4")){
+                            let videoURL = URL(string: USER.shared.videoUrl)
+                            let player = AVPlayer(url: videoURL!)
+                            let vc = AVPlayerViewController()
+                            vc.player = player
+                                self.present(vc, animated: true) {
+                                USER.shared.videoUrl = ""
+                                USER.shared.save()
+                                vc.player?.play()
+                            }
+                        }
+                        else{
+                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+                                vc.imgforview = USER.shared.videoUrl
+                                USER.shared.videoUrl = ""
+                                USER.shared.save()
+                                self.present(vc, animated: true, completion:nil)
+                        }
+                    }
                 }
             }
-            
-            else{
-                let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                    vc.imgforview = USER.shared.videoUrl
-                    USER.shared.videoUrl = ""
-                    USER.shared.save()
-                    self.present(vc, animated: true, completion:nil)
-            }
-        }
+
     }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loader.stopAnimating()
+//        self.loader.stopAnimating()
                 DispatchQueue.main.async {
             if self.setupSession() {
                 self.setupPreview()
@@ -327,6 +329,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                  }
              }
              //EDIT2: And I forgot this
+            self.constheight.constant = 20
              outputURL = tempURL()
              movieOutput.startRecording(to: outputURL, recordingDelegate: self)
              }
@@ -345,7 +348,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         return nil
     }
     func stopRecording() {
-
+        self.constheight.constant = 0
         if movieOutput.isRecording == true {
             self.toggleTorch(on: false)
             movieOutput.stopRecording()
@@ -753,7 +756,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                 print("my:",process)
                 //first?.added = value
                 appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
-                
                 //appDelegate.objLocalVid.progress = process!
             }, Success: { (DataResponce, Status, Message) in
                 if(Status == true){

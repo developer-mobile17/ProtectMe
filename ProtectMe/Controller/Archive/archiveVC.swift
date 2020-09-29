@@ -413,7 +413,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         let country = data.country?.uppercased()
         self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
         self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
-APPDELEGATE.HIDE_CUSTOM_LOADER()
+        APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     func fileAction(action:String){
         let vc = storyBoards.Main.instantiateViewController(withIdentifier: "driveVC") as! driveVC
