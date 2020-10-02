@@ -15,10 +15,33 @@ import AVKit
 import MapKit
 import Alamofire
 import Photos
+import SKPhotoBrowser
 
 
+private extension subFolderVC {
+    
+    func createWebPhotos() -> [SKPhotoProtocol]
+    {
+        let FinalimageArray = NSMutableArray()
+        FinalimageArray.add(self.Image_Zoom)
+        return (0..<FinalimageArray.count).map { (i: Int) -> SKPhotoProtocol in
+            
+            
+                
+                let photo = SKPhoto.photoWithImageURL(self.Image_Zoom)
+                photo.shouldCachePhotoURLImage = true
+                return photo
+                
+            
+            
+        }
+    }
+}
 
-class subFolderVC: baseVC ,MKMapViewDelegate{
+class subFolderVC: baseVC ,MKMapViewDelegate,SKPhotoBrowserDelegate{
+
+
+var Image_Zoom = String()
     var FileId:String = ""
     var FolderId:String = ""
     var name = ""
@@ -139,17 +162,33 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
     }
     @IBAction func btnMapShow(_ sender: UIButton) {
           self.selectedIndex = IndexPath(row: sender.tag, section: 0)
-          DispatchQueue.main.async {
-              
-              let lat = Double((self.arrFileList[sender.tag].latitude?.toDouble())!)
-              let lon = Double((self.arrFileList[sender.tag].longitude?.toDouble())!)
-              let coordinates = CLLocationCoordinate2D(latitude:lat
-                  , longitude:lon)
-              //        var locationManager = LocationManager.sharedInstance
-              self.setPinUsingMKPlacemark(location: coordinates)
-              self.Viewmap.isHidden = false
+        if(self.arrFileList[self.selectedIndex!.row].latitude != "00.0000" || self.arrFileList[self.selectedIndex!.row].longitude != "00.0000"){
+              DispatchQueue.main.async {
+                  
+                  let lat = Double((self.arrFileList[sender.tag].latitude?.toDouble())!)
+                  let lon = Double((self.arrFileList[sender.tag].longitude?.toDouble())!)
+                  let coordinates = CLLocationCoordinate2D(latitude:lat
+                      , longitude:lon)
+                  //        var locationManager = LocationManager.sharedInstance
+                  self.setPinUsingMKPlacemark(location: coordinates)
+                  self.Viewmap.isHidden = false
 
-          }
+              }
+              }
+              else{
+                  showAlertWithTitleFromVC(vc: self, andMessage: "Location was disabled for this post")
+              }
+//          DispatchQueue.main.async {
+//
+//              let lat = Double((self.arrFileList[sender.tag].latitude?.toDouble())!)
+//              let lon = Double((self.arrFileList[sender.tag].longitude?.toDouble())!)
+//              let coordinates = CLLocationCoordinate2D(latitude:lat
+//                  , longitude:lon)
+//              //        var locationManager = LocationManager.sharedInstance
+//              self.setPinUsingMKPlacemark(location: coordinates)
+//              self.Viewmap.isHidden = false
+//
+//          }
       }
     @IBAction func btnShareVideoURL(_ sender: Any) {
           //Set the default sharing message.
@@ -157,9 +196,24 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
               self.btnhideDetails(self)
               self.btnHandlerBlackBg(self)
           }
-          UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrFileList[self.selectedIndex!.row].image_path!
+        let mystring = ServiceManager.shared.deeplink + self.arrFileList[self.selectedIndex!.row].image_path!
 
-          self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
+        if(self.arrFileList[self.selectedIndex!.row].type?.lowercased() == "image"){
+            self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+
+//               let url = URL(string: mystring)
+//                   if let data = try? Data(contentsOf: url!){
+//                       self.ClicptoboardAndShare(myimg: UIImage(data: data)!, myString: mystring, isimage: false)
+//                   } //make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
+//
+               
+               }
+               else{
+                   self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+               }
+//          UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrFileList[self.selectedIndex!.row].image_path!
+//
+//          self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
       }
      @objc func btnMoveFolderAction(){
             let vc = storyBoards.Main.instantiateViewController(withIdentifier: "multiSelectionVC") as! multiSelectionVC
@@ -329,10 +383,21 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
 
 //        self.ViewVideoDetails.removeFromSuperview()
     }
+    @IBAction func btnViewCopySucessHandlerBlackBg(_ sender: Any){
+        self.ViewMoveSucess.removeFromSuperview()
+
+        self.ViewCopySucess.removeFromSuperview()
+               for controller in self.navigationController!.viewControllers as Array {
+                    if controller.isKind(of: archiveVC.self) {
+                        _ =  self.navigationController!.popToViewController(controller, animated: true)
+                        break
+                    }
+                }
+
+
+    }
     @IBAction func btnHandlerBlackBg(_ sender: Any)
     {
-        self.ViewMoveSucess.removeFromSuperview()
-        self.ViewCopySucess.removeFromSuperview()
         self.ViewOptionMenu.removeFromSuperview()
         
     }
@@ -448,7 +513,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
         else{
             self.navigationItem.rightBarButtonItem?.tintColor = .white
             self.navigationItem.rightBarButtonItem?.isEnabled = true
-            let rightBarButtonItem = UIBarButtonItem.init(image: UIImage(named: "ic_movefile"), style: .done, target: self, action:#selector(self.btnMoveFolderAction))
+            let rightBarButtonItem = UIBarButtonItem.init(image: UIImage(named: "ic_addFolder"), style: .done, target: self, action:#selector(self.btnMoveFolderAction))
             self.navigationItem.rightBarButtonItem = rightBarButtonItem
             self.isVisibleOptionMenu = false
             self.btnCancle.isHidden = true
@@ -586,7 +651,7 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                     self.ViewMoveSucess.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewMoveSucess)
                                   
-                    self.WSFolderList(Parameter: ["folder_id":self.FolderId])
+                  //  self.WSFolderList(Parameter: ["folder_id":self.FolderId])
                 }
                     else if(StatusCode == 307)
                     {
@@ -648,16 +713,16 @@ class subFolderVC: baseVC ,MKMapViewDelegate{
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
                     self.actionCompleted = true
                     self.btnHandlerBlackBg(self)
                     self.ViewCopySucess.frame = UIScreen.main.bounds
                     self.navigationController?.view.addSubview(self.ViewCopySucess)
 
-                    self.WSFolderList(Parameter: ["folder_id":self.FolderId])
+                    //self.WSFolderList(Parameter: ["folder_id":self.FolderId])
                 }
                     else if(StatusCode == 307)
                     {
@@ -1050,10 +1115,25 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
        
 
         if(self.arrFileList[sender.tag].type == "image"){
-              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                  vc.imgforview = self.arrFileList[sender.tag].image_path!
-                  
-                  self.present(vc, animated: true, completion: nil)
+            let file = (self.arrFileList[sender.tag].image_path!)
+            if file.isEmpty == false
+            {
+                       self.Image_Zoom = file
+                       
+                       let browser = SKPhotoBrowser(photos: createWebPhotos())
+                       browser.initializePageIndex(0)
+                       browser.delegate = self
+                       present(browser, animated: true, completion: nil)
+                       
+            }
+            else
+            {
+                       
+            }
+//              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+//                  vc.imgforview = self.arrFileList[sender.tag].image_path!
+//
+//                  self.present(vc, animated: true, completion: nil)
         }
         else{
         let videoURL = URL(string: self.arrFileList[sender.tag].image_path!)
@@ -1078,17 +1158,25 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         }
         else{
             let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "FileCell", for: indexPath) as! collCell
-                       cell.videoThumb.image = nil
-                       cell.btnPlayvideo.tag = indexPath.row
-                       cell.btnMap.tag = indexPath.row
-                       cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
-            if(self.isVisibleMapMenu == true){
+            cell.videoThumb.image = nil
+            cell.btnPlayvideo.tag = indexPath.row
+            cell.btnMap.tag = indexPath.row
+            if(self.arrFileList[indexPath.row].latitude == "00.0000" || self.arrFileList[indexPath.row].longitude == "00.0000"){
                 cell.btnMap.isHidden = false
-
+                cell.btnMap.alpha = 0.3
             }
             else{
-                cell.btnMap.isHidden = true
+                cell.btnMap.alpha = 1.0
+                cell.btnMap.isHidden = false
             }
+            cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayvideoClieck),for: .touchUpInside)
+//            if(self.isVisibleMapMenu == true){
+//                cell.btnMap.isHidden = false
+//
+//            }
+//            else{
+//                cell.btnMap.isHidden = true
+//            }
                 if(self.isVisibleOptionMenu == true){
                     cell.btnOption.isHidden = true
                     

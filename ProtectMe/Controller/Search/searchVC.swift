@@ -13,20 +13,42 @@ import AVKit
 import MapKit
 import Alamofire
 import Photos
+import SKPhotoBrowser
+
 
 extension searchVC:MKMapViewDelegate{
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
     }
 }
-
-class searchVC: baseVC ,UITextFieldDelegate{
+private extension searchVC {
+    
+    func createWebPhotos() -> [SKPhotoProtocol]
+    {
+        let FinalimageArray = NSMutableArray()
+        FinalimageArray.add(self.Image_Zoom)
+        return (0..<FinalimageArray.count).map { (i: Int) -> SKPhotoProtocol in
+            
+            
+                
+                let photo = SKPhoto.photoWithImageURL(self.Image_Zoom)
+                photo.shouldCachePhotoURLImage = true
+                return photo
+                
+            
+            
+        }
+    }
+}
+class searchVC: baseVC ,UITextFieldDelegate,SKPhotoBrowserDelegate{
     
     var timer = Timer()
+    var Image_Zoom = String()
+
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
     var isLocationEnable = USER.shared.location_service.StrTobool
 
-   @IBOutlet weak var ViewCreateFolder:UIControl!
+    @IBOutlet weak var ViewCreateFolder:UIControl!
     @IBOutlet weak var tblVideoList:UITableView!
     @IBOutlet weak var collVideogrid:UICollectionView!
     @IBOutlet weak var Viewmap:UIView!
@@ -37,7 +59,6 @@ class searchVC: baseVC ,UITextFieldDelegate{
     @IBOutlet weak var btnGreed:UIButton!
     @IBOutlet weak var btnlist:UIButton!
     @IBOutlet weak var Viewrename:UIControl!
-
     @IBOutlet weak var VideoDuration:UIControl!
     @IBOutlet weak var lblVideoDuration:UILabel!
 
@@ -259,6 +280,7 @@ class searchVC: baseVC ,UITextFieldDelegate{
     }
     @IBAction func btnMapShow(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+        if(self.arrarchivedList[self.selectedIndex!.row].latitude != "00.0000" || self.arrarchivedList[self.selectedIndex!.row].longitude != "00.0000"){
         DispatchQueue.main.async {
             
             let lat = Double((self.arrarchivedList[sender.tag].latitude?.toDouble())!)
@@ -270,6 +292,21 @@ class searchVC: baseVC ,UITextFieldDelegate{
             self.Viewmap.isHidden = false
 
         }
+        }
+        else{
+            showAlertWithTitleFromVC(vc: self, andMessage: "Location was disabled for this post")
+        }
+//        DispatchQueue.main.async {
+//            
+//            let lat = Double((self.arrarchivedList[sender.tag].latitude?.toDouble())!)
+//            let lon = Double((self.arrarchivedList[sender.tag].longitude?.toDouble())!)
+//            let coordinates = CLLocationCoordinate2D(latitude:lat
+//                , longitude:lon)
+//            //        var locationManager = LocationManager.sharedInstance
+//            self.setPinUsingMKPlacemark(location: coordinates)
+//            self.Viewmap.isHidden = false
+//
+//        }
     }
     @IBAction func btnmapHideClick(_ sender: UIButton) {
         self.Viewmap.isHidden = true
@@ -387,10 +424,25 @@ class searchVC: baseVC ,UITextFieldDelegate{
         else{
 
         if(arrarchivedList[sender.tag].type == "image"){
-              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                  vc.imgforview = self.arrarchivedList[sender.tag].image_path!
-                  
-                  self.present(vc, animated: true, completion: nil)
+            let file = (self.arrarchivedList[sender.tag].image_path!)
+            if file.isEmpty == false
+            {
+                       self.Image_Zoom = file
+                       
+                       let browser = SKPhotoBrowser(photos: createWebPhotos())
+                       browser.initializePageIndex(0)
+                       browser.delegate = self
+                       present(browser, animated: true, completion: nil)
+                       
+            }
+            else
+            {
+                       
+            }
+//              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+//                  vc.imgforview = self.arrarchivedList[sender.tag].image_path!
+//
+//                  self.present(vc, animated: true, completion: nil)
         }
         else{
         let videoURL = URL(string: self.arrarchivedList[sender.tag].image_path!)
@@ -493,9 +545,19 @@ class searchVC: baseVC ,UITextFieldDelegate{
                   self.btnhideDetails(self)
                   self.btnHandlerBlackBg(self)
               }
-              UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
-
-              self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
+        let mystring = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
+        //self.ClicptoboardAndShare(myimg: UIImage(named: "ic_Lpluse")!)
+        if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
+        let url = URL(string:  self.arrarchivedList[self.selectedIndex!.row].image_path!)
+            if let data = try? Data(contentsOf: url!){
+                   self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+            } //make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
+        }
+        else{
+            self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+        }
+        
+//              self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
         //Set the default sharing message.
 //        let message = "Please check this video link"
 //        //Set the link to share.
@@ -616,18 +678,12 @@ class searchVC: baseVC ,UITextFieldDelegate{
             self.selectedView = "table"
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
-            UIView.animate(withDuration: 0.1,
-                       delay: 0.2,
-                       options: UIView.AnimationOptions.curveEaseIn,
-                       animations: { () -> Void in
-                        self.tblVideoList.alpha = 0.5
-                        self.collVideogrid.alpha = 0.5
-            }, completion: { (finished) -> Void in
-                self.tblVideoList.alpha = 1.0
-                self.collVideogrid.alpha = 1.0
-                self.tblVideoList.isHidden = false
-                self.collVideogrid.isHidden = true
-            })
+            self.tblVideoList.beginUpdates()
+            self.tblVideoList.endUpdates()
+            self.tblVideoList.isHidden = false
+            self.collVideogrid.isHidden = true
+            
+            
         }
         else{
             self.selectedView = "grid"
@@ -635,19 +691,11 @@ class searchVC: baseVC ,UITextFieldDelegate{
             USER.shared.save()
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
-            UIView.animate(withDuration: 0.1,
-                                  delay: 0.2,
-                                  options: UIView.AnimationOptions.curveEaseIn,
-                                  animations: { () -> Void in
-                                   self.tblVideoList.alpha = 0.5
-                                   self.collVideogrid.alpha = 0.5
-                       }, completion: { (finished) -> Void in
-                       // ....
-                           self.tblVideoList.alpha = 1.0
-                           self.collVideogrid.alpha = 1.0
-                              self.tblVideoList.isHidden = true
-                           self.collVideogrid.isHidden = false
-                       })
+            self.tblVideoList.isHidden = true
+            self.collVideogrid.restore()
+            
+            self.collVideogrid.isHidden = false
+            
         }
     }
     @IBAction func btnbtnAddedClick(_ sender: UIButton) {
@@ -1151,11 +1199,14 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         else{
         let cell:collCell = collectionView.dequeueReusableCell(withReuseIdentifier: "collCell", for: indexPath) as! collCell
             cell.videoThumb.image = nil
-            if(self.isLocationEnable == true){
+            if(self.arrarchivedList[indexPath.row].latitude == "00.0000" || self.arrarchivedList[indexPath.row].longitude == "00.0000"){
                 cell.btnMap.isHidden = false
+                cell.btnMap.alpha = 0.3
             }
             else{
-                cell.btnMap.isHidden = true
+                cell.btnMap.alpha = 1.0
+
+                cell.btnMap.isHidden = false
             }
             cell.btnPlayvideo.tag = indexPath.row
             cell.btnMap.tag = indexPath.row
@@ -1246,11 +1297,14 @@ extension searchVC:UICollectionViewDelegate,UITableViewDataSource{
             else{
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
                 cell.videoThumb.image = nil
-                if(self.isLocationEnable == true){
+                if(self.arrarchivedList[indexPath.row].latitude == "00.0000" || self.arrarchivedList[indexPath.row].longitude == "00.0000"){
                     cell.btnMap.isHidden = false
+                    cell.btnMap.alpha = 0.3
                 }
                 else{
-                    cell.btnMap.isHidden = true
+                    cell.btnMap.alpha = 1.0
+
+                    cell.btnMap.isHidden = false
                 }
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row

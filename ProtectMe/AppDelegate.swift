@@ -79,6 +79,7 @@ var loggedInUserData = USER()
       
         self.SetNavigationBar()
         IQKeyboardManager.shared.enable = true
+        
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
@@ -680,8 +681,6 @@ extension AppDelegate {
 //                let apsvalue = userInfo.getString(key: "push_type")
 
             let body = payload.value(forKey: "body") as? String
-                
-                  
                   print("value  : \(push_type)")
                   switch push_type {
                    case 1 :
@@ -690,7 +689,6 @@ extension AppDelegate {
                     }
                     else{
                         appDelegate.setLinkAccountVC(selectd: "receiver")
-
                     }
                       break
                   case 2 :

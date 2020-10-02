@@ -71,6 +71,8 @@ class sidemenuVC: baseVC {
             self.locationManager.stopUpdatingLocation()
             }
     override func viewWillAppear(_ animated: Bool) {
+        //UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
+
         lblName.text = USER.shared.name
         if  USER.shared.city != ""{
             self.lblStateCountry.text = "\(USER.shared.city), \(USER.shared.country)"

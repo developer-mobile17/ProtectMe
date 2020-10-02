@@ -1385,6 +1385,30 @@ extension UISwitch {
 }
 
 extension UIViewController {
+    func ClicptoboardAndShare(myimg:UIImage,myString:String,isimage:Bool){
+        //UIPasteboard.general.string = myString
+          //    let content = UIPasteboard.general.string
+        if(isimage == true){
+            let image = myimg
+            let imageShare = [ image ]
+            let activityViewController = UIActivityViewController(activityItems: imageShare , applicationActivities: nil)
+            
+            activityViewController.popoverPresentationController?.sourceView = self.view
+            self.present(activityViewController, animated: true, completion: nil)
+
+        }
+        else{
+            let textToShare = ""
+            if let myWebsite = NSURL(string: myString) {
+            let objectsToShare: [Any] = [textToShare, myWebsite]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityVC.popoverPresentationController?.sourceView = self.view
+            self.present(activityVC, animated: true, completion: nil)
+        }
+        
+        }
+        
+    }
     func hideKeyboardWhenTappedAround() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false

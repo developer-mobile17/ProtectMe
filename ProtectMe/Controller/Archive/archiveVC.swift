@@ -9,6 +9,7 @@
 import UIKit
 import SDWebImage
 import AVFoundation
+import SKPhotoBrowser
 
 import AVKit
 import MapKit
@@ -23,13 +24,14 @@ import Toast_Swift
 
 extension archiveVC:MKMapViewDelegate{
     func getListData() {
-        WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter])
+        WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
     }
 }
 
-class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationControllerDelegate,SKPhotoBrowserDelegate {
     let controller = UIImagePickerController()
 
+    var Image_Zoom = String()
 
     var timer = Timer()
     let att = appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
@@ -302,6 +304,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
     }
     @IBAction func btnMapShow(_ sender: UIButton) {
         self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+        if(self.arrarchivedList[self.selectedIndex!.row].latitude != "00.0000" || self.arrarchivedList[self.selectedIndex!.row].longitude != "00.0000"){
         DispatchQueue.main.async {
             
             let lat = Double((self.arrarchivedList[sender.tag].latitude?.toDouble())!)
@@ -312,6 +315,10 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
             self.setPinUsingMKPlacemark(location: coordinates)
             self.Viewmap.isHidden = false
 
+        }
+        }
+        else{
+            showAlertWithTitleFromVC(vc: self, andMessage: "Location was disabled for this post")
         }
     }
     @IBAction func btnmapHideClick(_ sender: UIButton) {
@@ -397,9 +404,14 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
             self.lblVideoDuration.text = s
         }
         else{
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                let url = URL(string: data.image_path!)
+//                    if let data = try?  Data(contentsOf: url!){
+//                        self.selectedImage =  UIImage(data: data)
+//                    }
+//            }
             self.lblDetailType.text = (data.type?.uppercased())! + " (JPG)"
             self.VideoDuration.isHidden = true
-
         }
         if(data.user_id == USER.shared.id){
             self.lblDetailSharedBy.text = "YOU"
@@ -411,8 +423,14 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         let date = data.created?.uppercased()
         let city = data.city?.uppercased()
         let country = data.country?.uppercased()
+        
         self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
-        self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
+        if(data.longitude == "00.0000"){
+            self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
+        }
+        else{
+            self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
+        }
         APPDELEGATE.HIDE_CUSTOM_LOADER()
     }
     func fileAction(action:String){
@@ -474,10 +492,31 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         else{
 
         if(arrarchivedList[sender.tag].type == "image"){
-              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                  vc.imgforview = self.arrarchivedList[sender.tag].image_path!
-                  
-                  self.present(vc, animated: true, completion: nil)
+            let file = (self.arrarchivedList[sender.tag].image_path!)
+                if file.isEmpty == false
+                {
+                           self.Image_Zoom = file
+                           
+                           let browser = SKPhotoBrowser(photos: createWebPhotos())
+                           browser.initializePageIndex(0)
+                           browser.delegate = self
+                           present(browser, animated: true, completion: nil)
+                           
+                }
+                else
+                {
+                           
+                }
+            
+            
+//
+//
+//
+//
+//              let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+//                  vc.imgforview = self.arrarchivedList[sender.tag].image_path!
+//
+//                  self.present(vc, animated: true, completion: nil)
         }
         else{
             guard let url = URL(string:self.arrarchivedList[sender.tag].image_path!) else {
@@ -612,14 +651,37 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
 
        }
     @IBAction func btnShareVideoURL(_ sender: UIButton) {
-        //Set the default sharing message.
-        DispatchQueue.main.async {
+       
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.btnhideDetails(self)
             self.btnHandlerBlackBg(self)
         }
-        UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
-
-        self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
+        let mystring = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
+        if(self.arrarchivedList[self.selectedIndex!.row].type?.lowercased() == "image"){
+                self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+          //  self.ClicptoboardAndShare(myimg: self.selectedImage ?? UIImage(named: "AppIcon")!, myString: mystring, isimage: true)
+            
+            //make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
+            }
+            else{
+                self.ClicptoboardAndShare(myimg: UIImage(), myString: mystring, isimage: false)
+            }
+        
+        //self.ClicptoboardAndShare(myString: mystring,sender:sender)
+//        UIPasteboard.general.string = ServiceManager.shared.deeplink + self.arrarchivedList[self.selectedIndex!.row].image_path!
+//        let content = UIPasteboard.general.string
+//
+//        let textToShare = ""
+//
+//        if let myWebsite = NSURL(string: content!) {
+//               let objectsToShare: [Any] = [textToShare, myWebsite]
+//               let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+//
+//               activityVC.popoverPresentationController?.sourceView = sender
+//               self.present(activityVC, animated: true, completion: nil)
+//           }
+//        self.view.makeToast("URL Copied", duration: 1.5, position: .bottom)
     }
     func writeToFile(urlString: String) {
 
@@ -738,7 +800,9 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.navigationController?.view.addSubview(self.ViewdeleteConfirmation)
     }
     @IBAction func btnOptionMenuClick(_ sender: UIButton) {
+        
        self.selectedIndex = IndexPath(row: sender.tag, section: 0)
+       
        self.setDetails(data:self.arrarchivedList[sender.tag])
         self.ViewOptionMenu.frame = UIScreen.main.bounds
         if(self.arrarchivedList[selectedIndex!.row].user_id == USER.shared.id){
@@ -874,18 +938,12 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
             self.selectedView = "table"
             self.btnlist.tintColor = UIColor.clrSkyBlue
             self.btnGreed.tintColor = UIColor.themeGrayColor
-            UIView.animate(withDuration: 0.1,
-                       delay: 0.2,
-                       options: UIView.AnimationOptions.curveEaseIn,
-                       animations: { () -> Void in
-                        self.tblVideoList.alpha = 0.5
-                        self.collVideogrid.alpha = 0.5
-            }, completion: { (finished) -> Void in
-                self.tblVideoList.alpha = 1.0
-                self.collVideogrid.alpha = 1.0
-                self.tblVideoList.isHidden = false
-                self.collVideogrid.isHidden = true
-            })
+            self.tblVideoList.beginUpdates()
+            self.tblVideoList.endUpdates()
+            self.tblVideoList.isHidden = false
+            self.collVideogrid.isHidden = true
+            
+            
         }
         else{
             self.selectedView = "grid"
@@ -893,19 +951,10 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
             USER.shared.save()
             self.btnlist.tintColor = UIColor.themeGrayColor
             self.btnGreed.tintColor = UIColor.clrSkyBlue
-            UIView.animate(withDuration: 0.1,
-                                  delay: 0.2,
-                                  options: UIView.AnimationOptions.curveEaseIn,
-                                  animations: { () -> Void in
-                                   self.tblVideoList.alpha = 0.5
-                                   self.collVideogrid.alpha = 0.5
-                       }, completion: { (finished) -> Void in
-                       // ....
-                           self.tblVideoList.alpha = 1.0
-                           self.collVideogrid.alpha = 1.0
-                              self.tblVideoList.isHidden = true
-                           self.collVideogrid.isHidden = false
-                       })
+            self.tblVideoList.isHidden = true
+            self.collVideogrid.restore()
+            self.collVideogrid.isHidden = false
+            
         }
     }
     @IBAction func btnCheckBoxClickAction(_ sender: UIButton) {
@@ -992,6 +1041,12 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         
 
     }
+//    func imageTapped(_ sender: UITapGestureRecognizer)
+//    {
+//        let myCell = sender.view as! VideoDetailsTableViewCell
+//        myCell.videoThumb.image = UIImage(named: "imageTapped.jpg")
+//    }
+
     @IBAction func btnSelectOptions(_ sender: UIButton) {
         self.selectOptions(selected: sender)
     }
@@ -1376,10 +1431,16 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
                                 objarchivedList.number_of_files = "0"
                             }
 
-                            objarchivedList.thumb_image      = outcome[a]["thumb_image"] as? String ?? ""
+                            objarchivedList.thumb_image = outcome[a]["thumb_image"] as? String ?? ""
 
                             self.arrarchivedList.append(objarchivedList)
                         }
+                            DispatchQueue.main.async {
+                                   // Run UI Updates
+                            self.tblVideoList.reloadData()
+                            self.collVideogrid.reloadData()
+                               }
+                            
                         self.tblVideoList.reloadData()
                         self.collVideogrid.reloadData()
                     }
@@ -1613,20 +1674,22 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             cell.btnOption.addTarget(self, action: #selector(self.btnOptionMenuClick(_:)),for: .touchUpInside)
             cell.btnMap.addTarget(self, action: #selector(self.btnMapShow(_:)),for: .touchUpInside)
             //cell.lblTitle.text = self.arrarchivedList[indexPath.row].image_name
-            
             let firstPart = self.arrarchivedList[indexPath.row].image_name!.strstr(needle: ".", beforeNeedle: true)
                 cell.lblTitle.text = firstPart ??  self.arrarchivedList[indexPath.row].image_name!
               
-            if(self.isLocationEnable == true){
+            if(self.arrarchivedList[indexPath.row].latitude == "00.0000" || self.arrarchivedList[indexPath.row].longitude == "00.0000"){
                 cell.btnMap.isHidden = false
+                cell.btnMap.alpha = 0.3
             }
             else{
-                cell.btnMap.isHidden = true
+                cell.btnMap.alpha = 1.0
+
+                cell.btnMap.isHidden = false
             }
             
             cell.lblName.text = self.arrarchivedList[indexPath.row].uploaded_by
             cell.lblName.textColor = UIColor.AppSky()
-            if(arrarchivedList[indexPath.row].type == "image"){
+            if(arrarchivedList[indexPath.row].type?.lowercased() == "image"){
                 cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
                 cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].image_path!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                 cell.imgtype.image = #imageLiteral(resourceName: "ic_playimg")
@@ -1706,6 +1769,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
             cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
             cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
+            cell.layoutIfNeeded()
             return cell
         }
         else{
@@ -1723,18 +1787,24 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                 cell.lblTitle.text = self.arrarchivedList[indexPath.row].folder_name
                 cell.lblName.text = ""
                 cell.imgType.image = nil
+                cell.layoutIfNeeded()
                 return cell
             }
             else{
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
                 cell.videoThumb.image = nil
 
-                if(self.isLocationEnable == true){
-                    cell.btnMap.isHidden = false
-                }
-                else{
-                    cell.btnMap.isHidden = true
-                }
+            if(self.arrarchivedList[indexPath.row].latitude == "00.0000" || self.arrarchivedList[indexPath.row].longitude == "00.0000"){
+                   cell.btnMap.isHidden = false
+                   cell.btnMap.alpha = 0.3
+               }
+               else{
+                   cell.btnMap.alpha = 1.0
+
+                   cell.btnMap.isHidden = false
+               }
+
+                          
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row
                 cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)
@@ -1762,6 +1832,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
                     cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
                     
                 }
+                cell.layoutIfNeeded()
                 return cell
             }
         }
@@ -1971,8 +2042,18 @@ extension archiveVC {
                 self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
             print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
                  // arrOfChunks.append(FUrl)
+                    var lattitudeVal = ""
+                    var longtitudeVal = ""
+                    if(self.isLocationEnable == true){
+                        lattitudeVal = APPDELEGATE.latitude
+                        longtitudeVal = APPDELEGATE.logitude
+                    }
+                    else{
+                        lattitudeVal = "00.0000"
+                        longtitudeVal = "00.0000"
+                    }
                 let curruntChunk = FUrl
-                    let Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":self.Baseunique_id]
+                    let Parameter = ["lat":lattitudeVal,"long":longtitudeVal,"unique_id":self.Baseunique_id]
                 ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
                     (process)in
                     print("my:",process)
@@ -2252,7 +2333,18 @@ extension archiveVC {
             
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
                 picker.dismiss(animated: true) {
-                      self.WSUploadImageArchive(Parameters: ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"type":"image"], img: pickedImage)
+                    var lattitudeVal = ""
+                    var longtitudeVal = ""
+                    if(self.isLocationEnable == true){
+                        lattitudeVal = APPDELEGATE.latitude
+                        longtitudeVal = APPDELEGATE.logitude
+                    }
+                    else{
+                        lattitudeVal = "00.0000"
+                        longtitudeVal = "00.0000"
+                    }
+                                  
+                      self.WSUploadImageArchive(Parameters: ["lat":lattitudeVal,"long":longtitudeVal,"type":"image"], img: pickedImage)
                 }
             }
             imgPickerController.dismiss(animated: true,completion: {
@@ -2322,4 +2414,46 @@ extension archiveVC{
         }
         
     }
+}
+private extension archiveVC {
+    
+    func createWebPhotos() -> [SKPhotoProtocol]
+    {
+        let FinalimageArray = NSMutableArray()
+        FinalimageArray.add(self.Image_Zoom)
+        return (0..<FinalimageArray.count).map { (i: Int) -> SKPhotoProtocol in
+            
+            
+                
+                let photo = SKPhoto.photoWithImageURL(self.Image_Zoom)
+                photo.shouldCachePhotoURLImage = true
+                return photo
+                
+            
+            
+        }
+    }
+}
+class CustomImageCache: SKImageCacheable {
+    var cache: SDImageCache
+    
+    init() {
+        let cache = SDImageCache(namespace: "com.suzuki.custom.cache")
+        self.cache = cache
+    }
+    
+    func imageForKey(_ key: String) -> UIImage? {
+        guard let image = cache.imageFromDiskCache(forKey: key) else { return nil }
+        
+        return image
+    }
+    
+    func setImage(_ image: UIImage, forKey key: String) {
+        cache.store(image, forKey: key)
+    }
+    
+    func removeImageForKey(_ key: String) {}
+    
+    func removeAllImages() {}
+    
 }

@@ -15,19 +15,42 @@ import CoreLocation
 import Foundation
 import MobileCoreServices
 import IntentsUI
+import SKPhotoBrowser
+
 
 
 //import CameraEngine
 
-
-class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
+private extension recordVC {
     
+    func createWebPhotos() -> [SKPhotoProtocol]
+    {
+        let FinalimageArray = NSMutableArray()
+        FinalimageArray.add(self.Image_Zoom)
+        return (0..<FinalimageArray.count).map { (i: Int) -> SKPhotoProtocol in
+            
+            
+                
+                let photo = SKPhoto.photoWithImageURL(self.Image_Zoom)
+                photo.shouldCachePhotoURLImage = true
+                return photo
+                
+            
+            
+        }
+    }
+}
+
+class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelegate{
+
     @IBOutlet weak var constheight: NSLayoutConstraint!
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
     let myGroup = DispatchGroup()
     var thumbImageForVide:UIImage = #imageLiteral(resourceName: "placeholder")
     var unique_id = ""
+    var Image_Zoom = String()
+
 
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var timeView: UIView!
@@ -73,8 +96,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
         super.viewWillAppear(animated)
-        
         DispatchQueue.main.async {
             self.constheight.constant = 0
             self.setUserLocation()
@@ -82,7 +105,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
         if USER.shared.id == ""{
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
         }
-            
         else{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                          //voice_actionbyCommand
@@ -107,11 +129,29 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                             }
                         }
                         else{
-                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-                                vc.imgforview = USER.shared.videoUrl
+                                let file = (USER.shared.videoUrl)
+                                if file.isEmpty == false
+                                {
+                                    self.Image_Zoom = file
+                                           
+                                    let browser = SKPhotoBrowser(photos: self.createWebPhotos())
+                                           browser.initializePageIndex(0)
+                                           browser.delegate = self
+                                    self.present(browser, animated: true, completion: nil)
+                                           
+                                }
+                                else
+                                {
+                                           
+                                }
                                 USER.shared.videoUrl = ""
                                 USER.shared.save()
-                                self.present(vc, animated: true, completion:nil)
+
+//                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
+//                                vc.imgforview = USER.shared.videoUrl
+//                                USER.shared.videoUrl = ""
+//                                USER.shared.save()
+//                                self.present(vc, animated: true, completion:nil)
                         }
                     }
                 }
@@ -750,7 +790,20 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             
            // arrOfChunks.append(FUrl)
             let curruntChunk = FUrl
-             let Parameter = ["lat":APPDELEGATE.latitude,"long":APPDELEGATE.logitude,"unique_id":self.unique_id]
+            var lattitudeVal = ""
+            var longtitudeVal = ""
+            let isLocationEnable = USER.shared.location_service.StrTobool
+            if(isLocationEnable == true){
+                lattitudeVal = APPDELEGATE.latitude
+                longtitudeVal = APPDELEGATE.logitude
+            }
+            else{
+                lattitudeVal = "00.0000"
+                longtitudeVal = "00.0000"
+            }
+                        
+            
+             let Parameter = ["lat":lattitudeVal,"long":longtitudeVal,"unique_id":self.unique_id]
             ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
                 (process)in
                 print("my:",process)
@@ -767,10 +820,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
                                 self.unique_id = videoKey
                                 let strTimr = statTime + 5
                                 if(strTimr >= endTime){
-                                    print("video upload complete")
-                                        self.WSVideoUploadSuces1(Parameter: ["unique_video_id":videoKey])
-                                    appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-                                    NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
+                                print("video upload complete")
+                                self.WSVideoUploadSuces1(Parameter: ["unique_video_id":videoKey])
+                                appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
+                                NotificationCenter.default.post(name: NSNotification.Name("load"), object: nil)
                                 }
                                 else{
                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
@@ -869,11 +922,11 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate{
             let objLocalVid:localVideoModel = localVideoModel()
             objLocalVid.url = self.videoRecorded
             objLocalVid.thumbImage = AthumbImage
-            objLocalVid.name = "video\(Date().description).mp4"
+            objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
             appDelegate.ArrLocalVideoUploading.append(objLocalVid)
             self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true ,OPUrl: outputFileURL)
             }
-                    //    DispatchQueue.background(background: {
+            //    DispatchQueue.background(background: {
                             // do something in background
            
 //                        }, completion:{

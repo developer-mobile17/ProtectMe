@@ -94,7 +94,13 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     @IBAction func OpenMenuBtnAction(_ sender:UIButton){
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
-           present(menu, animated: true, completion: nil)
+        //menu.statusBarEndAlpha = 0
+        //SideMenuManager.default.leftMenuNavigationController = leftMenuNavigationController`
+
+        present(menu, animated: true, completion: {
+            menu.setWhiteStatusBar()
+              
+        })
        }
     @IBAction func plusButtonAction(_ sender:UIButton){
         let status = PHPhotoLibrary.authorizationStatus()

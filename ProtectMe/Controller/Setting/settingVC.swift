@@ -306,6 +306,7 @@ class settingVC: baseVC {
     }
 
     @IBAction func btnContactUsClick(_ sender: Any) {
+        print(USER.shared.support_email)
         self.launchEmail()
     }
     // MARK: - WEB Service
@@ -390,8 +391,10 @@ class settingVC: baseVC {
                                                                USER.shared.linked_account_counters = String(linked_account_counters)
                                        USER.shared.save()
                                        }
-                    self.WSGetAllData(Parameter: [:])
+                    //self.WSGetAllData(Parameter: [:])
                     if let outcome = dataResponce["data"] as? NSDictionary{
+                        USER.shared.setData(dict: outcome)
+                        self.setData()
                     }
                 }
                     else if(StatusCode == 307)
@@ -576,12 +579,14 @@ class settingVC: baseVC {
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
-                    self.WSGetAllData(Parameter: [:])
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
+//                    /self.WSGetAllData(Parameter: [:])
                       if let outcome = dataResponce["data"] as? NSDictionary{
+                        USER.shared.setData(dict: outcome)
+                        self.setData()
                       }
                   }
                     else if(StatusCode == 307)

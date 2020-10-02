@@ -402,7 +402,7 @@ public extension UIViewController {
                       let app = UIApplication.shared
                       let statusBarHeight: CGFloat = app.statusBarFrame.size.height
                       let statusbarView = UIView()
-                      statusbarView.backgroundColor = UIColor.white
+                      statusbarView.backgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
                       view.addSubview(statusbarView)
                       statusbarView.translatesAutoresizingMaskIntoConstraints = false
                       statusbarView.heightAnchor
@@ -415,7 +415,7 @@ public extension UIViewController {
                           .constraint(equalTo: view.centerXAnchor).isActive = true
                   } else {
                       let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView
-                      statusBar?.backgroundColor = UIColor.white
+                      statusBar?.backgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
                         
                   }
     }
@@ -683,7 +683,7 @@ extension UICollectionView {
         messageLabel.textColor = UIColor.darkGray
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
-        messageLabel.font = UIFont.appFont_SourceSansProMedium(Size: 12)
+        messageLabel.font = UIFont.appFont_SourceSansProMedium(Size: 18)
         messageLabel.sizeToFit()
 
         self.backgroundView = messageLabel;

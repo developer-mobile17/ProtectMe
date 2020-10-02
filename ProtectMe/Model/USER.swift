@@ -174,9 +174,9 @@ class USER: NSObject  ,NSCoding {
         if let value = aDecoder.decodeObject(forKey: "linked_account_counters") as? String{
             self.linked_account_counters = value
         }
-        if let value = aDecoder.decodeObject(forKey: "support_email") as? String{
-            self.support_email = value
-        }
+//        if let value = aDecoder.decodeObject(forKey: "support_email") as? String{
+//            self.support_email = value
+//        }
         if let value = aDecoder.decodeObject(forKey: "archived_counter") as? String{
             self.archived_counter = value
         }
@@ -308,7 +308,7 @@ class USER: NSObject  ,NSCoding {
         self.type                                       = ""
         self.vAuthToken                                 = ""
         self.voice_action                               = ""
-        self.support_email                              = ""
+        self.support_email                              = "support@goprotectme.com"
         self.linked_account_counters                    = ""
         self.archived_counter                           = ""
         self.isLogout                                   = false

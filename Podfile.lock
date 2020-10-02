@@ -383,6 +383,7 @@ PODS:
     - SDWebImage/Core (= 5.7.0)
   - SDWebImage/Core (5.7.0)
   - SideMenu (6.4.8)
+  - SKPhotoBrowser (6.1.0)
   - Toast-Swift (5.0.1)
   - VersaPlayer (3.0.2)
 
@@ -399,6 +400,7 @@ DEPENDENCIES:
   - NVActivityIndicatorView
   - SDWebImage (~> 5.0)
   - SideMenu
+  - SKPhotoBrowser
   - Toast-Swift (~> 5.0.1)
   - VersaPlayer
 
@@ -437,6 +439,7 @@ SPEC REPOS:
     - Protobuf
     - SDWebImage
     - SideMenu
+    - SKPhotoBrowser
     - Toast-Swift
     - VersaPlayer
 
@@ -474,9 +477,10 @@ SPEC CHECKSUMS:
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   SDWebImage: a99471f452bdfa0ca52ddf5b1adf2b61cab1d1eb
   SideMenu: 4a891be552d30bb6fa87ad404d62e485f8450c34
+  SKPhotoBrowser: 343de95d89dc7913763c5dda243cc6e606e4a168
   Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
   VersaPlayer: 0e9a0ea7da786729ffb377dbd17b34641a8265e4
 
-PODFILE CHECKSUM: c6e4447a6afa04e31b02f6f1145fe413b64291a1
+PODFILE CHECKSUM: 692026a6361017c60730c13680fc085568e0c9fc
 
 COCOAPODS: 1.9.3

@@ -31,6 +31,11 @@
                                     <constraint firstAttribute="width" secondItem="hv6-go-yMa" secondAttribute="height" multiplier="16:9" id="8nQ-hc-hYv"/>
                                     <constraint firstAttribute="height" constant="45" id="ohZ-i1-TLk"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="6"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12 April, 7:21 PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KgA-cX-WRV">
                                 <rect key="frame" x="100" y="12.5" width="109.5" height="20.5"/>

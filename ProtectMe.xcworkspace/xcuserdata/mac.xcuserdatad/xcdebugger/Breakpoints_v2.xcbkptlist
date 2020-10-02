@@ -14,8 +14,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1273"
-            endingLineNumber = "1273"
+            startingLineNumber = "1320"
+            endingLineNumber = "1320"
             landmarkName = "WSDeleteArchive(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "968"
-            endingLineNumber = "968"
+            startingLineNumber = "1030"
+            endingLineNumber = "1030"
             landmarkName = "getThumbnailFromUrl(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "971"
-            endingLineNumber = "971"
+            startingLineNumber = "1033"
+            endingLineNumber = "1033"
             landmarkName = "getThumbnailFromUrl(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "973"
-            endingLineNumber = "973"
+            startingLineNumber = "1035"
+            endingLineNumber = "1035"
             landmarkName = "getThumbnailFromUrl(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,10 +78,10 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "976"
-            endingLineNumber = "976"
-            landmarkName = "subFolderVC"
-            landmarkType = "3">
+            startingLineNumber = "1038"
+            endingLineNumber = "1038"
+            landmarkName = "getThumbnailFromUrl(_:_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -94,9 +94,9 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
-            landmarkName = "btnCreateFolderAction(_:)"
+            startingLineNumber = "522"
+            endingLineNumber = "522"
+            landmarkName = "viewWillAppear(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -126,8 +126,8 @@
             filePath = "ProtectMe/Controller/Search/searchVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "572"
-            endingLineNumber = "572"
+            startingLineNumber = "637"
+            endingLineNumber = "637"
             landmarkName = "btnChangeRename(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -158,8 +158,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1237"
-            endingLineNumber = "1237"
+            startingLineNumber = "1284"
+            endingLineNumber = "1284"
             landmarkName = "WSDeleteFolder(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -270,8 +270,8 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "301"
-            endingLineNumber = "301"
+            startingLineNumber = "352"
+            endingLineNumber = "352"
             landmarkName = "btnhideDownload(_:)"
             landmarkType = "7">
             <Locations>
@@ -286,24 +286,24 @@
                   urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Drive/subFolderVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "301"
-                  endingLineNumber = "301"
-                  offsetFromSymbolStart = "587">
+                  startingLineNumber = "352"
+                  endingLineNumber = "352"
+                  offsetFromSymbolStart = "334">
                </Location>
                <Location
-                  uuid = "43EAEEB8-51EB-4E36-859B-08C4FA08F783 - cd2be6f169b0fb75"
+                  uuid = "43EAEEB8-51EB-4E36-859B-08C4FA08F783 - a94121aab84d0fc7"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Bool) -&gt; () in ProtectMe.subFolderVC.btnhideDownload(Any) -&gt; ()"
+                  symbolName = "closure #1 () -&gt; () in ProtectMe.subFolderVC.btnhideDownload(Any) -&gt; ()"
                   moduleName = "ProtectMe"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Drive/subFolderVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "302"
-                  endingLineNumber = "302"
-                  offsetFromSymbolStart = "99">
+                  startingLineNumber = "352"
+                  endingLineNumber = "352"
+                  offsetFromSymbolStart = "52">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "476"
-            endingLineNumber = "476"
+            startingLineNumber = "496"
+            endingLineNumber = "496"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -334,8 +334,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "481"
-            endingLineNumber = "481"
+            startingLineNumber = "522"
+            endingLineNumber = "522"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -350,8 +350,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "524"
-            endingLineNumber = "524"
+            startingLineNumber = "565"
+            endingLineNumber = "565"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -366,9 +366,9 @@
             filePath = "ProtectMe/Controller/baseVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
-            landmarkName = "PhotoAlbum()"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "WSUploadImageFromBase(Parameters:img:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -382,10 +382,42 @@
             filePath = "ProtectMe/Controller/baseVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "261"
-            endingLineNumber = "261"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
             landmarkName = "PhotoAlbum()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EF7E71C9-3FA5-4E47-989E-957238B9FB73 - dee3e1de6e754f6a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 (Swift.Optional&lt;Swift.Array&lt;__C.PHAsset&gt;&gt;) -&gt; () in ProtectMe.baseVC.PhotoAlbum() -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/baseVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "263"
+                  endingLineNumber = "263"
+                  offsetFromSymbolStart = "42">
+               </Location>
+               <Location
+                  uuid = "EF7E71C9-3FA5-4E47-989E-957238B9FB73 - 299c543165a69262"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.UIImage) -&gt; () in closure #1 () -&gt; () in closure #1 (Swift.Optional&lt;Swift.Array&lt;__C.PHAsset&gt;&gt;) -&gt; () in ProtectMe.baseVC.PhotoAlbum() -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/baseVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "264"
+                  endingLineNumber = "264"
+                  offsetFromSymbolStart = "106">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -398,8 +430,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2150"
-            endingLineNumber = "2150"
+            startingLineNumber = "2219"
+            endingLineNumber = "2219"
             landmarkName = "WSUploadImageArchive(Parameters:img:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -424,15 +456,15 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "12ED6D9D-FE3A-4A82-8F87-34B2AD4AB94B"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1949"
-            endingLineNumber = "1949"
-            landmarkName = "WSVideoUploadSuces(Parameter:)"
+            startingLineNumber = "2008"
+            endingLineNumber = "2008"
+            landmarkName = "OpenMenuBtnAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -478,8 +510,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1128"
-            endingLineNumber = "1128"
+            startingLineNumber = "1175"
+            endingLineNumber = "1175"
             landmarkName = "WSCreateFolder(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -526,9 +558,9 @@
             filePath = "ProtectMe/Controller/Drive/subFolderVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
-            landmarkName = "btnMoveFolderAction()"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "btnShareVideoURL(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -718,8 +750,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "501"
-            endingLineNumber = "501"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
             landmarkName = "btnplayvideoClieck(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -734,10 +766,10 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1481"
-            endingLineNumber = "1481"
-            landmarkName = "downloadList(notification:)"
-            landmarkType = "7">
+            startingLineNumber = "1534"
+            endingLineNumber = "1534"
+            landmarkName = "archiveVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -958,10 +990,42 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2242"
-            endingLineNumber = "2242"
-            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
+            startingLineNumber = "2311"
+            endingLineNumber = "2311"
+            landmarkName = "videoUrlForUpload(nextURLAsset:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D8AFAC0F-1DC3-44D7-9AF7-46E67B137E2E - b7ff16af051109e2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in ProtectMe.archiveVC.videoUrlForUpload(nextURLAsset: Foundation.URL) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2312"
+                  endingLineNumber = "2312"
+                  offsetFromSymbolStart = "517">
+               </Location>
+               <Location
+                  uuid = "D8AFAC0F-1DC3-44D7-9AF7-46E67B137E2E - 304b3df4e0a3bde0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in ProtectMe.archiveVC.videoUrlForUpload(nextURLAsset: Foundation.URL) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2315"
+                  endingLineNumber = "2315"
+                  offsetFromSymbolStart = "4">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -974,9 +1038,9 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2245"
-            endingLineNumber = "2245"
-            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
+            startingLineNumber = "2314"
+            endingLineNumber = "2314"
+            landmarkName = "videoUrlForUpload(nextURLAsset:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1054,8 +1118,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1366"
-            endingLineNumber = "1366"
+            startingLineNumber = "1413"
+            endingLineNumber = "1413"
             landmarkName = "WSArchiveList(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1102,8 +1166,8 @@
             filePath = "ProtectMe/Controller/Setting/settingVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "330"
-            endingLineNumber = "330"
+            startingLineNumber = "331"
+            endingLineNumber = "331"
             landmarkName = "WSGetUserProfile(Parameter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1118,8 +1182,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "377"
-            endingLineNumber = "377"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
             landmarkName = "setFolderDetails(data:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1138,6 +1202,38 @@
             endingLineNumber = "23"
             landmarkName = "viewWillAppear(_:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CE3C1036-D46B-4549-AC66-DC7343CCEE91"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1651"
+            endingLineNumber = "1651"
+            landmarkName = "collectionView(_:cellForItemAt:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "68829567-8439-4B73-879F-8D1ED03F9D1A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Podfile"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

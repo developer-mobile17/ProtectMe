@@ -22,6 +22,8 @@ pod 'Firebase/Firestore'
 pod 'CameraRoll'
 pod 'Toast-Swift', '~> 5.0.1'
 pod 'VersaPlayer'
+pod 'SKPhotoBrowser'
+
 
 #pod 'MKMagneticProgress'
 # Pods for ProtectMe

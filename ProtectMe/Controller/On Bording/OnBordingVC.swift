@@ -16,7 +16,7 @@ class OnBordingVC: UIViewController {
 
 @IBOutlet weak var pageControl: UIPageControl!
 
-    let str = ["Record and send videos to your cloud and designated recipients safely.","Videos automatically save and send even if they are interupted. \n Feel more protected and assured in any situation"]
+    let str = ["Record and send videos to your cloud and designated recipients safely.","Videos automatically save and send even if they are interrupted. \n Feel more protected and assured in any situation"]
     let img = [#imageLiteral(resourceName: "setp1"),#imageLiteral(resourceName: "step2")]
     
     
