@@ -20,16 +20,14 @@ class setProfileVC: UIViewController {
                 txtEmail.validationType = .email
                 txtEmail.config.textFieldKeyboardType = .email
              }
-         }
+    }
     @IBOutlet weak var txtName:AIBaseTextField!{
-               didSet{
+        didSet{
                   txtName.leftIcon = #imageLiteral(resourceName: "ic_name")
-                  
-               }
-           }
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {

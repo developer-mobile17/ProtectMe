@@ -22,7 +22,19 @@ import MobileCoreServices
 import Toast_Swift
 
 
-extension archiveVC:MKMapViewDelegate{
+extension archiveVC:MKMapViewDelegate,refreshUploadList{
+    func refreshProcess() {
+        self.reloadcell()
+
+    }
+    
+    func refreshProcess(_ text: String) {
+          self.reloadcell()
+    }
+    
+//
+  
+    
     func getListData() {
         WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
     }
@@ -137,6 +149,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         super.viewDidLoad()
         self.imgPickerController.delegate = self
         controller.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshListmylist(notification:)), name: NSNotification.Name(rawValue: "refreshList"), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(loadList(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(downloadList(notification:)), name: NSNotification.Name(rawValue: "download"), object: nil)
@@ -148,7 +161,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.tblVideoList.dataSource = self
         self.collVideogrid.delegate = self
         self.collVideogrid.dataSource = self
-        self.scheduledTimerWithTimeInterval()
+        //self.scheduledTimerWithTimeInterval()
         self.btnHandlerBlackBg(self)
         //self.btnChangeTableView(self.btnGreed)
         //self.btnSelectOptions(self.btnRecent)
@@ -381,7 +394,6 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         self.lblDetailStorageUsed.text = data.storage_used?.uppercased()
         let date = data.created?.uppercased()
         let newdate = date?.toDate(withFormat: "yyyy-MM-dd HH:mm:ss")?.toLocalTime()
-        print(self.UTCToLocalAM(date: data.created!))
         self.lblDateCreatedandLocation.text = "DATE CREATED"
         self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!))
     }
@@ -425,7 +437,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         let country = data.country?.uppercased()
         
         self.lblDateCreatedandLocation.text = "DATE CREATED & LOCATION"
-        if(data.longitude == "00.0000"){
+        if(data.longitude != "00.0000"){
             self.lblDetailDateCreatedandLocation.text = (self.UTCToLocalAM(date: data.created!)) + " - " + city! + ", " + country!
         }
         else{
@@ -1541,6 +1553,9 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
         self.btnHandlerBlackBg(self)
         self.view.makeToast("Download Completed", duration: 1.5, position: .bottom)
     }
+    @objc func refreshListmylist(notification: NSNotification) {
+        self.reloadcell()
+    }
     @objc func loadList(notification: NSNotification) {
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
        }
@@ -1548,15 +1563,15 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
              self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
          }
 
-       func stopTimer() {
-           timer.invalidate()
-           //timerDispatchSourceTimer?.suspend() // if you want to suspend timer
-        //   timerDispatchSourceTimer?.cancel()
-       }
-       func scheduledTimerWithTimeInterval(){
-           // Scheduling timer to Call the function "updateCounting" with the interval of 1 seconds
-           timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
-       }
+//       func stopTimer() {
+//           timer.invalidate()
+//           //timerDispatchSourceTimer?.suspend() // if you want to suspend timer
+//        //   timerDispatchSourceTimer?.cancel()
+//       }
+//       func scheduledTimerWithTimeInterval(){
+//           // Scheduling timer to Call the function "updateCounting" with the interval of 1 seconds
+//           timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
+//       }
        @objc func reloadcell(){
            self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
            self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
@@ -1648,7 +1663,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
             cell.lblName.text = ""
             cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
 //            appDelegate.ArrLocalVideoUploading.filter({$0.isUploaded == false})
-            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
+            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress/100)
             cell.btnPlayvideo.tag = indexPath.row
             cell.btnPlayvideo.addTarget(self, action: #selector(self.btnplayofflineVideo(_:)),for: .touchUpInside)
             return cell
@@ -1768,7 +1783,7 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             cell.videoThumb.image = nil
             cell.lblTitle.text = appDelegate.ArrLocalVideoUploading[indexPath.row].name ?? ""
             cell.videoThumb.image = appDelegate.ArrLocalVideoUploading[indexPath.row].thumbImage
-            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress)
+            cell.progressBar.progress = Float(appDelegate.ArrLocalVideoUploading[indexPath.row].progress/100)
             cell.layoutIfNeeded()
             return cell
         }
@@ -1776,6 +1791,8 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
             if(self.isFolderSelected == true){
                 let cell:VideoDetailsTableViewCell = tableView.dequeueReusableCell(withIdentifier: "VideoDetailsTableViewCell", for: indexPath) as! VideoDetailsTableViewCell
                 cell.videoThumb.contentMode = .scaleAspectFit
+                cell.videoThumb.image = nil
+
                 cell.videoThumb.image = #imageLiteral(resourceName: "ic_folder")
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row
@@ -2058,7 +2075,19 @@ extension archiveVC {
                     (process)in
                     print("my:",process)
                     //set progress
-                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
+                    if(process == 1.0){
+                                       let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks
+                                      
+                                       let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
+                                       let totalchunk = totalLenghtInSec!/5
+                                       let per = (appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks * 100)/Int(totalchunk)
+                                       print("per:",per)
+                                       let remainingChunk = totalchunk - 1
+                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded! + 1
+                                       NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                                    }
+                    //appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
                     
                     //appDelegate.objLocalVid.progress = process!
                 }, Success: { (DataResponce, Status, Message) in

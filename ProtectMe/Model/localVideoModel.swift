@@ -15,6 +15,7 @@ class localVideoModel: NSObject {
     var name            :String?
     var thumbImage      :UIImage?
     var url             :URL?
-    var numberofchunks  :Int?
+    var numberofchunks  :Int = 0
+    var totalLenghtInSec :Double = 0.0
     var isUploaded      :Bool = false
 }

@@ -20,7 +20,9 @@ import SKPhotoBrowser
 
 
 //import CameraEngine
-
+protocol refreshUploadList:class {
+    func refreshProcess()
+}
 private extension recordVC {
     
     func createWebPhotos() -> [SKPhotoProtocol]
@@ -42,6 +44,7 @@ private extension recordVC {
 }
 
 class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelegate{
+    weak var delegaterefreshUploadList: refreshUploadList?
 
     @IBOutlet weak var constheight: NSLayoutConstraint!
     @IBOutlet weak var loader: UIActivityIndicatorView!
@@ -159,9 +162,32 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
 
     }
     }
+    @objc func applicationDidBecomeActive(notification: NSNotification) {
+        print("ACTIVE")
+        if self.setupSession() {
+            self.setupPreview()
+            self.startSession()
+        }
+        //askForCameraPermissions()
+        self.timeView.isHidden = true
+    
+        self.viewWillAppear(true)
+    }
+    @objc func applicationDidEnterBackground(notification: NSNotification) {
+        print("BACKGROUND")
+        DispatchQueue.main.async {
+            if self.movieOutput.isRecording == true{
+                self.stopRecording()
+            }
+        }
+        
+
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.loader.stopAnimating()
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
                 DispatchQueue.main.async {
             if self.setupSession() {
                 self.setupPreview()
@@ -808,7 +834,20 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
                 (process)in
                 print("my:",process)
                 //first?.added = value
-                appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
+                if(process == 1.0){
+                    let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks
+                   
+                    let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
+                    let totalchunk = totalLenghtInSec!/5
+                    let per = (appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks * 100)/Int(totalchunk)
+                    print("per:",per)
+                    let remainingChunk = totalchunk - 1
+                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded! + 1
+                    NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                 }
+                
+                
                 //appDelegate.objLocalVid.progress = process!
             }, Success: { (DataResponce, Status, Message) in
                 if(Status == true){
@@ -920,6 +959,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
             self.getThumbnailImageFromVideoUrl(url: videoRecorded!) { (AthumbImage) in
                 //self.thumbImageForVide = AthumImage
             let objLocalVid:localVideoModel = localVideoModel()
+                objLocalVid.totalLenghtInSec = durationTime
             objLocalVid.url = self.videoRecorded
             objLocalVid.thumbImage = AthumbImage
             objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"

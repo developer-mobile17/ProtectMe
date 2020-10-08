@@ -302,13 +302,25 @@ class LinkedAccountVC: baseVC {
                 let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
                 let StatusCode = DataResponce?["status"] as? Int
                 if (StatusCode == 200){
-                    if let usernm = self.arrLinkedAccList[self.selectedUnlinkINdex].name as? String{
-                        let a = usernm + " will be unlinked within the next 24 hours"
-                        showAlertWithTitleFromVC(vc: self, andMessage: a)
-                        self.ViewOptionMenu.removeFromSuperview()
-                        self.selectOptions(selected: self.btnSelected)
-                        //showAlert(title: Constant.APP_NAME as NSString, message: usernm + "will be unlinked within the next 24 hours")
+                    if(USER.shared.id == self.arrLinkedAccList[self.selectedUnlinkINdex].user_id){
+                        if let usernm = self.arrLinkedAccList[self.selectedUnlinkINdex].name as? String{
+                            let a = usernm + " will be unlinked within the next 24 hours"
+                            showAlertWithTitleFromVC(vc: self, andMessage: a)
+                            self.ViewOptionMenu.removeFromSuperview()
+                            self.selectOptions(selected: self.btnSelected)
+                            //showAlert(title: Constant.APP_NAME as NSString, message: usernm + "will be unlinked within the next 24 hours")
+                        }
                     }
+                    else{
+                        if let usernm = self.arrLinkedAccList[self.selectedUnlinkINdex].inserted_by_name as? String{
+                            let a = usernm + " will be unlinked within the next 24 hours"
+                            showAlertWithTitleFromVC(vc: self, andMessage: a)
+                            self.ViewOptionMenu.removeFromSuperview()
+                            self.selectOptions(selected: self.btnSelected)
+                            //showAlert(title: Constant.APP_NAME as NSString, message: usernm + "will be unlinked within the next 24 hours")
+                        }
+                    }
+                    
                     if let archived_counter = dataResponce["archived_counter"] as? Int{
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
@@ -417,10 +429,10 @@ class LinkedAccountVC: baseVC {
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                                               USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
                     if let outcome = dataResponce["data"] as? [NSDictionary]{
                          self.arrLinkedAccList.removeAll()
                         for a : Int in (0..<(outcome.count))

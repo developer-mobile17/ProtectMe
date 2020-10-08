@@ -83,6 +83,7 @@ var loggedInUserData = USER()
         GIDSignIn.sharedInstance().clientID = "189381868477-65o7f6e55v9shdb27qv1rlbhve172u9f.apps.googleusercontent.com"
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
+        
       ApplicationDelegate.shared.application(
                         application,
                         didFinishLaunchingWithOptions: launchOptions
@@ -332,12 +333,13 @@ var loggedInUserData = USER()
     func SetNavigationBar(){
            UINavigationBar.appearance().barTintColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
         //   UITabBar.appearance().unselectedItemTintColor = .init(red: 70.0/255, green: 165.0/255, blue: 239.0/255, alpha: 1.0)
-           UITabBar.appearance().unselectedItemTintColor = UIColor.white
+        UITabBar.appearance().unselectedItemTintColor = UIColor.white
         UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.font: UIFont(name: "SourceSansPro-Regular", size: 18)!,NSAttributedString.Key.foregroundColor : UIColor.white]
 
        // UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white,NSAttributedString.Key.foregroundColor : UIColor.white]
 
          UINavigationBar.appearance().tintColor = UIColor.white
+        UINavigationBar.appearance().barStyle = .blackOpaque
 
            // To change colour of tappable items.
          //  UINavigationBar.appearance().tintColor = .white
