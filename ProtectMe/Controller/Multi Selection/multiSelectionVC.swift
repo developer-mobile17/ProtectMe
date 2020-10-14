@@ -223,13 +223,14 @@ extension multiSelectionVC:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:multiselectionTableViewCell = tableView.dequeueReusableCell(withIdentifier: "multiselectionTableViewCell", for: indexPath) as! multiselectionTableViewCell
         cell.selectionStyle = .none
+        cell.videoThumb.contentMode = .scaleAspectFit
+
         cell.lblName.text = arrarchivedList[indexPath.row].image_name
         cell.lblOwnerName.text = arrarchivedList[indexPath.row].uploaded_by
         cell.btncheckbox.tag = indexPath.row
         cell.btncheckbox.addTarget(self, action: #selector(self.btnCheckBoxAction(_:)), for: .touchUpInside)
         cell.videoThumb.sd_imageIndicator = SDWebImageActivityIndicator.gray
         cell.videoThumb.sd_setImage(with: URL(string: arrarchivedList[indexPath.row].thumb_image!), placeholderImage: #imageLiteral(resourceName: "placeholder"),completed: nil)
-        cell.videoThumb.contentMode = .scaleAspectFill
 
         if(self.arrarchivedList[indexPath.row].isChecked == true)
         {

@@ -99,12 +99,10 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
+       // UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
         super.viewWillAppear(animated)
-        DispatchQueue.main.async {
             self.constheight.constant = 0
             self.setUserLocation()
-        }
         if USER.shared.id == ""{
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
         }
@@ -112,10 +110,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                          //voice_actionbyCommand
                 if (USER.shared.voice_actionbyCommand.boolValue == true && USER.shared.voice_action.boolValue == true){
-                      print(USER.shared.voice_actionbyCommand)
                       USER.shared.voice_actionbyCommand = "0"
                       USER.shared.save()
-                         // showAlertWithTitleFromVC(vc: self, andMessage: "open app")
                       self.recordVideo(self.btnrecordcam)
                 }
                 else{
@@ -149,12 +145,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
                                 }
                                 USER.shared.videoUrl = ""
                                 USER.shared.save()
-
-//                            let vc = storyBoards.Main.instantiateViewController(withIdentifier: "imgviewwerVC") as! imgviewwerVC
-//                                vc.imgforview = USER.shared.videoUrl
-//                                USER.shared.videoUrl = ""
-//                                USER.shared.save()
-//                                self.present(vc, animated: true, completion:nil)
                         }
                     }
                 }
@@ -174,12 +164,11 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
         self.viewWillAppear(true)
     }
     @objc func applicationDidEnterBackground(notification: NSNotification) {
-        print("BACKGROUND")
-        DispatchQueue.main.async {
             if self.movieOutput.isRecording == true{
+                
                 self.stopRecording()
             }
-        }
+
         
 
     }
@@ -303,7 +292,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
 
          // Setup Microphone
          let microphone = AVCaptureDevice.default(for: AVMediaType.audio)!
-
          do {
              let micInput = try AVCaptureDeviceInput(device: microphone)
              if captureSession.canAddInput(micInput) {
@@ -414,6 +402,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
         return nil
     }
     func stopRecording() {
+        print("video stopped")
         self.constheight.constant = 0
         if movieOutput.isRecording == true {
             self.toggleTorch(on: false)
@@ -835,15 +824,24 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
                 print("my:",process)
                 //first?.added = value
                 if(process == 1.0){
-                    let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks
+                    let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks + 1
                    
                     let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
                     let totalchunk = totalLenghtInSec!/5
-                    let per = (appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks * 100)/Int(totalchunk)
-                    print("per:",per)
-                    let remainingChunk = totalchunk - 1
-                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
-                    appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded! + 1
+                    if(totalchunk > 1){
+                        let per = (uploded * 100)/Int(totalchunk)
+                                          print("per:",per)
+                        let remainingChunk = totalchunk - 1
+                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
+                    }
+                    else{
+                        
+                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(process!)
+                    
+                    }
+                  
+                    NotificationCenter.default.removeObserver(self)
                     NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
                  }
                 
@@ -949,14 +947,16 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
              print("Error recording movie: \(error!.localizedDescription)")
 
          } else {
+            DispatchQueue.background(background: {
+
             //self.thumbImageForVide =  generateThumbnail(path: self.outputURL)!
-             videoRecorded = outputURL! as URL
+                self.videoRecorded = self.outputURL! as URL
             UISaveVideoAtPathToSavedPhotosAlbum(outputFileURL.path, nil, nil, nil)
-            print("recorded video url :",videoRecorded!)
-            let asset = AVAsset(url: videoRecorded!)
+                print("recorded video url :",self.videoRecorded!)
+                let asset = AVAsset(url: self.videoRecorded!)
             let duration = asset.duration
             let durationTime = CMTimeGetSeconds(duration)
-            self.getThumbnailImageFromVideoUrl(url: videoRecorded!) { (AthumbImage) in
+                self.getThumbnailImageFromVideoUrl(url: self.videoRecorded!) { (AthumbImage) in
                 //self.thumbImageForVide = AthumImage
             let objLocalVid:localVideoModel = localVideoModel()
                 objLocalVid.totalLenghtInSec = durationTime
@@ -964,38 +964,18 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
             objLocalVid.thumbImage = AthumbImage
             objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
             appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+            NotificationCenter.default.removeObserver(self)
+            NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
             self.WSUploadVideoR(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true ,OPUrl: outputFileURL)
             }
-            //    DispatchQueue.background(background: {
-                            // do something in background
-           
-//                        }, completion:{
-//                            // when background job finished, do something in main thread
-//                        })
+            }, completion:{
+                NotificationCenter.default.removeObserver(self)
+                    NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                    // self.delegate?.getListData()
+                    // when background job finished, do something in main thread
+            })
+            
 
-//            self.passVideoFortrim(videoUrl: outputFileURL)
-         //   self.cropVideo(sourceURL: outputURL, startTime: StartTime, endTime: EndTime) { (FUrl) in
-                                  //print("url :",FUrl, "Start time : ",StartTime, "End time : ",EndTime)
-                                                // UISaveVideoAtPathToSavedPhotosAlbum(FUrl.path, nil, nil, nil)
-            //}
-//            DispatchQueue.background(background: {
-//                // do something in background
-//             //   self.trimVideoAndUpload(filepath: outputFileURL)
-//               // self.fileintoChunk(filepath: outputFileURL)
-//               // self.getFileDataInChunks()
-//                            
-//            }, completion:{
-//                // when background job finished, do something in main thread
-//            })
-            print(videoRecorded!.lastPathComponent)
-            print(videoRecorded!.pathExtension)
-            print("mimeType",videoRecorded?.mimeType())
-            //  self.WSUploadImage(Parameters: ["lat":self.latitude.description,"long":self.longitude.description,"type":"image"], img: videoRecorded)
-            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum((videoRecorded?.path)!))
-            {
-                          // UISaveVideoAtPathToSavedPhotosAlbum((videoRecorded?.path)!, self, #selector(self.video(videoPath:didFinishSavingWithError:contextInfo:)), nil)
-                       }
-        //     performSegue(withIdentifier: "showVideo", sender: videoRecorded)
 
          }
 

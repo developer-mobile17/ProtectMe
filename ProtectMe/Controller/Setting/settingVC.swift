@@ -650,17 +650,19 @@ class settingVC: baseVC {
 
 extension settingVC {
     func addSiriButton(to view: UIView) {
-       if #available(iOS 12.0, *) {
-           let siriButton = INUIAddVoiceShortcutButton(style: .whiteOutline)
-               siriButton.shortcut = INShortcut(intent: intent )
-               siriButton.delegate = self
-               siriButton.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 12.0, *) {
+            let siriButton = INUIAddVoiceShortcutButton(style: .whiteOutline)
+            
+            siriButton.shortcut = INShortcut(intent: intent )
+            siriButton.delegate = self
+            siriButton.translatesAutoresizingMaskIntoConstraints = false
             //siriButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-               view.addSubview(siriButton)
-        view.leftAnchor.constraint(equalTo: siriButton.leftAnchor ).isActive = true
-
-               //view.centerXAnchor.constraint(equalTo: siriButton.centerXAnchor ).isActive = true
-               view.centerYAnchor.constraint(equalTo: siriButton.centerYAnchor).isActive = true
+            view.addSubview(siriButton)
+            
+            
+            view.leftAnchor.constraint(equalTo: siriButton.leftAnchor ).isActive = true
+            //view.centerXAnchor.constraint(equalTo: siriButton.centerXAnchor ).isActive = true
+            view.centerYAnchor.constraint(equalTo: siriButton.centerYAnchor).isActive = true
            }
        
        }

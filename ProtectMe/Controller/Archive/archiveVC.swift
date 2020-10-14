@@ -1368,6 +1368,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
         }
     }
     func WSArchiveList(Parameter:[String:String]) -> Void {
+        
         ServiceManager.shared.callAPIPost(WithType: .archived_list, isAuth: true, WithParams: Parameter, Success: { (DataResponce, Status, Message) in
             if(Status == true){
                 
@@ -1453,8 +1454,8 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
                             self.collVideogrid.reloadData()
                                }
                             
-                        self.tblVideoList.reloadData()
-                        self.collVideogrid.reloadData()
+                        //self.tblVideoList.reloadData()
+                        //self.collVideogrid.reloadData()
                     }
                 }
                     else if(StatusCode == 307)
@@ -1560,6 +1561,7 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
         self.selectOptions(selected: self.selectedButton ?? self.btnRecent)
        }
     @objc func RefreshList(notification: NSNotification) {
+            
              self.WSArchiveList(Parameter: ["type":self.selectedType,"filter":selectedFilter,"semi_filter":self.semiFilter.description])
          }
 
@@ -1573,8 +1575,17 @@ extension archiveVC:UITableViewDelegate,UICollectionViewDataSource,UICollectionV
 //           timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.reloadcell), userInfo: nil, repeats: true)
 //       }
        @objc func reloadcell(){
+        DispatchQueue.main.async{
            self.collVideogrid.reloadSections(NSIndexSet(index: 0) as IndexSet)
-           self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
+            self.collVideogrid.performBatchUpdates(nil, completion: {
+                (result) in
+                // ready
+            })
+            self.tblVideoList.beginUpdates()
+            self.tblVideoList.reloadSections(NSIndexSet(index: 0) as IndexSet, with: .none)
+            self.tblVideoList.endUpdates()
+
+        }
        }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -2076,16 +2087,32 @@ extension archiveVC {
                     print("my:",process)
                     //set progress
                     if(process == 1.0){
-                                       let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks
+                        let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks + 1
                                       
                                        let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
                                        let totalchunk = totalLenghtInSec!/5
-                                       let per = (appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks * 100)/Int(totalchunk)
-                                       print("per:",per)
-                                       let remainingChunk = totalchunk - 1
-                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
-                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded! + 1
-                                       NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+//                                       let per = (uploded * 100)/Int(totalchunk)
+//                                       print("per:",per)
+//                                       let remainingChunk = totalchunk - 1
+//                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+//                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
+                        
+                        if(totalchunk > 1){
+                                     let per = (uploded * 100)/Int(totalchunk)
+                                                       print("per:",per)
+                                     let remainingChunk = totalchunk - 1
+                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
+                                 }
+                                 else{
+                                     
+                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(process!)
+                                 
+                                 }
+                        NotificationCenter.default.removeObserver(self)
+                        NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                        
+                        
                                     }
                     //appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
                     
@@ -2328,14 +2355,17 @@ extension archiveVC {
         self.getThumbnailImageFromVideoUrl(url: self.videoURL as! URL) { (AthumbImage) in
                                                       //self.thumbImageForVide = AthumImage
         let objLocalVid:localVideoModel = localVideoModel()
+        objLocalVid.totalLenghtInSec = durationTime
         objLocalVid.url = self.videoRecorded
         objLocalVid.thumbImage = AthumbImage
-         objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
+        objLocalVid.name = "video\(Date().getyyyMMddStr().description).mp4"
         appDelegate.ArrLocalVideoUploading.append(objLocalVid)
+        self.reloadcell()
         self.WSUploadPhoneVideo(statTime: 0.0, endTime:Double(durationTime), thumimg: AthumbImage!, sendThum: true, OPUrl: self.videoURL! as URL )
                 }
                 
             }, completion:{
+                self.reloadcell()
                                        // self.delegate?.getListData()
                                          // when background job finished, do something in main thread
                                      })
