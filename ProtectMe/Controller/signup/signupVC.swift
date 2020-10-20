@@ -103,19 +103,19 @@ class signupVC: UIViewController {
                self.navigationController?.pushViewController(vc, animated: true)
         
     }
-    func getLocation(){
-        let locationManager = LocationManager.sharedInstance
-           locationManager.showVerboseMessage = false
-           locationManager.autoUpdate = true
-         //   locationManager.startUpdatingLocation()
-           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
-            //   print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
-               //print(verboseMessage)
-            locationManager.autoUpdate = false
-           }
-    }
+//    func getLocation(){
+//        let locationManager = LocationManager.sharedInstance
+//           locationManager.showVerboseMessage = false
+//           locationManager.autoUpdate = true
+//         //   locationManager.startUpdatingLocation()
+//           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//               self.latitude = latitude
+//               self.longitude = longitude
+//            //   print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
+//               //print(verboseMessage)
+//            locationManager.autoUpdate = false
+//           }
+//    }
 override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     //self.getLocation()

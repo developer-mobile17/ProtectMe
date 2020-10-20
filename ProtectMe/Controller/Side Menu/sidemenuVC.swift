@@ -42,34 +42,34 @@ class sidemenuVC: baseVC {
 
         // Do any additional setup after loading the view.
     }
-    func setUserLiveLocation(){
-        locationManager.startUpdatingLocation()
-        locationManager.showVerboseMessage = false
-        locationManager.autoUpdate = true
-                //   locationManager.startUpdatingLocation()
-                  locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-                      self.latitude = latitude
-                      self.longitude = longitude
-                  //  self.getAddressFromLatLon(pdblLatitude: "\(latitude)", withLongitude: longitude.description)
-                    self.locationManager.autoUpdate = false
-                   self.locationManager.stopUpdatingLocation()
-                  }
-        
-//        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
-//            var city1 = ""
-//            if let city = dict?["locality"] as? String{
-//                    city1 = city
+//    func setUserLiveLocation(){
+//        locationManager.startUpdatingLocation()
+//        locationManager.showVerboseMessage = false
+//        locationManager.autoUpdate = true
+//                //   locationManager.startUpdatingLocation()
+//                  locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//                      self.latitude = latitude
+//                      self.longitude = longitude
+//                  //  self.getAddressFromLatLon(pdblLatitude: "\(latitude)", withLongitude: longitude.description)
+//                    self.locationManager.autoUpdate = false
+//                   self.locationManager.stopUpdatingLocation()
+//                  }
+//
+////        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: self.latitude, longitude: self.longitude) { (dict, placemark, str) in
+////            var city1 = ""
+////            if let city = dict?["locality"] as? String{
+////                    city1 = city
+////            }
+////            var country1 = ""
+////            if let country = dict?["country"] as? String{
+////                country1 = country
+////            }
+////                          //  USER.shared.save()
+////            self.lblStateCountry.text = "\(city1),\(country1)"
+////            }
+//            self.locationManager.autoUpdate = false
+//            self.locationManager.stopUpdatingLocation()
 //            }
-//            var country1 = ""
-//            if let country = dict?["country"] as? String{
-//                country1 = country
-//            }
-//                          //  USER.shared.save()
-//            self.lblStateCountry.text = "\(city1),\(country1)"
-//            }
-            self.locationManager.autoUpdate = false
-            self.locationManager.stopUpdatingLocation()
-            }
     override func viewWillAppear(_ animated: Bool) {
         //UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
 
@@ -81,7 +81,7 @@ class sidemenuVC: baseVC {
             switch CLLocationManager.authorizationStatus() {
                 case .notDetermined, .restricted, .denied:
                     print("No access")
-                    self.locationManager.startUpdatingLocation()
+                    //self.locationManager.startUpdatingLocation()
                 //self.lblStateCountry.text = "\(USER.shared.city),\(USER.shared.country)"
                 case .authorizedAlways, .authorizedWhenInUse:
                     //self.setUserLiveLocation()

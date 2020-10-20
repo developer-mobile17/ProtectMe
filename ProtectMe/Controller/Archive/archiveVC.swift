@@ -117,7 +117,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
     var videoURL : NSURL?
     var latitude:Double = 0.0
     var longitude:Double = 0.0
-    let locationManager = LocationManager.sharedInstance
+  //  let locationManager = LocationManager.sharedInstance
     let accetm = AssetManager.sharedInstance
     var selectedButton:UIButton?
     var selectedType = "recent"
@@ -925,7 +925,7 @@ class archiveVC:downloadfolder,UIImagePickerControllerDelegate, UINavigationCont
                     }
     }
     override func viewWillAppear(_ animated: Bool) {
-        self.getLocation()
+        //self.getLocation()
         self.btnHandlerBlackBg(self)
         //self.btnSelectOptions(self.btnRecent)
         self.setInitialView()
@@ -2011,28 +2011,28 @@ extension archiveVC {
 
     }
     
-      func getLocation(){
-               locationManager.showVerboseMessage = false
-               locationManager.autoUpdate = true
-                locationManager.startUpdatingLocation()
-            DispatchQueue.main.async {
-                self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-                      if let city = dict?["locality"] as? String{
-                          USER.shared.city = city
-                      }
-                      if let country = dict?["country"] as? String{
-                          USER.shared.country = country
-                      }
-                      USER.shared.save()
-                      }
-
-            }
-               locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-                   self.latitude = latitude
-                   self.longitude = longitude
-                self.locationManager.autoUpdate = false
-               }
-        }
+//      func getLocation(){
+//               locationManager.showVerboseMessage = false
+//               locationManager.autoUpdate = true
+//                locationManager.startUpdatingLocation()
+//            DispatchQueue.main.async {
+//                self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+//                      if let city = dict?["locality"] as? String{
+//                          USER.shared.city = city
+//                      }
+//                      if let country = dict?["country"] as? String{
+//                          USER.shared.country = country
+//                      }
+//                      USER.shared.save()
+//                      }
+//
+//            }
+//               locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//                   self.latitude = latitude
+//                   self.longitude = longitude
+//                self.locationManager.autoUpdate = false
+//               }
+//        }
         @IBAction func OpenMenuBtnAction(_ sender:UIButton){
                let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
                present(menu, animated: true, completion: nil)

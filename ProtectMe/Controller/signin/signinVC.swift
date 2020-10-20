@@ -49,21 +49,21 @@ class signinVC: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-    func getLocation(){
-        let locationManager = LocationManager.sharedInstance
-           locationManager.showVerboseMessage = false
-           locationManager.autoUpdate = true
-         //   locationManager.startUpdatingLocation()
-           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
-               print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
-               //print(verboseMessage)
-            locationManager.autoUpdate = false
-           }
-    }
+//    func getLocation(){
+//        let locationManager = LocationManager.sharedInstance
+//           locationManager.showVerboseMessage = false
+//           locationManager.autoUpdate = true
+//         //   locationManager.startUpdatingLocation()
+//           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//               self.latitude = latitude
+//               self.longitude = longitude
+//               print("lat:\(latitude) lon:\(longitude) status:\(status) error:\(error)")
+//               //print(verboseMessage)
+//            locationManager.autoUpdate = false
+//           }
+//    }
     override func viewWillAppear(_ animated: Bool) {
-        self.getLocation()
+       // self.getLocation()
         self.navigationController?.navigationBar.isHidden = true
     }
   
@@ -576,8 +576,8 @@ extension signinVC : ASAuthorizationControllerDelegate
                 self.SocialData.eDeviceType   = "iOS"
                 self.SocialData.id          = self.SocialData.social_Id
                 self.SocialData.checkExist   = "1"
-                self.SocialData.longitude   = self.longitude.description
-                self.SocialData.latitude    = self.latitude.description
+                self.SocialData.longitude   = appDelegate.logitude.description
+                self.SocialData.latitude    = appDelegate.latitude.description
                 if(self.SocialData.email != "" && self.SocialData.name != ""){
                     self.WSSocialLogin(Parameter: registerDetail as! [String : String])
                 }

@@ -93,13 +93,14 @@ class LocationManager: NSObject,CLLocationManagerDelegate {
     }
     
     
-    fileprivate override init(){
-        super.init()
-        if(!autoUpdate){
-            autoUpdate = !CLLocationManager.significantLocationChangeMonitoringAvailable()
-        }
-        
-    }
+//    fileprivate override init(){
+//
+//        super.init()
+//        if(!autoUpdate){
+//            autoUpdate = !CLLocationManager.significantLocationChangeMonitoringAvailable()
+//        }
+//
+//    }
     
     fileprivate func resetLatLon(){
         

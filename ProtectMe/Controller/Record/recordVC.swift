@@ -102,7 +102,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
        // UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
         super.viewWillAppear(animated)
             self.constheight.constant = 0
-            self.setUserLocation()
+          //  self.setUserLocation()
         if USER.shared.id == ""{
             showAlertWithTitleFromVC(vc: self, andMessage: AlertMessage.LoginToContinue)
         }

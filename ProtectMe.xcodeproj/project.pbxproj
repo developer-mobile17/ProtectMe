@@ -99,7 +99,6 @@
 		04E7B76B248FAF7700DBA769 /* VideoDetailsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */; };
 		04E7B76D248FB18F00DBA769 /* baseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E7B76C248FB18F00DBA769 /* baseVC.swift */; };
 		04E95C9924F3C37A00224215 /* deletedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E95C9824F3C37A00224215 /* deletedVC.swift */; };
-		04EAD24E24A4C8E50084EAB5 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */; };
 		04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FACBFD24EBC48B004CE41F /* localVideoModel.swift */; };
 		4A2E624717ABC8B994AA8705 /* Pods_ProtectMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */; };
 /* End PBXBuildFile section */
@@ -201,7 +200,6 @@
 		04E7B769248FAF7700DBA769 /* VideoDetailsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VideoDetailsTableViewCell.xib; sourceTree = "<group>"; };
 		04E7B76C248FB18F00DBA769 /* baseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseVC.swift; sourceTree = "<group>"; };
 		04E95C9824F3C37A00224215 /* deletedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = deletedVC.swift; sourceTree = "<group>"; };
-		04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		04FACBFD24EBC48B004CE41F /* localVideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localVideoModel.swift; sourceTree = "<group>"; };
 		6D24D23721553E195789BFC2 /* Pods_ProtectMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProtectMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C549DAE0357C8B9AA1FC0202 /* Pods-ProtectMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProtectMe.release.xcconfig"; path = "Target Support Files/Pods-ProtectMe/Pods-ProtectMe.release.xcconfig"; sourceTree = "<group>"; };
@@ -448,7 +446,6 @@
 				0476BA96248F60E8005977D4 /* GeneralUtility.swift */,
 				0476BA97248F60E8005977D4 /* Extension.swift */,
 				0476BA98248F60E8005977D4 /* Extention */,
-				04EAD24D24A4C8E50084EAB5 /* LocationManager.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -835,7 +832,6 @@
 				04FACBFE24EBC48B004CE41F /* localVideoModel.swift in Sources */,
 				04E18B34248F8CB5003AF836 /* SideMenuTransition.swift in Sources */,
 				04E083F524A30D830027DE04 /* KVideoRecorder.swift in Sources */,
-				04EAD24E24A4C8E50084EAB5 /* LocationManager.swift in Sources */,
 				041ADC352492106600E573F7 /* renameArchiveVC.swift in Sources */,
 				04E18B33248F8CB5003AF836 /* SideMenuManager.swift in Sources */,
 				041ADC322492006100E573F7 /* notificationSettingVC.swift in Sources */,

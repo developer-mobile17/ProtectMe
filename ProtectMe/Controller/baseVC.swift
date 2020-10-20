@@ -21,7 +21,7 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     var videoURL : NSURL?
     var latitude:Double = 0.0
     var longitude:Double = 0.0
-    let locationManager = LocationManager.sharedInstance
+    //let locationManager = LocationManager.sharedInstance
     var videoRecorded: URL? = nil
 
 
@@ -29,8 +29,8 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = false
         self.imgPickerController.delegate = self
-        locationManager.delegate = self as? LocationManagerDelegate
-        self.getLocation()
+      //  locationManager.delegate = self as? LocationManagerDelegate
+     //   self.getLocation()
 
 //        let photos = PHPhotoLibrary.authorizationStatus()
 //        if photos == .notDetermined {
@@ -55,43 +55,43 @@ class baseVC: UIViewController ,UIImagePickerControllerDelegate, UINavigationCon
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.getLocation()
+       // self.getLocation()
 
 
     }
-    func setUserLocation(){
-        locationManager.showVerboseMessage = true
-        locationManager.autoUpdate = true
-        locationManager.startUpdatingLocation()
-
-        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
-                  if let city = dict?["locality"] as? String{
-                      USER.shared.city = city
-                  }
-                  if let country = dict?["country"] as? String{
-                      USER.shared.country = country
-                  }
-                self.locationManager.stopUpdatingLocation()
-
-                  USER.shared.save()
-                  }
-
-        
-    }
+//    func setUserLocation(){
+//        locationManager.showVerboseMessage = true
+//        locationManager.autoUpdate = true
+//        locationManager.startUpdatingLocation()
+//
+//        self.locationManager.reverseGeocodeLocationWithLatLon(latitude: USER.shared.latitude.toDouble()!, longitude: USER.shared.longitude.toDouble()!) { (dict, placemark, str) in
+//                  if let city = dict?["locality"] as? String{
+//                      USER.shared.city = city
+//                  }
+//                  if let country = dict?["country"] as? String{
+//                      USER.shared.country = country
+//                  }
+//                self.locationManager.stopUpdatingLocation()
+//
+//                  USER.shared.save()
+//                  }
+//
+//
+//    }
     
-    func getLocation(){
-        locationManager.startUpdatingLocation()
-
-           locationManager.showVerboseMessage = false
-           locationManager.autoUpdate = true
-         //   locationManager.startUpdatingLocation()
-           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
-               self.latitude = latitude
-               self.longitude = longitude
-            self.locationManager.autoUpdate = false
-            self.locationManager.stopUpdatingLocation()
-           }
-    }
+//    func getLocation(){
+//        locationManager.startUpdatingLocation()
+//
+//           locationManager.showVerboseMessage = false
+//           locationManager.autoUpdate = true
+//         //   locationManager.startUpdatingLocation()
+//           locationManager.startUpdatingLocationWithCompletionHandler { (latitude, longitude, status, verboseMessage, error) -> () in
+//               self.latitude = latitude
+//               self.longitude = longitude
+//            self.locationManager.autoUpdate = false
+//            self.locationManager.stopUpdatingLocation()
+//           }
+//    }
     @IBAction func OpenMenuBtnAction(_ sender:UIButton){
            let menu = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
         //menu.statusBarEndAlpha = 0

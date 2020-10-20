@@ -30,7 +30,7 @@ var loggedInUserData = USER()
     class AppDelegate: UIResponder, UIApplicationDelegate {
     var FCMdeviceToken:String = ""
     
-    let locationManager = LocationManager.sharedInstance
+    //let locationManager = LocationManager.sharedInstance
     var locManager = CLLocationManager()
     var currentLocation: CLLocation!
     var currentlatitude =  Double()
