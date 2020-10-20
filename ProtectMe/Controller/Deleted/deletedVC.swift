@@ -118,7 +118,7 @@ class deletedVC: baseVC {
     @IBAction func btnClearAllButton(_ sender: UIButton) {
         if(arrarchivedList.count>0){
             showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME
-            , andMessage: "Are you sure you want to clear?", buttons: ["Yes","Cancel"]) { (index) in
+            , andMessage: "Are you sure you want to empty the deleted files ?", buttons: ["Yes","Cancel"]) { (index) in
                 if(index == 0){
                     self.WSCleatDeletedfiles(Parameter: [:])
                 }

@@ -325,10 +325,11 @@ class LinkedAccountVC: baseVC {
                         USER.shared.archived_counter = String(archived_counter)
                         USER.shared.save()
                     }
-                                       if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
-                                    USER.shared.linked_account_counters = String(linked_account_counters)
-                                       USER.shared.save()
-                                       }
+                    if let linked_account_counters = dataResponce["linked_account_counters"] as? Int{
+                        USER.shared.linked_account_counters = String(linked_account_counters)
+                        USER.shared.save()
+                    }
+                    
 //                    if let msg = DataResponce?["message"] as? String{
 //                        //showAlertWithTitleFromVC(vc: self, andMessage: msg)
 //                        showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: msg, buttons: ["Dismiss"]) { (i) in
