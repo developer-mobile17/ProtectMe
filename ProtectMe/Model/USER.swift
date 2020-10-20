@@ -4,7 +4,7 @@
 //
 //  Created by Mac on 06/02/20.
 //  Copyright © 2020 ZestBrains PVT LTD. All rights reserved.
-//
+//var support_email                       = "support@goprotectme.com"
 
 import UIKit
 
@@ -31,7 +31,8 @@ class USER: NSObject  ,NSCoding {
         var voice_actionbyCommand               = "0"
         var voice_action                        = ""
         var linked_account_counters             = ""
-        var support_email                       = "support@goprotectme.com"
+    //
+        var support_email                       = "Support@getprotectme.com"
         var LinkedAccSenederSelected            = false
         var isLogout                            = false
         var isDeleteActionShow                  = "0"
@@ -308,7 +309,7 @@ class USER: NSObject  ,NSCoding {
         self.type                                       = ""
         self.vAuthToken                                 = ""
         self.voice_action                               = ""
-        self.support_email                              = "support@goprotectme.com"
+        self.support_email                              = "Support@getprotectme.com"
         self.linked_account_counters                    = ""
         self.archived_counter                           = ""
         self.isLogout                                   = false
