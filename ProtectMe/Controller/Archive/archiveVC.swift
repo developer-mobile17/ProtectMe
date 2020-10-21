@@ -1831,8 +1831,6 @@ extension archiveVC:UICollectionViewDelegate,UITableViewDataSource{
 
                    cell.btnMap.isHidden = false
                }
-
-                          
                 cell.selectionStyle = .none
                 cell.btnPlayView.tag = indexPath.row
                 cell.btnPlayView.addTarget(self, action: #selector(self.btnplayvideoClieck(_:)),for: .touchUpInside)

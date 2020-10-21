@@ -548,7 +548,7 @@ class deletedVC: baseVC {
                             self.arrarchivedList.append(objarchivedList)
                         }
                         if(self.arrarchivedList.count == 0){
-                            self.collVideogrid.setEmptyMessage("No Data Found!")
+                            //self.collVideogrid.setEmptyMessage("No Data Found!")
                         }
                         self.tblVideoList.reloadData()
                         self.collVideogrid.reloadData()
