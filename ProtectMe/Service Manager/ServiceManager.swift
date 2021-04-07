@@ -193,9 +193,6 @@ class ServiceManager: NSObject{
             
             return
         }
-        
-        
-        
         if Connectivity.isConnectedToInternet() {
             print("Yes! internet is available.")
             // do some tasks..
@@ -825,9 +822,11 @@ class ServiceManager: NSObject{
                 print(apitocken)
                 var headers: HTTPHeaders = [:]//
 
-                headers = ["Vauthtoken":"Bearer " + apitocken,"Content-type": "multipart/form-data",
-                "Content-Disposition" : "form-data"]
+                headers = ["Vauthtoken":"Bearer " + apitocken,"Content-type": "multipart/form-data","Content-Disposition" : "form-data"]
+                //
               //  SHOW_CUSTOM_LOADER()
+                print("headers : ",headers)
+
                 Alamofire.upload (multipartFormData: { multipartFormData in
                     
                     for (key, value) in params {
@@ -889,13 +888,17 @@ class ServiceManager: NSObject{
                                 }
                                 print("\n\n===========Error===========")
                                 print("Json Object is not NSDictionary : Please Check this API \(apiType.getEndPoint())")
-                                successBlock(nil, true, nil)
+                                
+                                successBlock(nil, false, nil)
                             }
                         }
                         
                     case .failure(let encodingError):
                         HIDE_CUSTOM_LOADER()
-                        
+                        if encodingError._code == NSURLErrorTimedOut {
+                            //timeout here
+                            debugPrint("timeOut")
+                        }
                         print(encodingError)
                     }
                 }

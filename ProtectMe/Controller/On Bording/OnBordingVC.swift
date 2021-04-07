@@ -10,14 +10,14 @@ import UIKit
 
 
 class OnBordingVC: UIViewController {
-    @IBOutlet weak var colle:UICollectionView!
+   @IBOutlet weak var colle:UICollectionView!
    @IBOutlet weak var btnNext:UIButton!
-    @IBOutlet weak var btnBack:UIButton!
+   @IBOutlet weak var btnBack:UIButton!
 
 @IBOutlet weak var pageControl: UIPageControl!
 
     let str = ["Record and send videos to your cloud and designated recipients safely.","Videos automatically save and send even if they are interrupted. \n Feel more protected and assured in any situation"]
-    let img = [#imageLiteral(resourceName: "setp1"),#imageLiteral(resourceName: "step2")]
+    let img = [#imageLiteral(resourceName: "step2"),#imageLiteral(resourceName: "step2")]
     
     
   
@@ -120,7 +120,8 @@ extension OnBordingVC:UICollectionViewDelegate,UICollectionViewDataSource,UIColl
         return CGSize(width: cellWidth, height: cellHeight)
     }
 }
-class bordcell:UICollectionViewCell{
+
+class bordcell:UICollectionViewCell {
     @IBOutlet weak var lblTitle:UILabel!
     @IBOutlet weak var imgBoard:UIImageView!
 }

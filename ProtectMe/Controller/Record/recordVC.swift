@@ -16,36 +16,25 @@ import Foundation
 import MobileCoreServices
 import IntentsUI
 import SKPhotoBrowser
-
-
-
 //import CameraEngine
 protocol refreshUploadList:class {
     func refreshProcess()
 }
 private extension recordVC {
-    
     func createWebPhotos() -> [SKPhotoProtocol]
     {
         let FinalimageArray = NSMutableArray()
         FinalimageArray.add(self.Image_Zoom)
         return (0..<FinalimageArray.count).map { (i: Int) -> SKPhotoProtocol in
-            
-            
-                
                 let photo = SKPhoto.photoWithImageURL(self.Image_Zoom)
                 photo.shouldCachePhotoURLImage = true
                 return photo
-                
-            
-            
         }
     }
 }
 
 class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelegate{
     weak var delegaterefreshUploadList: refreshUploadList?
-
     @IBOutlet weak var constheight: NSLayoutConstraint!
     @IBOutlet weak var loader: UIActivityIndicatorView!
     var outputFileHandle:FileHandle?
@@ -53,8 +42,6 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
     var thumbImageForVide:UIImage = #imageLiteral(resourceName: "placeholder")
     var unique_id = ""
     var Image_Zoom = String()
-
-
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var timeView: UIView!
     // let cameraManager = CameraManager()
@@ -79,24 +66,24 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
     var timer = Timer()
     var isTimerRunning = false //This will be used to make sure only one timer is created at a time.
    
-    func capturePhoto() {
-        // create settings for your photo capture
-        let settings = AVCapturePhotoSettings()
-        //let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
-        if #available(iOS 12.0, *) {
-            let previewPixelType = settings.availableRawEmbeddedThumbnailPhotoCodecTypes.first!
-            let previewFormat = [
-                kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
-                kCVPixelBufferWidthKey as String: UIScreen.main.bounds.size.width,
-                kCVPixelBufferHeightKey as String: UIScreen.main.bounds.size.height
-                ] as [String : Any]
-            settings.previewPhotoFormat = previewFormat
-            cameraOutput.capturePhoto(with: settings, delegate: self)
-        } else {
-            // Fallback on earlier versions
-        }
-       
-    }
+//    func capturePhoto() {
+//        // create settings for your photo capture
+//        let settings = AVCapturePhotoSettings()
+//        //let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
+//        if #available(iOS 12.0, *) {
+//            let previewPixelType = settings.availableRawEmbeddedThumbnailPhotoCodecTypes.first!
+//            let previewFormat = [
+//                kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+//                kCVPixelBufferWidthKey as String: UIScreen.main.bounds.size.width,
+//                kCVPixelBufferHeightKey as String: UIScreen.main.bounds.size.height
+//                ] as [String : Any]
+//            settings.previewPhotoFormat = previewFormat
+//            cameraOutput.capturePhoto(with: settings, delegate: self)
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
        // UIApplication.statusBarBackgroundColor = .init(red: 34.0/255, green: 42.0/255, blue: 52.0/255, alpha: 1.0)
@@ -175,18 +162,14 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.loader.stopAnimating()
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-                DispatchQueue.main.async {
+    //    NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+      //  NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        DispatchQueue.main.async {
             if self.setupSession() {
                 self.setupPreview()
                 self.startSession()
-                
-        }
-        //askForCameraPermissions()
+            }
         self.timeView.isHidden = true
-
-//        cameraManager.shouldFlipFrontCameraImage = true
        
         }
         }
@@ -267,6 +250,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
             print(error.localizedDescription)
             return
         }
+        
 
         // Swap capture device inputs
         captureSession.removeInput(input)
@@ -289,7 +273,8 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
              print("Error setting device video input: \(error)")
              return false
          }
-
+            
+            
          // Setup Microphone
          let microphone = AVCaptureDevice.default(for: AVMediaType.audio)!
          do {
@@ -1064,6 +1049,7 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
                       newCamera = cameraWithPosition(position: .back)
                   }
               }
+      
 
               //Add input to session
               var err: NSError?
@@ -1080,7 +1066,16 @@ class recordVC: baseVC,AVCaptureFileOutputRecordingDelegate,SKPhotoBrowserDelega
               } else {
                   captureSession.addInput(newVideoInput)
               }
-
+        // Setup Microphone
+              let microphone = AVCaptureDevice.default(for: AVMediaType.audio)!
+              do {
+                  let micInput = try AVCaptureDeviceInput(device: microphone)
+                  if captureSession.canAddInput(micInput) {
+                      captureSession.addInput(micInput)
+                  }
+              } catch {
+                  print("Error setting device audio input: \(error)")
+              }
               //Commit all the configuration changes at once
               captureSession.commitConfiguration()
           

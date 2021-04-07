@@ -12,7 +12,8 @@ pod 'SDWebImage', '~> 5.0'
 pod 'FBSDKLoginKit'
 pod 'GoogleSignIn'
 pod 'SideMenu'
-#pod 'CameraManager', '~> 5.1'
+pod 'CameraManager', '~> 5.1'
+
 
 pod 'Firebase/Core'
 pod 'Firebase/Auth'

@@ -224,6 +224,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.7):
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
+  - CameraManager (5.1.3)
   - CameraRoll (0.1.0)
   - FBSDKCoreKit (6.3.0):
     - FBSDKCoreKit/Basics (= 6.3.0)
@@ -389,6 +390,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.0)
+  - CameraManager (~> 5.1)
   - CameraRoll
   - FBSDKLoginKit
   - Firebase/Auth
@@ -410,6 +412,7 @@ SPEC REPOS:
     - Alamofire
     - AppAuth
     - BoringSSL-GRPC
+    - CameraManager
     - CameraRoll
     - FBSDKCoreKit
     - FBSDKLoginKit
@@ -448,6 +451,7 @@ SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
+  CameraManager: 73936a52093081ba5e44914e8120ab511360f5d4
   CameraRoll: e2b1141080cf2a40dde3f253cbdfc9616c665dfa
   FBSDKCoreKit: 5d55c8f3007c9c49b793617b9102e46355fc7e17
   FBSDKLoginKit: d46aa04d9bb9990a4deb6441736fae24a8c94496
@@ -481,6 +485,6 @@ SPEC CHECKSUMS:
   Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
   VersaPlayer: 0e9a0ea7da786729ffb377dbd17b34641a8265e4
 
-PODFILE CHECKSUM: 692026a6361017c60730c13680fc085568e0c9fc
+PODFILE CHECKSUM: dfdc60eaa67d83ee35dbef342a855e3bb64617d9
 
 COCOAPODS: 1.9.3

@@ -398,10 +398,42 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2250"
-            endingLineNumber = "2250"
+            startingLineNumber = "2252"
+            endingLineNumber = "2252"
             landmarkName = "WSDownloadImage(Parameters:img:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4CBE1B12-693E-4822-AC00-AE26956186E6 - 7db430f3d4d73c20"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.NSDictionary&gt;, Swift.Bool, Swift.Optional&lt;Swift.String&gt;) -&gt; () in ProtectMe.archiveVC.WSDownloadImage(Parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, img: __C.UIImage) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2252"
+                  endingLineNumber = "2252"
+                  offsetFromSymbolStart = "3668">
+               </Location>
+               <Location
+                  uuid = "4CBE1B12-693E-4822-AC00-AE26956186E6 - fdda69cc8bd8aa21"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Optional&lt;__C.NSDictionary&gt;, Swift.Bool, Swift.Optional&lt;Swift.String&gt;) -&gt; () in ProtectMe.archiveVC.WSDownloadImage(Parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, img: __C.UIImage) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2254"
+                  endingLineNumber = "2254"
+                  offsetFromSymbolStart = "260">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -942,8 +974,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2342"
-            endingLineNumber = "2342"
+            startingLineNumber = "2344"
+            endingLineNumber = "2344"
             landmarkName = "navigationController(_:willShow:animated:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -958,8 +990,8 @@
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2345"
-            endingLineNumber = "2345"
+            startingLineNumber = "2347"
+            endingLineNumber = "2347"
             landmarkName = "videoUrlForUpload(nextURLAsset:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1086,8 +1118,8 @@
             filePath = "Podfile"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1166,8 +1198,8 @@
             filePath = "ProtectMe/Controller/Record/recordVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "856"
-            endingLineNumber = "856"
+            startingLineNumber = "841"
+            endingLineNumber = "841"
             landmarkName = "WSUploadVideoR(statTime:endTime:thumimg:sendThum:OPUrl:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1198,8 +1230,8 @@
             filePath = "ProtectMe/Controller/Record/recordVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "845"
-            endingLineNumber = "845"
+            startingLineNumber = "830"
+            endingLineNumber = "830"
             landmarkName = "WSUploadVideoR(statTime:endTime:thumimg:sendThum:OPUrl:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1207,16 +1239,128 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E24393C5-1D76-4B4C-B636-395C36097443"
+            uuid = "4160E3CD-9CDE-4E01-8020-D91A2F49DF18"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1557"
-            endingLineNumber = "1557"
-            landmarkName = "refreshListmylist(notification:)"
+            startingLineNumber = "2068"
+            endingLineNumber = "2068"
+            landmarkName = "WSUploadPhoneVideo(statTime:endTime:thumimg:sendThum:OPUrl:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4160E3CD-9CDE-4E01-8020-D91A2F49DF18 - f30548c76f6cc31d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ProtectMe.archiveVC.WSUploadPhoneVideo(statTime: Swift.Double, endTime: Swift.Double, thumimg: __C.UIImage, sendThum: Swift.Bool, OPUrl: Foundation.URL) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2068"
+                  endingLineNumber = "2068"
+                  offsetFromSymbolStart = "252">
+               </Location>
+               <Location
+                  uuid = "4160E3CD-9CDE-4E01-8020-D91A2F49DF18 - 4aacb5a481ccf5d5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "function signature specialization &lt;Arg[2] = Value Promoted from Box&gt; of closure #1 (Foundation.URL) -&gt; () in ProtectMe.archiveVC.WSUploadPhoneVideo(statTime: Swift.Double, endTime: Swift.Double, thumimg: __C.UIImage, sendThum: Swift.Bool, OPUrl: Foundation.URL) -&gt; ()"
+                  moduleName = "ProtectMe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mac/Desktop/Git%20Projects/ProtectMe/ProtectMe/Controller/Archive/archiveVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2061"
+                  endingLineNumber = "2061"
+                  offsetFromSymbolStart = "220">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7B3E3942-958C-4A80-A500-E3DD9C8284B5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Archive/archiveVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2073"
+            endingLineNumber = "2073"
+            landmarkName = "WSUploadPhoneVideo(statTime:endTime:thumimg:sendThum:OPUrl:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4AE5E348-6E4D-42D4-B20D-197BF2D63F76"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Record/recordVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "captureDevice(with:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9778DF34-72A5-43AC-B9C7-329770BA0A34"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Service Manager/ServiceManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "825"
+            endingLineNumber = "825"
+            landmarkName = "callAPIWithVideoChunk(WithType:VideoChunk:thumbImage:passThumb:WithParams:Progress:Success:Failure:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D0EDF2C6-A978-4484-8F4E-F572B963F21E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Record/recordVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1074"
+            endingLineNumber = "1074"
+            landmarkName = "changeCamera(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "20C20FBA-E315-4A79-BCED-53D5FD6DC29A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ProtectMe/Controller/Record/recordVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "viewWillAppear(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

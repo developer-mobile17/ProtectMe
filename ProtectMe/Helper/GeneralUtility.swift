@@ -1426,7 +1426,7 @@ extension UIViewController {
 
         let asset = AVAsset(url: sourceURL)
         let length = Float(asset.duration.value) / Float(asset.duration.timescale)
-      //  print("video length: \(length) seconds")
+        print("video length: \(length) seconds")
 
         var outputURL = documentDirectory.appendingPathComponent("output")
         do {
@@ -1442,7 +1442,7 @@ extension UIViewController {
 
         guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else { return }
         exportSession.outputURL = outputURL
-        exportSession.outputFileType = .mp4
+        exportSession.outputFileType = .mov
 
         let timeRange = CMTimeRange(start: CMTime(seconds: startTime, preferredTimescale: 1000),
                                     end: CMTime(seconds: endTime, preferredTimescale: 1000))

@@ -2060,118 +2060,120 @@ extension archiveVC {
         
           func WSUploadPhoneVideo(statTime:Double, endTime:Double,thumimg:UIImage,sendThum:Bool,OPUrl:URL) -> Void {
             
-            var etime = statTime + 5.0
+            var etime = statTime + 10.0
             if(etime>endTime){
                 etime = endTime
             }
             if(statTime < endTime){
-                self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
-            print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
-                 // arrOfChunks.append(FUrl)
-                    var lattitudeVal = ""
-                    var longtitudeVal = ""
-                    if(self.isLocationEnable == true){
-                        lattitudeVal = APPDELEGATE.latitude
-                        longtitudeVal = APPDELEGATE.logitude
-                    }
-                    else{
-                        lattitudeVal = "00.0000"
-                        longtitudeVal = "00.0000"
-                    }
-                let curruntChunk = FUrl
-                    let Parameter = ["lat":lattitudeVal,"long":longtitudeVal,"unique_id":self.Baseunique_id]
-                ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
-                    (process)in
-                    print("my:",process)
-                    //set progress
-                    if(process == 1.0){
-                        let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks + 1
-                                      
-                                       let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
-                                       let totalchunk = totalLenghtInSec!/5
-//                                       let per = (uploded * 100)/Int(totalchunk)
-//                                       print("per:",per)
-//                                       let remainingChunk = totalchunk - 1
-//                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
-//                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
-                        
-                        if(totalchunk > 1){
-                                     let per = (uploded * 100)/Int(totalchunk)
-                                                       print("per:",per)
-                                     let remainingChunk = totalchunk - 1
-                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
-                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
-                                 }
-                                 else{
+                    self.cropVideo(sourceURL: self.videoURL! as URL, startTime: statTime, endTime: etime) { (FUrl) in
+                print("url :",FUrl, "Start time : ",statTime, "End time : ",etime)
+                     // arrOfChunks.append(FUrl)
+                        UISaveVideoAtPathToSavedPhotosAlbum(FUrl.path, nil, nil, nil)
+
+                        var lattitudeVal = ""
+                        var longtitudeVal = ""
+                        if(self.isLocationEnable == true){
+                            lattitudeVal = APPDELEGATE.latitude
+                            longtitudeVal = APPDELEGATE.logitude
+                        }
+                        else{
+                            lattitudeVal = "00.0000"
+                            longtitudeVal = "00.0000"
+                        }
+                    let curruntChunk = FUrl
+                        let Parameter = ["lat":lattitudeVal,"long":longtitudeVal,"unique_id":self.Baseunique_id]
+                    ServiceManager.shared.callAPIWithVideoChunk(WithType: .upload_chunk, VideoChunk: curruntChunk, thumbImage: thumimg, passThumb: sendThum, WithParams: Parameter,Progress: {
+                        (process)in
+                        print("my:",process)
+                        //set progress
+                        if(process == 1.0){
+                            let uploded = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first!.numberofchunks + 1
+                                          
+                                           let totalLenghtInSec = appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.totalLenghtInSec
+                                           let totalchunk = totalLenghtInSec!/10
+    //                                       let per = (uploded * 100)/Int(totalchunk)
+    //                                       print("per:",per)
+    //                                       let remainingChunk = totalchunk - 1
+    //                                       appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+    //                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
+                            
+                            if(totalchunk > 1){
+                                         let per = (uploded * 100)/Int(totalchunk)
+                                                           print("per:",per)
+                                         let remainingChunk = totalchunk - 1
+                                         appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(per)
+                                         appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.numberofchunks = uploded
+                                     }
+                                     else{
+                                         
+                                         appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(process!)
                                      
-                                     appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = Double(process!)
-                                 
-                                 }
-                        NotificationCenter.default.removeObserver(self)
-                        NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                                     }
+                            NotificationCenter.default.removeObserver(self)
+                            NotificationCenter.default.post(name: NSNotification.Name("refreshList"), object: nil)
+                            
+                            
+                                        }
+                        //appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
                         
-                        
+                        //appDelegate.objLocalVid.progress = process!
+                    }, Success: { (DataResponce, Status, Message) in
+                        if(Status == true){
+                            let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
+                            let StatusCode = DataResponce?["status"] as? Int
+                            if (StatusCode == 200){
+                               if let Data = dataResponce["data"] as? NSDictionary{
+                                    if let videoKey = Data["unique_id"] as? String{
+                                        self.Baseunique_id = videoKey
+                                        let strTimr = statTime + 10
+                                        if(strTimr >= endTime){
+                                            print("video upload complete")
+                                            self.WSVideoUploadSuces(Parameter: ["unique_video_id":videoKey])
+                                            appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
+                                            self.getListData()
+                                          //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
+                                        }
+                                        else{
+                                            appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
+                                            self.WSUploadPhoneVideo(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                                        }
                                     }
-                    //appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = process!
-                    
-                    //appDelegate.objLocalVid.progress = process!
-                }, Success: { (DataResponce, Status, Message) in
-                    if(Status == true){
-                        let dataResponce:Dictionary<String,Any> = DataResponce as! Dictionary<String, Any>
-                        let StatusCode = DataResponce?["status"] as? Int
-                        if (StatusCode == 200){
-                           if let Data = dataResponce["data"] as? NSDictionary{
-                                if let videoKey = Data["unique_id"] as? String{
-                                    self.Baseunique_id = videoKey
-                                    let strTimr = statTime + 5
-                                    if(strTimr >= endTime){
-                                        print("video upload complete")
-                                        self.WSVideoUploadSuces(Parameter: ["unique_video_id":videoKey])
-                                        appDelegate.ArrLocalVideoUploading = appDelegate.ArrLocalVideoUploading.filter({$0.url != OPUrl})
-                                        self.getListData()
-                                      //  NotificationCenter.default.post(name: NSNotification.Name("refresh"), object: nil)
-                                    }
-                                    else{
-                                        appDelegate.ArrLocalVideoUploading.filter({$0.url == OPUrl}).first?.progress = 0.0
-                                        self.WSUploadPhoneVideo(statTime: strTimr, endTime:endTime, thumimg: thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                            }
+                            }
+                            else if(StatusCode == 401)
+                            {
+                             //   self.myGroup.leave()
+                                self.WSUploadPhoneVideo(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
+                                if let errorMessage:String = Message{
+                                    showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
+                                            appDelegate.setLoginVC()
                                     }
                                 }
-                        }
-                        }
-                        else if(StatusCode == 401)
-                        {
-                         //   self.myGroup.leave()
-                            self.WSUploadPhoneVideo(statTime: statTime, endTime:endTime, thumimg:thumimg, sendThum: false,OPUrl: self.videoURL! as URL)
-                            if let errorMessage:String = Message{
-                                showAlertWithTitleFromVC(vc: self, title: Constant.APP_NAME as String, andMessage: errorMessage, buttons: ["Dismiss"]) { (i) in
-                                        appDelegate.setLoginVC()
+                            }
+                            else{
+                           //     self.myGroup.leave()
+
+                                if let errorMessage:String = dataResponce["message"] as? String{
+                                   // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                                 }
                             }
                         }
                         else{
-                       //     self.myGroup.leave()
+                            //self.myGroup.leave()
 
-                            if let errorMessage:String = dataResponce["message"] as? String{
-                               // showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
+                            if let errorMessage:String = Message{
+                                //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
                             }
                         }
-                    }
-                    else{
+                    }) { (DataResponce, Status, Message) in
+                        //
                         //self.myGroup.leave()
 
-                        if let errorMessage:String = Message{
-                            //showAlertWithTitleFromVC(vc: self, andMessage: errorMessage)
-                        }
                     }
-                }) { (DataResponce, Status, Message) in
-                    //
-                    //self.myGroup.leave()
 
+                  
+                
                 }
-
-              
-            
-            }
         }
            // return responsBool
         }

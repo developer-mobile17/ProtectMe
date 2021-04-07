@@ -414,7 +414,7 @@ extension AppDelegate {
                     {
                         print("reverse geodcode fail: \(error!.localizedDescription)")
                     }
-                    print(placemarks)
+               //     print(placemarks)
                     
                     if placemarks != nil
                     {
